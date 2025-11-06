@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor 简单示例</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .editor-container {
+            height: 500px;
+            border: 1px solid #ddd;
+            margin: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .control-group select, .control-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .control-group button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .control-group button:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Monaco Editor 简单示例</h1>
+            <p>基于 VS Code 的浏览器代码编辑器</p>
+        </div>
+        
+        <div class="editor-container" id="editorContainer"></div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="language">编程语言:</label>
+                <select id="language">
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="json">JSON</option>
+                </select>
+                
+                <label for="theme">主题:</label>
+                <select id="theme">
+                    <option value="vs">浅色主题</option>
+                    <option value="vs-dark">深色主题</option>
+                    <option value="hc-black">高对比度</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="formatCode()">格式化代码</button>
+                <button onclick="getCode()">获取代码</button>
+                <button onclick="setCode()">设置代码</button>
+                <button onclick="toggleMinimap()">切换小地图</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用 CDN 版本的 Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"></script>
+    <script>
+        let editor;
+        let isMinimapVisible = true;
+
+        // 初始化 Monaco Editor
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs' }});
+        require(['vs/editor/editor.main'], function () {
+            // 创建编辑器实例
+            editor = monaco.editor.create(document.getElementById('editorContainer'), {
+                value: getDefaultCode(),
+                language: 'javascript',
+                theme: 'vs',
+                automaticLayout: true,
+                minimap: { enabled: true },
+                lineNumbers: 'on',
+                wordWrap: 'on',
+                fontSize: 14,
+                fontFamily: 'Consolas, "Courier New", monospace',
+                scrollBeyondLastLine: false,
+                renderWhitespace: 'selection',
+                selectOnLineNumbers: true,
+                roundedSelection: false,
+                readOnly: false,
+                cursorStyle: 'line',
+                mouseWheelZoom: true
+            });
+
+            // 监听语言变化
+            document.getElementById('language').addEventListener('change', function() {
+                const language = this.value;
+                monaco.editor.setModelLanguage(editor.getModel(), language);
+            });
+
+            // 监听主题变化
+            document.getElementById('theme').addEventListener('change', function() {
+                const theme = this.value;
+                monaco.editor.setTheme(theme);
+            });
+        });
+
+        // 获取默认代码
+        function getDefaultCode() {
+            return `// 欢迎使用 Monaco Editor！
+// 这是一个功能强大的代码编辑器
+
+function greet(name) {
+    console.log(\`Hello, \${name}!\`);
+    return \`Welcome to Monaco Editor, \${name}!\`;
+}
+
+// 调用函数
+const message = greet('开发者');
+console.log(message);
+
+// 支持多种编程语言
+// 支持语法高亮、自动补全、错误检查等功能
+// 支持多种主题和自定义配置`;
+        }
+
+        // 格式化代码
+        function formatCode() {
+            if (editor) {
+                editor.getAction('editor.action.formatDocument').run();
+            }
+        }
+
+        // 获取代码
+        function getCode() {
+            if (editor) {
+                const code = editor.getValue();
+                console.log('当前代码:', code);
+                alert('代码已输出到控制台');
+            }
+        }
+
+        // 设置代码
+        function setCode() {
+            if (editor) {
+                const newCode = `// 新代码 - ${new Date().toLocaleTimeString()}
+function newFunction() {
+    return "这是新设置的代码";
+}
+
+console.log(newFunction());`;
+                editor.setValue(newCode);
+            }
+        }
+
+        // 切换小地图
+        function toggleMinimap() {
+            if (editor) {
+                isMinimapVisible = !isMinimapVisible;
+                editor.updateOptions({ minimap: { enabled: isMinimapVisible } });
+            }
+        }
+    </script>
+</body>
+</html>

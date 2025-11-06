@@ -1,0 +1,29 @@
+{
+  "name": "monaco-editor-database",
+  "version": "1.0.0",
+  "description": "Monaco Editor 数据库模块",
+  "main": "connection.js",
+  "scripts": {
+    "init": "node init.js",
+    "test": "node -e \"const { testConnection } = require('./connection'); testConnection().then(success => process.exit(success ? 0 : 1));\"",
+    "backup": "mysqldump -h localhost -P 3307 -u monaco_user -p monaco_editor_db > backup_$(date +%Y%m%d_%H%M%S).sql",
+    "restore": "mysql -h localhost -P 3307 -u monaco_user -p monaco_editor_db < backup.sql"
+  },
+  "dependencies": {
+    "mysql2": "^3.6.5"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "monaco-editor",
+    "mysql",
+    "database",
+    "ai",
+    "code-editor"
+  ],
+  "author": "Monaco Editor Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+

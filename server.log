@@ -1,0 +1,8 @@
+nohup: 忽略输入
+🚀 Monaco Editor 服务器已启动！
+📁 服务目录: /media/storage/project/aicode
+🌐 访问地址: http://localhost:3005
+📄 基础演示: http://localhost:3005/
+🤖 AI 演示: http://localhost:3005/ai
+🎨 可视化编辑器: http://localhost:3005/visual
+⏹️  按 Ctrl+C 停止服务器

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Monaco Editor AI 代码补全演示</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 20px;
+			background-color: #f5f5f5;
+		}
+
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			overflow: hidden;
+		}
+
+		.header {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+			font-size: 2.2em;
+		}
+
+		.header p {
+			margin: 10px 0 0 0;
+			opacity: 0.9;
+		}
+
+		.controls {
+			padding: 20px;
+			background: #f8f9fa;
+			border-bottom: 1px solid #dee2e6;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 15px;
+			align-items: center;
+		}
+
+		.control-group {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+
+		.control-group label {
+			font-weight: bold;
+			color: #495057;
+			font-size: 14px;
+		}
+
+		.control-group select,
+		.control-group input,
+		.control-group button {
+			padding: 8px 12px;
+			border: 1px solid #ced4da;
+			border-radius: 4px;
+			background: white;
+			cursor: pointer;
+			font-size: 14px;
+		}
+
+		.control-group button {
+			background: #007acc;
+			color: white;
+			border: none;
+			margin-left: 10px;
+			transition: background 0.3s;
+		}
+
+		.control-group button:hover {
+			background: #0056b3;
+		}
+
+		.control-group button:disabled {
+			background: #6c757d;
+			cursor: not-allowed;
+		}
+
+		.ai-controls {
+			background: #e3f2fd;
+			border: 1px solid #2196f3;
+			border-radius: 4px;
+			padding: 10px;
+			margin-left: auto;
+		}
+
+		.ai-help {
+			background: #fff3cd;
+			border: 1px solid #ffeaa7;
+			border-radius: 4px;
+			padding: 8px;
+			margin-top: 10px;
+			font-size: 13px;
+			color: #856404;
+		}
+
+		.ai-status {
+			display: inline-block;
+			padding: 4px 8px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: bold;
+			margin-left: 10px;
+		}
+
+		.ai-status.enabled {
+			background: #d4edda;
+			color: #155724;
+		}
+
+		.ai-status.disabled {
+			background: #f8d7da;
+			color: #721c24;
+		}
+
+		.main-container {
+			display: flex;
+			height: 85vh;
+			border: 1px solid #dee2e6;
+			border-radius: 8px;
+			overflow: hidden;
+		}
+
+		.editor-container {
+			flex: 1;
+			position: relative;
+			height: 100%;
+			background: #1e1e1e;
+		}
+
+		.ai-panel {
+			width: 400px;
+			height: 100%;
+			background: #2d2d2d;
+			border-left: 1px solid #404040;
+			display: flex;
+			flex-direction: column;
+			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+		}
+
+		.ai-panel h4 {
+			margin: 0 0 10px 0;
+			color: #ffffff;
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		.ai-panel button {
+			width: 100%;
+			padding: 8px 16px;
+			margin: 4px 0;
+			background: #007acc;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 13px;
+			transition: background 0.2s;
+		}
+
+		.ai-panel button:hover {
+			background: #0056b3;
+		}
+
+		.ai-panel button:disabled {
+			background: #6c757d;
+			cursor: not-allowed;
+		}
+
+		/* 聊天界面样式 */
+		.ai-tabs {
+			display: flex;
+			margin-bottom: 0;
+			border-bottom: 1px solid #404040;
+			background: #1e1e1e;
+		}
+
+		.tab-button {
+			flex: 1;
+			padding: 12px 16px;
+			background: #1e1e1e;
+			border: none;
+			border-bottom: 3px solid transparent;
+			cursor: pointer;
+			font-size: 14px;
+			color: #cccccc;
+			transition: all 0.3s;
+		}
+
+		.tab-button.active {
+			background: #2d2d2d;
+			border-bottom-color: #007acc;
+			color: #ffffff;
+		}
+
+		.tab-button:hover {
+			background: #2d2d2d;
+			color: #ffffff;
+		}
+
+		.tab-content {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.chat-container {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
+		.chat-messages {
+			flex: 1;
+			overflow-y: auto;
+			padding: 16px;
+			background: #2d2d2d;
+		}
+
+		.message {
+			margin-bottom: 16px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.user-message {
+			align-items: flex-end;
+		}
+
+		.ai-message {
+			align-items: flex-start;
+		}
+
+		.message-content {
+			max-width: 85%;
+			padding: 12px 16px;
+			border-radius: 16px;
+			font-size: 14px;
+			line-height: 1.5;
+			word-wrap: break-word;
+		}
+
+		.user-message .message-content {
+			background: #007acc;
+			color: white;
+			border-bottom-right-radius: 4px;
+		}
+
+		.ai-message .message-content {
+			background: #404040;
+			color: #ffffff;
+			border: 1px solid #555555;
+			border-bottom-left-radius: 4px;
+		}
+
+		.chat-input-container {
+			display: flex;
+			gap: 12px;
+			padding: 16px;
+			background: #1e1e1e;
+			border-top: 1px solid #404040;
+		}
+
+		#chatInput {
+			flex: 1;
+			padding: 12px 16px;
+			border: 1px solid #555555;
+			border-radius: 24px;
+			font-size: 14px;
+			background: #2d2d2d;
+			color: #ffffff;
+			outline: none;
+		}
+
+		#chatInput:focus {
+			border-color: #007acc;
+		}
+
+		#chatInput::placeholder {
+			color: #888888;
+		}
+
+		#sendButton {
+			padding: 12px 20px;
+			background: #007acc;
+			color: white;
+			border: none;
+			border-radius: 24px;
+			cursor: pointer;
+			font-size: 14px;
+			transition: background 0.2s;
+		}
+
+		#sendButton:hover {
+			background: #0056b3;
+		}
+
+		#sendButton:disabled {
+			background: #6c757d;
+			cursor: not-allowed;
+		}
+
+		/* 字体控制样式 */
+		.font-controls {
+			background: #404040;
+			border: 1px solid #555555;
+			border-radius: 6px;
+			padding: 10px;
+			margin-bottom: 15px;
+		}
+
+		.font-controls label {
+			display: block;
+			color: #ffffff;
+			font-size: 12px;
+			margin-bottom: 5px;
+		}
+
+		.font-controls input[type="range"] {
+			width: 100%;
+			margin: 5px 0;
+		}
+
+		#fontSizeValue {
+			color: #007acc;
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.status {
+			padding: 15px 20px;
+			background: #e9ecef;
+			font-size: 14px;
+			color: #6c757d;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.status-info {
+			display: flex;
+			gap: 20px;
+		}
+
+		.api-key-input {
+			width: 200px;
+		}
+
+		.loading {
+			display: none;
+			color: #007acc;
+		}
+
+		.loading.show {
+			display: inline;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>🤖 Monaco Editor AI 代码补全演示</h1>
+			<p>集成 AI 大模型提供智能代码建议和生成功能</p>
+		</div>
+
+		<div class="controls">
+			<div class="control-group">
+				<label for="language">编程语言:</label>
+				<select id="language">
+					<option value="javascript">JavaScript</option>
+					<option value="typescript">TypeScript</option>
+					<option value="python">Python</option>
+					<option value="java">Java</option>
+					<option value="csharp">C#</option>
+					<option value="cpp">C++</option>
+					<option value="html">HTML</option>
+					<option value="css">CSS</option>
+					<option value="json">JSON</option>
+				</select>
+			</div>
+
+			<div class="control-group">
+				<label for="theme">主题:</label>
+				<select id="theme">
+					<option value="vs">浅色主题</option>
+					<option value="vs-dark">深色主题</option>
+					<option value="hc-black">高对比度</option>
+				</select>
+			</div>
+
+			<div class="control-group">
+				<button onclick="formatCode()">格式化代码</button>
+				<button onclick="clearCode()">清空代码</button>
+			</div>
+
+			<div class="ai-controls">
+				<div class="control-group">
+					<label for="apiType">API 类型:</label>
+					<select id="apiType" onchange="updateApiConfig()">
+						<option value="openai">OpenAI</option>
+						<option value="azure">Azure OpenAI</option>
+						<option value="custom">自定义 API</option>
+					</select>
+				</div>
+				<div class="control-group">
+					<label for="apiUrl">API URL:</label>
+					<input type="text" id="apiUrl" class="api-key-input" placeholder="https://aihubmix.com/v1"
+						value="https://aihubmix.com/v1">
+				</div>
+				<div class="control-group">
+					<label for="apiKey">API Key:</label>
+					<input type="password" id="apiKey" class="api-key-input" placeholder="输入您的 API Key">
+				</div>
+				<div class="control-group">
+					<label for="model">模型:</label>
+					<input type="text" id="model" class="api-key-input" placeholder="gpt-3.5-turbo"
+						value="gpt-3.5-turbo">
+				</div>
+				<div class="control-group">
+					<button onclick="toggleAI()" id="toggleAI">🚀 启用 AI 功能</button>
+					<span id="aiStatus" class="ai-status disabled">AI 未启用</span>
+				</div>
+				<div class="ai-help">
+					💡 <strong>提示</strong>: 配置API信息并点击"启用AI功能"后，右侧将显示AI助手面板，包含工具和对话功能！
+				</div>
+			</div>
+		</div>
+
+		<div class="main-container">
+			<!-- 隐藏的编辑器占位，避免移除左侧面板后脚本报错 -->
+			<div id="editor" style="position:absolute; left:-10000px; top:0; width:1px; height:1px;"></div>
+			<div class="ai-panel" id="aiPanel">
+				<div class="ai-tabs">
+					<button class="tab-button active" onclick="switchTab('tools')">🛠️ 工具</button>
+					<button class="tab-button" onclick="switchTab('chat')">💬 对话</button>
+				</div>
+
+				<div id="toolsTab" class="tab-content">
+					<h4>🤖 AI 助手</h4>
+					<div class="font-controls">
+						<label for="fontSize">字体大小:</label>
+						<input type="range" id="fontSize" min="12" max="24" value="18" onchange="updateFontSize()">
+						<span id="fontSizeValue">18px</span>
+					</div>
+					<button onclick="generateCode()">生成代码</button>
+					<button onclick="explainCode()">解释代码</button>
+					<button onclick="optimizeCode()">优化代码</button>
+					<button onclick="addComments()">添加注释</button>
+					<button onclick="refactorCode()">重构代码</button>
+				</div>
+
+				<div id="chatTab" class="tab-content" style="display: none;">
+					<div class="chat-container">
+						<div class="chat-messages" id="chatMessages">
+							<div class="message ai-message">
+								<div class="message-content">
+									👋 你好！我是你的AI编程助手。你可以通过对话的方式让我帮你生成代码、解释代码、优化代码等。请告诉我你需要什么帮助！
+								</div>
+							</div>
+						</div>
+						<div class="chat-input-container">
+							<input type="text" id="chatInput" placeholder="输入你的问题或需求..."
+								onkeypress="handleChatKeyPress(event)">
+							<button onclick="sendChatMessage()" id="sendButton">发送</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="status">
+			<div class="status-info">
+				<span id="status">Monaco Editor 正在加载...</span>
+				<span id="loading" class="loading">AI 正在思考中...</span>
+			</div>
+			<div>
+				<span>行: <span id="lineNumber">1</span> | 列: <span id="columnNumber">1</span></span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Monaco Editor CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"></script>
+
+	<script>
+		let editor;
+		let aiEnabled = false;
+		let aiCompletionProvider;
+
+		// 聊天功能 - 提前定义
+		window.switchTab = function (tabName) {
+			// 隐藏所有标签页
+			document.getElementById('toolsTab').style.display = 'none';
+			document.getElementById('chatTab').style.display = 'none';
+
+			// 移除所有按钮的active类
+			document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+			// 显示选中的标签页
+			if (tabName === 'tools') {
+				document.getElementById('toolsTab').style.display = 'block';
+				document.querySelector('.tab-button[onclick="switchTab(\'tools\')"]').classList.add('active');
+			} else if (tabName === 'chat') {
+				document.getElementById('chatTab').style.display = 'block';
+				document.querySelector('.tab-button[onclick="switchTab(\'chat\')"]').classList.add('active');
+			}
+		}
+
+		// 更新字体大小
+		window.updateFontSize = function () {
+			const fontSize = document.getElementById('fontSize').value;
+			document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+
+			if (editor) {
+				editor.updateOptions({
+					fontSize: parseInt(fontSize),
+					lineHeight: parseInt(fontSize) * 1.3
+				});
+			}
+		}
+
+		// 默认代码示例
+		const codeExamples = {
+			javascript: `// 欢迎使用 AI 增强的 Monaco Editor！
+// 输入代码时，AI 将为您提供智能建议
+
+function calculateFibonacci(n) {
+    if (n <= 1) return n;
+    return calculateFibonacci(n - 1) + calculateFibonacci(n - 2);
+}
+
+// 尝试输入 "console." 或 "function " 来体验 AI 补全
+const result = calculateFibonacci(10);
+console.log(result);`,
+			python: `# Python 代码示例
+# AI 将帮助您编写更好的 Python 代码
+
+def calculate_fibonacci(n):
+    if n <= 1:
+        return n
+    return calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2)
+
+# 尝试输入 "print(" 或 "def " 来体验 AI 补全
+result = calculate_fibonacci(10)
+print(result)`,
+			typescript: `// TypeScript 代码示例
+// AI 将提供类型安全的代码建议
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+class UserService {
+    private users: User[] = [];
+
+    addUser(user: User): void {
+        this.users.push(user);
+    }
+
+    getUserById(id: number): User | undefined {
+        return this.users.find(user => user.id === id);
+    }
+}
+
+// 尝试输入 "const " 或 "interface " 来体验 AI 补全
+const userService = new UserService();`
+		};
+
+		// 初始化 Monaco Editor
+		require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs' } });
+		require(['vs/editor/editor.main'], function () {
+			// 创建编辑器
+			editor = monaco.editor.create(document.getElementById('editor'), {
+				value: codeExamples.javascript,
+				language: 'javascript',
+				theme: 'vs-dark',
+				automaticLayout: true,
+				minimap: { enabled: true },
+				scrollBeyondLastLine: false,
+				fontSize: 18,
+				fontFamily: 'Consolas, "Courier New", monospace',
+				lineHeight: 24,
+				lineNumbers: 'on',
+				roundedSelection: false,
+				scrollbar: {
+					vertical: 'auto',
+					horizontal: 'auto'
+				},
+				suggest: {
+					showKeywords: true,
+					showSnippets: true,
+					showFunctions: true,
+					showConstructors: true,
+					showFields: true,
+					showVariables: true,
+					showClasses: true,
+					showStructs: true,
+					showInterfaces: true,
+					showModules: true,
+					showProperties: true,
+					showEvents: true,
+					showOperators: true,
+					showUnits: true,
+					showValues: true,
+					showConstants: true,
+					showEnums: true,
+					showEnumMembers: true,
+					showKeywords: true,
+					showWords: true,
+					showColors: true,
+					showFiles: true,
+					showReferences: true,
+					showFolders: true,
+					showTypeParameters: true,
+					showSnippets: true
+				}
+			});
+
+			// 更新状态
+			document.getElementById('status').textContent = 'Monaco Editor 已加载完成！';
+
+			// 监听光标位置变化
+			editor.onDidChangeCursorPosition((e) => {
+				document.getElementById('lineNumber').textContent = e.position.lineNumber;
+				document.getElementById('columnNumber').textContent = e.position.column;
+			});
+
+			// 语言切换
+			document.getElementById('language').addEventListener('change', function () {
+				const language = this.value;
+				monaco.editor.setModelLanguage(editor.getModel(), language);
+				editor.setValue(codeExamples[language] || codeExamples.javascript);
+				document.getElementById('status').textContent = `语言已切换到: ${language}`;
+			});
+
+			// 主题切换
+			document.getElementById('theme').addEventListener('change', function () {
+				const theme = this.value;
+				monaco.editor.setTheme(theme);
+				document.getElementById('status').textContent = `主题已切换到: ${theme}`;
+			});
+		});
+
+		// AI 代码补全提供者
+		class AICodeCompletionProvider {
+			constructor(config) {
+				this.config = config;
+				this.cache = new Map();
+			}
+
+			get triggerCharacters() {
+				return ['.', ' ', '\n', '\t', '(', '[', '{'];
+			}
+
+			async provideCompletionItems(model, position, context, token) {
+				if (!this.apiKey) return { suggestions: [] };
+
+				try {
+					const lineContent = model.getLineContent(position.lineNumber);
+					const textBeforeCursor = lineContent.substring(0, position.column - 1);
+
+					// 生成缓存键
+					const cacheKey = `${model.getLanguageId()}-${textBeforeCursor}-${position.lineNumber}`;
+
+					if (this.cache.has(cacheKey)) {
+						return { suggestions: this.cache.get(cacheKey) };
+					}
+
+					// 调用 AI API
+					const suggestions = await this.getAISuggestions(
+						model.getValue(),
+						textBeforeCursor,
+						model.getLanguageId(),
+						position
+					);
+
+					this.cache.set(cacheKey, suggestions);
+					return { suggestions };
+
+				} catch (error) {
+					console.error('AI 代码补全错误:', error);
+					return { suggestions: [] };
+				}
+			}
+
+			async getAISuggestions(context, textBefore, language, position) {
+				const prompt = `请为以下${language}代码提供3-5个补全建议：
+
+\`\`\`${language}
+${context}
+\`\`\`
+
+当前光标位置在: "${textBefore}"
+
+请只返回代码片段，不要包含解释。`;
+
+				try {
+					const requestConfig = this.buildRequestConfig(prompt, language);
+					const response = await fetch(requestConfig.url, requestConfig.options);
+
+					if (!response.ok) {
+						const errorText = await response.text();
+						throw new Error(`API 请求失败: ${response.status} - ${errorText}`);
+					}
+
+					const data = await response.json();
+					return this.parseAIResponse(data, textBefore, position);
+
+				} catch (error) {
+					console.error('AI API 调用失败:', error);
+					return this.getFallbackSuggestions(language, textBefore);
+				}
+			}
+
+			buildRequestConfig(prompt, language) {
+				const headers = {
+					'Content-Type': 'application/json',
+					...this.config.headers
+				};
+
+				// 根据API类型设置认证头
+				switch (this.config.apiType) {
+					case 'azure':
+						headers['api-key'] = this.config.apiKey;
+						break;
+					case 'custom':
+						headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+						break;
+					case 'openai':
+					default:
+						headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+						break;
+				}
+
+				// 构建请求体
+				let requestBody;
+				switch (this.config.apiType) {
+					case 'azure':
+						requestBody = {
+							messages: [
+								{
+									role: 'system',
+									content: `你是一个专业的${language}代码助手。请根据上下文提供准确的代码补全建议。`
+								},
+								{
+									role: 'user',
+									content: prompt
+								}
+							],
+							max_tokens: this.config.maxTokens || 100,
+							temperature: this.config.temperature || 0.7,
+							stop: ['\n\n', '```']
+						};
+						break;
+					case 'custom':
+					case 'openai':
+					default:
+						requestBody = {
+							model: this.config.model,
+							messages: [
+								{
+									role: 'system',
+									content: `你是一个专业的${language}代码助手。请根据上下文提供准确的代码补全建议。`
+								},
+								{
+									role: 'user',
+									content: prompt
+								}
+							],
+							max_tokens: this.config.maxTokens || 100,
+							temperature: this.config.temperature || 0.7,
+							stop: ['\n\n', '```']
+						};
+						break;
+				}
+
+				// 构建URL
+				let url;
+				switch (this.config.apiType) {
+					case 'azure':
+						url = `${this.config.baseUrl}/chat/completions?api-version=2023-12-01-preview`;
+						break;
+					case 'custom':
+					case 'openai':
+					default:
+						url = `${this.config.baseUrl}/chat/completions`;
+						break;
+				}
+
+				return {
+					url,
+					options: {
+						method: 'POST',
+						headers,
+						body: JSON.stringify(requestBody)
+					}
+				};
+			}
+
+			parseAIResponse(data, textBefore, position) {
+				const suggestions = [];
+
+				if (data.choices && data.choices.length > 0) {
+					const content = data.choices[0].message.content;
+					const lines = content.split('\n').filter(line => line.trim());
+
+					lines.forEach((line, index) => {
+						const trimmedLine = line.trim();
+						if (trimmedLine && !trimmedLine.startsWith('```')) {
+							suggestions.push({
+								label: trimmedLine,
+								kind: monaco.languages.CompletionItemKind.Snippet,
+								insertText: trimmedLine,
+								insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+								documentation: `AI 建议 ${index + 1}`,
+								detail: 'AI 代码补全',
+								sortText: `ai_${index.toString().padStart(2, '0')}`,
+								range: {
+									startLineNumber: position.lineNumber,
+									endLineNumber: position.lineNumber,
+									startColumn: position.column,
+									endColumn: position.column
+								}
+							});
+						}
+					});
+				}
+
+				return suggestions;
+			}
+
+			getFallbackSuggestions(language, textBefore) {
+				const fallbackSuggestions = {
+					javascript: [
+						{
+							label: 'console.log()',
+							kind: monaco.languages.CompletionItemKind.Function,
+							insertText: 'console.log(${1:message})',
+							insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+							documentation: '输出调试信息到控制台',
+							detail: '内置函数'
+						}
+					],
+					python: [
+						{
+							label: 'print()',
+							kind: monaco.languages.CompletionItemKind.Function,
+							insertText: 'print(${1:message})',
+							insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+							documentation: '输出信息到控制台',
+							detail: '内置函数'
+						}
+					]
+				};
+
+				return fallbackSuggestions[language] || [];
+			}
+		}
+
+		// 更新API配置
+		function updateApiConfig() {
+			const apiType = document.getElementById('apiType').value;
+			const apiUrl = document.getElementById('apiUrl');
+			const model = document.getElementById('model');
+
+			switch (apiType) {
+				case 'openai':
+					apiUrl.value = 'https://aihubmix.com/v1';
+					model.value = 'gpt-3.5-turbo';
+					break;
+				case 'azure':
+					apiUrl.value = 'https://your-resource.openai.azure.com/';
+					model.value = 'gpt-35-turbo';
+					break;
+				case 'custom':
+					apiUrl.value = 'http://localhost:11434/v1';
+					model.value = 'llama2';
+					break;
+			}
+		}
+
+		// 切换 AI 功能
+		function toggleAI() {
+			const apiKey = document.getElementById('apiKey').value.trim();
+			const apiUrl = document.getElementById('apiUrl').value.trim();
+			const model = document.getElementById('model').value.trim();
+			const apiType = document.getElementById('apiType').value;
+			const toggleBtn = document.getElementById('toggleAI');
+			const status = document.getElementById('aiStatus');
+			const panel = document.getElementById('aiPanel');
+
+			if (!aiEnabled) {
+				if (!apiKey) {
+					alert('请先输入 API Key');
+					return;
+				}
+				if (!apiUrl) {
+					alert('请先输入 API URL');
+					return;
+				}
+				if (!model) {
+					alert('请先输入模型名称');
+					return;
+				}
+
+				// 启用 AI
+				const config = {
+					apiKey: apiKey,
+					baseUrl: apiUrl,
+					model: model,
+					apiType: apiType,
+					maxTokens: 100,
+					temperature: 0.7,
+					headers: {}
+				};
+
+				aiCompletionProvider = new AICodeCompletionProvider(config);
+				monaco.languages.registerCompletionItemProvider(
+					editor.getModel().getLanguageId(),
+					aiCompletionProvider
+				);
+
+				aiEnabled = true;
+				toggleBtn.textContent = '禁用 AI 补全';
+				status.textContent = 'AI 已启用';
+				status.className = 'ai-status enabled';
+				panel.style.display = 'block';
+
+				document.getElementById('status').textContent = `AI 代码补全已启用！(${apiType.toUpperCase()})`;
+
+			} else {
+				// 禁用 AI
+				if (aiCompletionProvider) {
+					// 这里需要实现取消注册的逻辑
+					aiCompletionProvider = null;
+				}
+
+				aiEnabled = false;
+				toggleBtn.textContent = '启用 AI 补全';
+				status.textContent = 'AI 未启用';
+				status.className = 'ai-status disabled';
+				panel.style.display = 'none';
+
+				document.getElementById('status').textContent = 'AI 代码补全已禁用';
+			}
+		}
+
+		// 聊天功能 - 已在上面定义
+
+		function handleChatKeyPress(event) {
+			if (event.key === 'Enter') {
+				sendChatMessage();
+			}
+		}
+
+		async function sendChatMessage() {
+			const input = document.getElementById('chatInput');
+			const message = input.value.trim();
+
+			if (!message) return;
+
+			// 检查AI是否启用
+			if (!aiEnabled) {
+				addChatMessage('user', message);
+				addChatMessage('ai', '请先启用AI功能！请配置API信息并点击"启用AI补全"按钮。');
+				input.value = '';
+				return;
+			}
+
+			// 添加用户消息
+			addChatMessage('user', message);
+			input.value = '';
+
+			// 禁用发送按钮
+			const sendButton = document.getElementById('sendButton');
+			sendButton.disabled = true;
+			sendButton.textContent = '思考中...';
+
+			try {
+				// 调用AI API
+				const response = await callAIAPI(message);
+				addChatMessage('ai', response);
+
+				// 检查是否包含代码，如果包含则提供插入选项
+				if (response.includes('```') || response.includes('function') || response.includes('class')) {
+					addCodeInsertButton(response);
+				}
+
+			} catch (error) {
+				addChatMessage('ai', '抱歉，AI服务出现错误：' + error.message);
+			} finally {
+				// 恢复发送按钮
+				sendButton.disabled = false;
+				sendButton.textContent = '发送';
+			}
+		}
+
+		function addChatMessage(sender, content) {
+			const messagesContainer = document.getElementById('chatMessages');
+			const messageDiv = document.createElement('div');
+			messageDiv.className = `message ${sender}-message`;
+
+			const contentDiv = document.createElement('div');
+			contentDiv.className = 'message-content';
+			contentDiv.innerHTML = formatMessage(content);
+
+			messageDiv.appendChild(contentDiv);
+			messagesContainer.appendChild(messageDiv);
+
+			// 滚动到底部
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+		}
+
+		function formatMessage(content) {
+			// 简单的markdown格式化
+			return content
+				.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+				.replace(/\*(.*?)\*/g, '<em>$1</em>')
+				.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+				.replace(/`(.*?)`/g, '<code>$1</code>')
+				.replace(/\n/g, '<br>');
+		}
+
+		function addCodeInsertButton(response) {
+			const messagesContainer = document.getElementById('chatMessages');
+			const lastMessage = messagesContainer.lastElementChild;
+
+			const buttonDiv = document.createElement('div');
+			buttonDiv.style.marginTop = '8px';
+			buttonDiv.innerHTML = `
+				<button onclick="insertCodeToEditor('${btoa(response)}')" style="
+					background: #28a745;
+					color: white;
+					border: none;
+					padding: 4px 8px;
+					border-radius: 4px;
+					cursor: pointer;
+					font-size: 12px;
+				">插入到编辑器</button>
+			`;
+
+			lastMessage.appendChild(buttonDiv);
+		}
+
+		function insertCodeToEditor(encodedResponse) {
+			const response = atob(encodedResponse);
+
+			// 提取代码块
+			const codeMatch = response.match(/```[\w]*\n?([\s\S]*?)```/);
+			if (codeMatch) {
+				const code = codeMatch[1].trim();
+				editor.setValue(code);
+				document.getElementById('status').textContent = '代码已插入到编辑器！';
+			} else {
+				// 如果没有代码块，直接插入整个响应
+				editor.setValue(response);
+				document.getElementById('status').textContent = '内容已插入到编辑器！';
+			}
+		}
+
+		// AI 功能函数
+		async function generateCode() {
+			const userPrompt = window.prompt('请输入您想要生成的代码描述:');
+			if (!userPrompt) return;
+
+			showLoading(true);
+			try {
+				const response = await callAIAPI(`请生成${document.getElementById('language').value}代码: ${userPrompt}`);
+				editor.setValue(response);
+				document.getElementById('status').textContent = 'AI 代码生成完成！';
+			} catch (error) {
+				alert('AI 代码生成失败: ' + error.message);
+			} finally {
+				showLoading(false);
+			}
+		}
+
+		async function explainCode() {
+			const code = editor.getValue();
+			if (!code.trim()) {
+				alert('请先输入一些代码');
+				return;
+			}
+
+			showLoading(true);
+			try {
+				const response = await callAIAPI(`请解释以下${document.getElementById('language').value}代码:\n\n${code}`);
+				alert('代码解释:\n\n' + response);
+			} catch (error) {
+				alert('AI 代码解释失败: ' + error.message);
+			} finally {
+				showLoading(false);
+			}
+		}
+
+		async function optimizeCode() {
+			const code = editor.getValue();
+			if (!code.trim()) {
+				alert('请先输入一些代码');
+				return;
+			}
+
+			showLoading(true);
+			try {
+				const response = await callAIAPI(`请优化以下${document.getElementById('language').value}代码:\n\n${code}`);
+				editor.setValue(response);
+				document.getElementById('status').textContent = 'AI 代码优化完成！';
+			} catch (error) {
+				alert('AI 代码优化失败: ' + error.message);
+			} finally {
+				showLoading(false);
+			}
+		}
+
+		async function addComments() {
+			const code = editor.getValue();
+			if (!code.trim()) {
+				alert('请先输入一些代码');
+				return;
+			}
+
+			showLoading(true);
+			try {
+				const response = await callAIAPI(`请为以下${document.getElementById('language').value}代码添加详细注释:\n\n${code}`);
+				editor.setValue(response);
+				document.getElementById('status').textContent = 'AI 注释添加完成！';
+			} catch (error) {
+				alert('AI 注释添加失败: ' + error.message);
+			} finally {
+				showLoading(false);
+			}
+		}
+
+		async function refactorCode() {
+			const code = editor.getValue();
+			if (!code.trim()) {
+				alert('请先输入一些代码');
+				return;
+			}
+
+			showLoading(true);
+			try {
+				const response = await callAIAPI(`请重构以下${document.getElementById('language').value}代码，提高可读性和可维护性:\n\n${code}`);
+				editor.setValue(response);
+				document.getElementById('status').textContent = 'AI 代码重构完成！';
+			} catch (error) {
+				alert('AI 代码重构失败: ' + error.message);
+			} finally {
+				showLoading(false);
+			}
+		}
+
+		// 调用 AI API
+		async function callAIAPI(prompt) {
+			const apiKey = document.getElementById('apiKey').value.trim();
+			const apiUrl = document.getElementById('apiUrl').value.trim();
+			const model = document.getElementById('model').value.trim();
+			const apiType = document.getElementById('apiType').value;
+
+			if (!apiKey) {
+				throw new Error('请先输入 API Key');
+			}
+			if (!apiUrl) {
+				throw new Error('请先输入 API URL');
+			}
+			if (!model) {
+				throw new Error('请先输入模型名称');
+			}
+
+			// 构建消息
+			const messages = [
+				{
+					role: 'system',
+					content: '你是一个专业的代码助手。请提供准确、完整的代码解决方案。'
+				},
+				{
+					role: 'user',
+					content: prompt
+				}
+			];
+
+			// 通过代理服务器发送请求
+			const proxyUrl = 'http://127.0.0.1:3008/api/chat';
+			const requestBody = {
+				apiUrl: apiUrl,
+				apiType: apiType,
+				apiKey: apiKey,
+				model: model,
+				messages: messages,
+				max_tokens: 1000,
+				temperature: 0.7
+			};
+
+			// 重试机制
+			let lastError;
+			for (let attempt = 1; attempt <= 3; attempt++) {
+				try {
+					const response = await fetch(proxyUrl, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(requestBody)
+					});
+
+					if (!response.ok) {
+						const errorData = await response.json();
+						throw new Error(`API 请求失败: ${response.status} - ${errorData.error || 'Unknown error'}`);
+					}
+
+					// 成功，返回响应
+					const data = await response.json();
+					if (data.choices && data.choices.length > 0) {
+						return data.choices[0].message.content;
+					} else {
+						throw new Error('API 返回格式不正确');
+					}
+				} catch (error) {
+					lastError = error;
+					console.log(`尝试 ${attempt}/3 失败:`, error.message);
+
+					if (attempt < 3) {
+						// 等待后重试
+						await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+					}
+				}
+			}
+
+			// 所有重试都失败了
+			if (lastError.message.includes('ERR_CONNECTION_REFUSED') ||
+				lastError.message.includes('Failed to fetch')) {
+				throw new Error('无法连接到代理服务器。请检查：\n1. 代理服务器是否运行在端口3008\n2. 网络连接是否正常\n3. 防火墙设置');
+			}
+			throw lastError;
+		}
+
+		// 显示/隐藏加载状态
+		function showLoading(show) {
+			const loading = document.getElementById('loading');
+			if (show) {
+				loading.classList.add('show');
+			} else {
+				loading.classList.remove('show');
+			}
+		}
+
+		// 格式化代码
+		function formatCode() {
+			if (editor) {
+				editor.getAction('editor.action.formatDocument').run();
+				document.getElementById('status').textContent = '代码已格式化';
+			}
+		}
+
+		// 清空代码
+		function clearCode() {
+			if (editor) {
+				editor.setValue('');
+				document.getElementById('status').textContent = '代码已清空';
+			}
+		}
+	</script>
+</body>
+
+</html>

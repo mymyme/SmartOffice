@@ -30,7 +30,6 @@ module.exports = {
 	},
 	devtool: "source-map",
 	devServer: {
-		port: 3007,
 		headers: {
 			"Access-Control-Allow-Origin": "*",
 			"Access-Control-Allow-Methods":
@@ -104,9 +103,10 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [{ from: "./static", to: "./" }],
 		}),
-		new CopyPlugin({
-			patterns: [{ from: "./typedoc/dist", to: "./typedoc/" }],
-		}),
+		// 注释掉 typedoc 复制，因为文件不存在
+		// new CopyPlugin({
+		// 	patterns: [{ from: "./typedoc/dist", to: "./typedoc/" }],
+		// }),
 		new CopyPlugin({
 			patterns: [
 				{
@@ -142,3 +142,4 @@ function getHtml(): string {
 	</body>
 </html>`;
 }
+

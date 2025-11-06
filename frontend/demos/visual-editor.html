@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天下文档，唯快不破</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            background: #2d2d30;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-controls button {
+            padding: 6px 16px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .header-controls button:hover {
+            background: #1177bb;
+        }
+
+        .header-controls button.active {
+            background: #16825d;
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel-header {
+            background: #2d2d30;
+            color: #cccccc;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: 500;
+            border-bottom: 1px solid #3e3e42;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-badge {
+            background: #16825d;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            width: 35%;
+            min-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .left-panel.hidden {
+            width: 0;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .middle-panel {
+            width: 50%;
+            min-width: 200px;
+            background: white;
+            transition: none;
+        }
+
+        .middle-panel.expanded {
+            width: 65%;
+        }
+
+        .right-panel {
+            width: 50%;
+            min-width: 200px;
+            background: #252526;
+            transition: none;
+        }
+
+        .right-panel.expanded {
+            width: 35%;
+        }
+
+        .resizer {
+            width: 5px;
+            background: #3e3e42;
+            cursor: col-resize;
+            flex-shrink: 0;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .resizer:hover {
+            background: #0e639c;
+        }
+
+        .resizer.resizing {
+            background: #1177bb;
+        }
+
+        #code-editor {
+            height: 100%;
+        }
+
+        #preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .editable-mode #preview-frame {
+            cursor: text;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #1e1e1e;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: #0e639c;
+            color: white;
+        }
+
+        .ai-avatar {
+            background: #16825d;
+            color: white;
+        }
+
+        .chat-message {
+            display: flex;
+            margin-bottom: 16px;
+            gap: 10px;
+        }
+
+        .chat-message.user-message {
+            flex-direction: row-reverse;
+            justify-content: flex-start;
+        }
+
+        .chat-message.ai-message {
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            flex: 0 1 auto;
+            max-width: 70%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: #cccccc;
+            font-size: 13px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+            color: white;
+        }
+
+        .ai-message .message-content {
+            background: #2d2d30;
+        }
+
+        .message-content code {
+            background: #1e1e1e;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background: #252526;
+            border-top: 1px solid #3e3e42;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            background: #3c3c3c;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            color: #cccccc;
+            font-size: 13px;
+            font-family: inherit;
+            resize: none;
+            min-height: 40px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #0e639c;
+        }
+
+        .send-button {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .send-button:hover {
+            background: #1177bb;
+        }
+
+        .send-button:disabled {
+            background: #3e3e42;
+            cursor: not-allowed;
+        }
+
+        .send-button.stop-mode {
+            background: #d32f2f;
+        }
+
+        .send-button.stop-mode:hover {
+            background: #f44336;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #424242;
+            border-radius: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #4e4e4e;
+        }
+
+        [contenteditable="true"] {
+            outline: 2px dashed #16825d;
+            outline-offset: 2px;
+        }
+
+        .resizing-panels * {
+            animation: none !important;
+            pointer-events: none !important;
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid #16825d;
+        }
+
+        .code-block-container {
+            margin: 10px 0;
+            background: #1e1e1e;
+            border-radius: 4px;
+            overflow: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .code-block-header {
+            background: #2d2d30;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .code-block-lang {
+            color: #858585;
+            font-size: 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .code-block-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .code-block-btn {
+            padding: 3px 10px;
+            font-size: 11px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .code-block-btn:hover {
+            background: #1177bb;
+        }
+
+        .code-content {
+            width: 100%;
+            max-width: 100%;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            padding: 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-sizing: border-box;
+        }
+
+        .code-content:focus {
+            outline: none;
+            background: #252526;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>🎨 天下文档，唯快不破</h1>
+            <div class="header-controls">
+                <button id="toggle-editor-btn" onclick="toggleCodeEditor()">▶ 显示编辑器</button>
+                <button id="toggle-edit-btn" onclick="toggleEditMode()">🖊 启用预览编辑</button>
+                <button id="auto-insert-toggle" onclick="toggleAutoInsert()" style="background: #4CAF50;">🤖 自动插入:
+                    开</button>
+                <button id="code-block-toggle" onclick="toggleCodeBlocks()" style="background: #4CAF50;">ð 显示代码块:
+                    开</button>
+                <button onclick="runCode()">▶ 运行代码</button>
+                <button onclick="clearCode()">🗑 清空</button>
+                <button onclick="saveCode()">💾 保存</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="panel left-panel hidden">
+                <div class="panel-header">代码编辑器</div>
+                <div class="panel-content">
+                    <div id="code-editor"></div>
+                </div>
+            </div>
+            <div class="panel middle-panel expanded">
+                <div class="panel-header">
+                    <span>实时预览</span>
+                    <span id="edit-mode-badge" class="panel-badge" style="display:none;">可编辑</span>
+                </div>
+                <div class="panel-content"><iframe id="preview-frame"></iframe></div>
+            </div>
+            <div class="resizer" id="resizer"></div>
+            <div class="panel right-panel expanded">
+                <div class="panel-header">AI 对话助手</div>
+                <div class="panel-content">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-message">
+                                <div class="message-avatar ai-avatar">AI</div>
+                                <div class="message-content">
+                                    你好！我你的文档编写助手，可以尝试和我说：“帮我根据以下内容生成汇报材料，着重突出数据对比的内容，要求层次结构分明，样式好看。”<br>
+                                    📝tips：<br>
+                                    1、可以在提示词后面丢给我以下材料，以文本形式复制进来<br>
+                                    • 项目的建设方案、参考的各类文档、示例风格稿等<br>
+                                    2、参考格式：<br>
+                                    帮我根据以下内容生成汇报材料，着重突出数据对比的内容，要求层次结构分明，样式好看<br>
+                                    #项目建设方案<br>
+                                    Xxxxx<br>
+                                    #参考文档名字1<br>
+                                    Xxxxx<br>
+                                    #参考文档名字2<br>
+                                    xxxxx
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="chat-input-container">
+                                <textarea id="chat-input" class="chat-input"
+                                    placeholder="输入消息...按 Enter 发送，Shift+Enter 换行" rows="1"></textarea>
+                                <button id="send-btn" class="send-button" onclick="handleSendClick()">发送</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/monaco-editor@0.54.0/min/vs/loader.js"></script>
+    <script>
+        let editor, updateTimeout, syncTimeout;
+        let conversationId = ''; // Dify 会话 ID
+        let autoInsertCode = true; // 自动插入代码到编辑器
+        let showCodeBlocks = true; // 显示代码块开关
+        let isGeneratingCode = false;
+        let abortController = null; // 用于中断生成的控制器 // 是否正在生成代码
+        const DIFY_API_URL = 'https://yw.zjythb.cn/v1';
+        const DIFY_API_KEY = 'app-pT423FIvwgtVMCPIrxZHFnXU';
+        let isEditMode = false;
+        let isEditorVisible = false;
+        let isUpdatingFromPreview = false;
+        let isUpdatingFromEditor = false;
+
+        // 提取代码块（支持markdown格式和纯文本）
+        function extractCode(text) {
+            // 尝试提取markdown代码块
+            const codeBlockRegex = /```[\w]*\n([\s\S]*?)```/g;
+            const matches = [...text.matchAll(codeBlockRegex)];
+
+            if (matches.length > 0) {
+                // 返回所有代码块，用换行分隔
+                return matches.map(m => m[1].trim()).join('\n\n');
+            }
+
+            // 如果没有代码块标记，检查是否包含HTML标签
+            if (text.includes('<') && text.includes('>')) {
+                return text;
+            }
+
+            // 否则返回原文本
+            return text;
+        }
+
+        // 插入到编辑器
+        function insertToEditor(content) {
+            const code = extractCode(content);
+            const currentCode = editor.getValue();
+            const position = editor.getPosition();
+
+            // 询问用户插入方式
+            const action = confirm('点击"确定"替换全部代码\n点击"取消"在光标位置插入');
+
+            if (action) {
+                // 替换全部代码
+                editor.setValue(code);
+                updateStatus('已替换编辑器内容');
+            } else {
+                // 在光标位置插入
+                const line = position ? position.lineNumber : 1;
+                const column = position ? position.column : 1;
+
+                editor.executeEdits('insert-code', [{
+                    range: new monaco.Range(line, column, line, column),
+                    text: code
+                }]);
+
+                updateStatus('已在光标位置插入代码');
+            }
+
+            updatePreview();
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text, button) {
+            const code = extractCode(text);
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ 已复制';
+                button.style.background = '#4CAF50';
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                updateStatus('复制失败: ' + err.message);
+            });
+        }
+
+        // 自动插入到编辑器
+        function autoInsertToEditor(content) {
+            const code = extractCode(content);
+
+            // 只有当提取到的内容看起来像代码时才插入
+            if (!looksLikeCode(code)) {
+                console.log('Content does not appear to be code, skipping auto-insert');
+                return;
+            }
+
+            const currentCode = editor.getValue();
+
+            // 如果编辑器是空的或只有默认代码，直接替换
+            if (!currentCode.trim() || currentCode === editor.getValue()) {
+                editor.setValue(code);
+                updateStatus('✅ 已自动插入代码到编辑器');
+            } else {
+                // 否则追加到末尾
+                const lastLine = editor.getModel().getLineCount();
+                const lastColumn = editor.getModel().getLineMaxColumn(lastLine);
+
+                editor.executeEdits('auto-insert', [{
+                    range: new monaco.Range(lastLine, lastColumn, lastLine, lastColumn),
+                    text: '\n\n' + code
+                }]);
+
+                updateStatus('✅ 已自动追加代码到编辑器末尾');
+            }
+
+            updatePreview();
+
+            // 滚动到插入的位置
+            editor.revealLine(editor.getModel().getLineCount());
+        }
+
+        // 判断内容是否看起来像代码
+        function looksLikeCode(text) {
+            // 检查是否包含代码特征
+            const codePatterns = [
+                /<[a-z][\s\S]*>/i,           // HTML标签
+                /function\s+\w+\s*\(/,      // 函数定义
+                /const\s+\w+\s*=/,          // const声明
+                /let\s+\w+\s*=/,            // let声明
+                /var\s+\w+\s*=/,            // var声明
+                /class\s+\w+/,               // 类定义
+                /\.\w+\s*\(/,              // 方法调用
+                /\{[\s\S]*\}/,             // 代码块
+                /if\s*\(/,                   // if语句
+                /for\s*\(/,                  // for循环
+                /while\s*\(/,                // while循环
+                /```/                          // markdown代码块
+            ];
+
+            return codePatterns.some(pattern => pattern.test(text));
+        }
+
+        // 切换自动插入开关
+        function toggleAutoInsert() {
+            autoInsertCode = !autoInsertCode;
+            const btn = document.getElementById('auto-insert-toggle');
+            if (btn) {
+                btn.textContent = autoInsertCode ? '🤖 自动插入: 开' : '🤖 自动插入: 关';
+                btn.style.background = autoInsertCode ? '#4CAF50' : '#f44336';
+            }
+            updateStatus(autoInsertCode ? '已开启自动插入' : '已关闭自动插入');
+        }
+
+
+        // 切换代码块显示
+        function toggleCodeBlocks() {
+            showCodeBlocks = !showCodeBlocks;
+            const btn = document.getElementById('code-block-toggle');
+            if (btn) {
+                btn.textContent = showCodeBlocks ? 'ð 显示代码块: 开' : 'ð 显示代码块: 关';
+                btn.style.background = showCodeBlocks ? '#4CAF50' : '#f44336';
+            }
+
+            // 重新渲染所有消息
+            const messages = document.querySelectorAll('.message-content');
+            messages.forEach((msg, index) => {
+                if (index > 0) {
+                    const originalContent = msg.getAttribute('data-original-content');
+                    if (originalContent) {
+                        const isGen = msg.getAttribute('data-is-generating') === 'true'; msg.innerHTML = formatMessageContent(originalContent, isGen);
+                    }
+                }
+            });
+
+            updateStatus(showCodeBlocks ? '已开启代码块显示' : '已关闭代码块显示');
+        }
+        let defaultCode = '';  // 将从外部文件加载
+        // 从外部文件加载默认代码
+        async function loadDefaultCode() {
+            try {
+                const response = await fetch('frontend/demos/default-code-in-editor.html');
+                if (response.ok) {
+                    defaultCode = await response.text();
+                    console.log('✅ 默认代码已从文件加载');
+                    return defaultCode;
+                } else {
+                    console.error('❌ 加载默认代码失败:', response.status);
+                    return '';
+                }
+            } catch (error) {
+                console.error('❌ 加载默认代码出错:', error);
+                return '';
+            }
+        }
+
+
+        require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.54.0/min/vs' } });
+        require(['vs/editor/editor.main'], async function () {
+            await loadDefaultCode();
+            editor = monaco.editor.create(document.getElementById('code-editor'), {
+                value: defaultCode, language: 'html', theme: 'vs-dark', automaticLayout: true,
+                minimap: { enabled: true }, fontSize: 13, lineNumbers: 'on', scrollBeyondLastLine: false,
+                wordWrap: 'on', tabSize: 2, formatOnPaste: true, formatOnType: true
+            });
+            editor.onDidChangeModelContent(() => {
+                updateStatusBar();
+                if (!isUpdatingFromPreview) {
+                    clearTimeout(updateTimeout);
+                    updateTimeout = setTimeout(() => { updatePreview(); }, 500);
+                }
+            });
+            updatePreview();
+            updateStatus('编辑器已就绪 - 支持双向编辑');
+        });
+
+        function updatePreview() {
+            if (isUpdatingFromPreview) return;
+            isUpdatingFromEditor = true;
+            const code = editor.getValue();
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(code);
+            iframeDoc.close();
+            if (isEditMode) {
+                setTimeout(() => enableEditableMode(), 100);
+            }
+            updateStatus('预览已更新');
+            setTimeout(() => { isUpdatingFromEditor = false; }, 600);
+        }
+
+        function toggleCodeEditor() {
+            isEditorVisible = !isEditorVisible;
+            const leftPanel = document.querySelector('.left-panel');
+            const middlePanel = document.querySelector('.middle-panel');
+            const rightPanel = document.querySelector('.right-panel');
+            const btn = document.getElementById('toggle-editor-btn');
+            if (isEditorVisible) {
+                leftPanel.classList.remove('hidden');
+                middlePanel.classList.remove('expanded');
+                rightPanel.classList.remove('expanded');
+                btn.textContent = '◀ 隐藏编辑器';
+                updateStatus('代码编辑器已显示');
+            } else {
+                leftPanel.classList.add('hidden');
+                middlePanel.classList.add('expanded');
+                rightPanel.classList.add('expanded');
+                btn.textContent = '▶ 显示编辑器';
+                updateStatus('代码编辑器已隐藏');
+            }
+        }
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const btn = document.getElementById('toggle-edit-btn');
+            const badge = document.getElementById('edit-mode-badge');
+            if (isEditMode) {
+                btn.textContent = '🔒 禁用预览编辑';
+                btn.classList.add('active');
+                badge.style.display = 'block';
+                enableEditableMode();
+                updateStatus('预览编辑模式已启用 - 可直接编辑预览内容');
+            } else {
+                btn.textContent = '🖊 启用预览编辑';
+                btn.classList.remove('active');
+                badge.style.display = 'none';
+                disableEditableMode();
+                updateStatus('预览编辑模式已禁用');
+            }
+        }
+
+        function enableEditableMode() {
+            console.log('[EDIT MODE] Enabling editable mode');
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            // 使所有文本元素可编辑
+            const textElements = iframeDoc.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, span, li, td, th, a, button, label');
+            textElements.forEach(el => {
+                el.setAttribute('contenteditable', 'true');
+                // 监听内容变化
+                el.addEventListener('input', function () {
+                    console.log('[SYNC] Input event triggered on element:', el.tagName);
+                    clearTimeout(syncTimeout);
+                    syncTimeout = setTimeout(() => {
+                        syncPreviewToCode();
+                    }, 1000);
+                });
+                el.addEventListener('blur', function () {
+                    syncPreviewToCode();
+                });
+            });
+        }
+
+        function disableEditableMode() {
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const editableElements = iframeDoc.querySelectorAll('[contenteditable="true"]');
+            editableElements.forEach(el => {
+                el.removeAttribute('contenteditable');
+            });
+        }
+
+        function syncPreviewToCode() {
+            console.log('[SYNC] syncPreviewToCode called, isUpdatingFromEditor:', isUpdatingFromEditor);
+            if (isUpdatingFromEditor) return;
+            isUpdatingFromPreview = true;
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            // 获取完整的HTML（包括修改）
+            let html = '<!DOCTYPE html>\n';
+            html += iframeDoc.documentElement.outerHTML;
+            // 清理contenteditable属性
+            html = html.replace(/\s*contenteditable="true"/gi, '');
+            // 更新编辑器
+            const currentPosition = editor.getPosition();
+            editor.setValue(html);
+            // 尝试恢复光标位置
+            try {
+                editor.setPosition(currentPosition);
+            } catch (e) { }
+            updateStatus('预览修改已同步到代码');
+            setTimeout(() => { isUpdatingFromPreview = false; }, 600);
+        }
+
+        function runCode() { updatePreview(); updateStatus('代码已运行'); }
+        async function clearCode() {
+            if (confirm('确定要清空代码吗？')) {
+                await loadDefaultCode();
+                editor.setValue(defaultCode);
+                updatePreview();
+                updateStatus('已重置为默认代码');
+            }
+        }
+        function saveCode() {
+            const code = editor.getValue();
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            updateStatus('代码已保存');
+        }
+        function updateStatusBar() {
+            const position = editor.getPosition();
+            const model = editor.getModel();
+            const lineCount = model.getLineCount();
+        }
+        function updateStatus(message) {
+            const statusEl = document.getElementById('status-text');
+            if (statusEl) {
+                statusEl.textContent = message;
+            }
+            // Also log to console for debugging
+            console.log('[STATUS]', message);
+        }
+        function formatMessageContent(t) { if (!t) return ''; const r = /```([\w]*)\n/g; const e = /```/g; const blocks = []; let match; e.lastIndex = 0; while ((match = r.exec(t)) !== null) { blocks.push({ start: match.index, startEnd: r.lastIndex, lang: match[1] || 'code' }) } for (let b of blocks) { e.lastIndex = b.startEnd; const endMatch = e.exec(t); if (endMatch) { b.end = endMatch.index; b.endEnd = e.lastIndex; b.code = t.substring(b.startEnd, b.end) } else { b.code = t.substring(b.startEnd); b.incomplete = true } } let o = '', pos = 0; for (let b of blocks) { if (pos < b.start) { o += escapeHtml(t.substring(pos, b.start)).replace(/\n/g, '<br>') } if (!showCodeBlocks) { const placeholder = isGeneratingCode ? '生成中...' : '←内容已完成'; o += `<div class="code-block-placeholder" style="padding:10px;background:#2d2d30;border-radius:4px;color:#888;font-style:italic;">${placeholder}</div>` } else { o += `<div class="code-block-container"><div class="code-block-header"><span class="code-block-lang">${b.lang}</span>`; if (!b.incomplete) { o += `<div class="code-block-actions"><button class="code-block-btn" onclick="copyCodeBlock(this)">📋 复制</button><button class="code-block-btn" onclick="insertCodeBlock(this)">➕ 插入编辑器</button></div>` } o += `</div><pre class="code-content"><code>${escapeHtml(b.code)}</code></pre></div>` } pos = b.endEnd || t.length } if (pos < t.length) { o += escapeHtml(t.substring(pos)).replace(/\n/g, '<br>') } return o }
+        function escapeHtml(t) { const e = document.createElement('div'); e.textContent = t; return e.innerHTML }
+        function copyCodeBlock(b) { const c = b.closest('.code-block-container').querySelector('code'); navigator.clipboard.writeText(c.textContent).then(() => { const o = b.textContent; b.textContent = '✅ 已复制'; b.style.background = '#4CAF50'; setTimeout(() => { b.textContent = o; b.style.background = '' }, 2000) }).catch(e => updateStatus('复制失败')) }
+        function insertCodeBlock(b) { const c = b.closest('.code-block-container').querySelector('code').textContent, p = editor.getPosition(), e = editor.getValue(); if (!e.trim()) { editor.setValue(c) } else if (p) { const l = p.lineNumber, col = p.column; editor.executeEdits('insert', [{ range: new monaco.Range(l, col, l, col), text: '\n' + c + '\n' }]); editor.setPosition({ lineNumber: l + c.split('\n').length, column: 1 }) } else { const l = editor.getModel().getLineCount(), m = editor.getModel().getLineMaxColumn(l); editor.executeEdits('insert', [{ range: new monaco.Range(l, m, l, m), text: '\n\n' + c }]) } updatePreview(); editor.revealLine(editor.getPosition().lineNumber); b.textContent = '✅ 已插入'; b.style.background = '#4CAF50'; setTimeout(() => { b.textContent = '➕ 插入编辑器'; b.style.background = '' }, 2000) }
+        function handleSendClick() {
+            if (isGeneratingCode) {
+                stopGeneration();
+            } else {
+                sendMessage();
+            }
+        }
+
+        function stopGeneration() {
+            if (abortController) {
+                abortController.abort();
+                abortController = null;
+            }
+            isGeneratingCode = false;
+            updateSendButton();
+            updateStatus('已停止生成');
+        }
+
+        function updateSendButton() {
+            const btn = document.getElementById('send-btn');
+            if (isGeneratingCode) {
+                btn.textContent = '停止';
+                btn.classList.add('stop-mode');
+            } else {
+                btn.textContent = '发送';
+                btn.classList.remove('stop-mode');
+            }
+        }
+
+
+        async function sendMessage() {
+            abortController = new AbortController();
+            isGeneratingCode = true;
+            updateSendButton();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(`${DIFY_API_URL}/chat-messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${DIFY_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: message,
+                        response_mode: 'streaming',
+                        conversation_id: conversationId,
+                        user: 'visual-editor-user'
+                    }),
+                    signal: abortController.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API 请求失败: ${response.statusText}`);
+                }
+
+                hideTypingIndicator();
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiResponse = '';
+                let messageElement = null;
+                let buffer = ''; // 缓冲区用于处理不完整的数据
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+
+                    // 按行分割，保留最后一个可能不完整的行
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || ''; // 保留最后一个不完整的行
+
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine && trimmedLine.startsWith('data: ')) {
+                            try {
+                                const jsonStr = trimmedLine.slice(6);
+                                if (!jsonStr) continue; // 跳过空数据
+                                const data = JSON.parse(jsonStr);
+
+                                if (data.event === 'message' || data.event === 'agent_message') {
+                                    aiResponse += data.answer;
+
+                                    if (!messageElement) {
+                                        addMessage('', 'ai');
+                                        const messages = document.querySelectorAll('.message-content');
+                                        messageElement = messages[messages.length - 1];
+                                        messageElement.setAttribute("data-is-generating", "true");
+                                        isGeneratingCode = true;
+                                    }
+
+                                    messageElement.setAttribute('data-original-content', aiResponse);
+                                    messageElement.innerHTML = formatMessageContent(aiResponse, true);
+                                } else if (data.event === 'message_end') {
+                                    conversationId = data.conversation_id || conversationId;
+                                    isGeneratingCode = false;
+                                    updateSendButton();
+                                    if (messageElement) messageElement.setAttribute("data-is-generating", "false");
+
+                                    // 自动插入代码
+                                    if (autoInsertCode && aiResponse.trim()) {
+                                        setTimeout(() => {
+                                            autoInsertToEditor(aiResponse);
+                                        }, 500);
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('解析错误:', e);
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage(`发送失败: ${error.message}`, 'ai');
+            }
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chat-messages');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.className = 'chat-message';
+            indicator.innerHTML = `
+                <div class="message-avatar ai-avatar">AI</div>
+                <div class="message-content typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            messagesContainer.appendChild(indicator);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'user' ? 'chat-message user-message' : 'chat-message ai-message';
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = `message-avatar ${type === 'user' ? 'user-avatar' : 'ai-avatar'}`;
+            avatarDiv.textContent = type === 'user' ? 'U' : 'AI';
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        function generateAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            if (lowerMessage.includes('编辑') || lowerMessage.includes('修改')) {
+                return '你可以点击顶部的"启用预览编辑"按钮，然后直接在预览区域编辑文本。修改会自动同步到代码编辑器！';
+            } else if (lowerMessage.includes('同步')) {
+                return '双向同步功能已启用！你可以：<br>1. 在代码编辑器中修改代码，预览会自动更新<br>2. 启用预览编辑后，直接在预览区编辑，代码会自动同步';
+            } else if (lowerMessage.includes('代码')) {
+                const code = editor.getValue();
+                return `我看到你的代码了！当前代码有 ${code.split('\n').length} 行。${isEditMode ? '预览编辑模式已启用。' : '你可以启用预览编辑模式来直接修改预览内容。'}`;
+            } else if (lowerMessage.includes('颜色') || lowerMessage.includes('背景')) {
+                return '你可以在CSS中修改 <code>background</code> 属性来改变背景颜色。或者直接启用预览编辑，然后修改页面内容！';
+            } else {
+                return '我理解了。试试启用预览编辑功能，你可以直接在预览区域修改内容，修改会自动同步到代码！';
+            }
+        }
+        document.getElementById('chat-input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        document.getElementById('chat-input').addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        // 优化的拖动实现 - 使用RAF防止卡顿
+        const resizer = document.getElementById('resizer');
+        const middlePanel = document.querySelector('.middle-panel');
+        const rightPanel = document.querySelector('.right-panel');
+        const contentPanel = document.querySelector('.content');
+        let isResizing = false;
+        let currentX = 0;
+        let containerRect = null;
+        let animationFrameId = null;
+
+        if (resizer) {
+            resizer.addEventListener('mousedown', function (e) {
+                isResizing = true;
+                currentX = e.clientX;
+                containerRect = contentPanel.getBoundingClientRect();
+                resizer.classList.add('resizing');
+                contentPanel.classList.add('resizing-panels');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function (e) {
+                if (!isResizing) return;
+                currentX = e.clientX;
+
+                // 使用RAF批处理更新，避免频繁重绘
+                if (!animationFrameId) {
+                    animationFrameId = requestAnimationFrame(updatePanelWidths);
+                }
+                e.preventDefault();
+            });
+
+            function updatePanelWidths() {
+                if (!isResizing || !containerRect) return;
+
+                const mouseX = currentX - containerRect.left;
+                let middlePercent = (mouseX / containerRect.width) * 100;
+
+                // 限制范围：20% - 80%
+                middlePercent = Math.max(20, Math.min(80, middlePercent));
+                const rightPercent = 100 - middlePercent;
+
+                middlePanel.style.width = middlePercent + '%';
+                rightPanel.style.width = rightPercent + '%';
+
+                animationFrameId = null;
+            }
+
+            document.addEventListener('mouseup', function () {
+                if (isResizing) {
+                    isResizing = false;
+                    containerRect = null;
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                    resizer.classList.remove('resizing');
+                    document.body.style.cursor = '';
+                    contentPanel.classList.remove('resizing-panels');
+                    document.body.style.userSelect = '';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

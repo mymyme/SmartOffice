@@ -1,0 +1,31 @@
+{
+  "name": "monaco-editor-frontend",
+  "version": "1.0.0",
+  "description": "Monaco Editor 前端演示和示例",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ../server.js",
+    "start:website": "node services/website-server.js",
+    "dev": "cd ../website && npm run dev",
+    "build": "cd ../website && npm run build-webpack",
+    "demo": "node ../server.js",
+    "ai-demo": "open http://localhost:3005/ai"
+  },
+  "keywords": [
+    "monaco-editor",
+    "code-editor",
+    "ai",
+    "code-completion",
+    "frontend"
+  ],
+  "author": "Monaco Editor Team",
+  "license": "MIT",
+  "dependencies": {
+    "monaco-editor": "^0.54.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
