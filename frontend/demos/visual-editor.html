@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>天下文档，唯快不破</title>
     <style>
         * {
@@ -63,6 +66,932 @@
 
         .header-controls button.active {
             background: #16825d;
+        }
+
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #0e639c;
+            object-fit: cover;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: #2d2d30;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: #cccccc;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: #3e3e42;
+        }
+
+        /* 登录按钮样式 */
+
+        /* 图片上传对话框样式 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .image-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            background: #2d2d30;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .image-modal-header {
+            background: #252526;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .image-modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .image-tabs {
+            display: flex;
+            background: #252526;
+            border-bottom: 2px solid #3e3e42;
+        }
+
+        .image-tab {
+            flex: 1;
+            padding: 12px 15px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .image-tab:hover {
+            background: #2d2d30;
+            color: #ccc;
+        }
+
+        .image-tab.active {
+            color: #0e639c;
+            border-bottom-color: #0e639c;
+            background: #2d2d30;
+        }
+
+        .image-modal-body {
+            padding: 20px;
+            max-height: calc(85vh - 220px);
+            overflow-y: auto;
+        }
+
+        .image-tab-pane {
+            display: none;
+        }
+
+        .image-tab-pane.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 2px dashed #3e3e42;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #1e1e1e;
+        }
+
+        .upload-area:hover {
+            border-color: #0e639c;
+            background: #252526;
+        }
+
+        .upload-area.dragover {
+            border-color: #16825d;
+            background: rgba(22, 130, 93, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #ccc;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .upload-hint {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .upload-progress {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #3e3e42;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0e639c, #16825d);
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-text {
+            color: #ccc;
+            font-size: 13px;
+        }
+
+        .image-library-search {
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0e639c;
+        }
+
+        .image-library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            min-height: 200px;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s, opacity 0.3s, transform 0.3s;
+            background: #1e1e1e;
+            border: 2px solid transparent;
+        }
+
+        .image-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-color: #0e639c;
+        }
+
+        .image-item.selected {
+            border-color: #16825d;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .image-item-info {
+            padding: 8px;
+            background: #252526;
+        }
+
+        .image-item-name {
+            color: #ccc;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .image-item-size {
+            color: #888;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .image-item-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            font-size: 16px;
+            z-index: 10;
+        }
+
+        .image-item:hover .image-item-delete {
+            opacity: 1;
+        }
+
+        .image-item-delete:hover {
+            background: rgba(244, 67, 54, 1);
+            transform: scale(1.1);
+        }
+
+        .image-item-delete:active {
+            transform: scale(0.95);
+        }
+
+        .loading-text {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .url-input-group label {
+            color: #ccc;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #0e639c;
+        }
+
+        .btn-preview {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-preview:hover {
+            background: #1177bb;
+        }
+
+        .url-preview-area {
+            text-align: center;
+            padding: 20px;
+            background: #1e1e1e;
+            border-radius: 8px;
+        }
+
+        .url-preview-area img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 6px;
+        }
+
+        .insert-options {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #3e3e42;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .option-group label {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .radio-label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            margin-right: 5px;
+        }
+
+        .alt-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            color: #ccc;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .alt-input:focus {
+            outline: none;
+            border-color: #0e639c;
+        }
+
+        #image-width-slider {
+            width: 200px;
+            margin: 0 10px;
+        }
+
+        #width-value {
+            color: #0e639c;
+            font-weight: 600;
+        }
+
+        .image-modal-footer {
+            padding: 15px 20px;
+            background: #252526;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: #3e3e42;
+            color: #ccc;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #4e4e4e;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1177bb;
+        }
+
+        .btn-primary:disabled {
+            background: #3e3e42;
+            cursor: not-allowed;
+        }
+
+        /* 浮动工具栏样式 */
+        .floating-toolbar {
+            position: fixed;
+            display: none;
+            background: linear-gradient(135deg, #2d2d30 0%, #1e1e1e 100%);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            z-index: 3000;
+            border: 1px solid #3e3e42;
+            backdrop-filter: blur(10px);
+            animation: toolbarFadeIn 0.2s ease-out;
+            max-width: 90vw;
+        }
+
+        .floating-toolbar.show {
+            display: block;
+        }
+
+        @keyframes toolbarFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            background: #3e3e42;
+            color: #ccc;
+            border: 1px solid #4e4e4e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-btn:hover {
+            background: #0e639c;
+            border-color: #0e639c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 99, 156, 0.3);
+        }
+
+        .toolbar-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 元素悬停高亮（类似Chrome DevTools） */
+        .preview-element-hover {
+            outline: 2px solid rgba(101, 175, 255, 0.8) !important;
+            outline-offset: 0px !important;
+            background: rgba(101, 175, 255, 0.1) !important;
+            cursor: pointer !important;
+            transition: all 0.15s ease !important;
+        }
+
+        /* 元素选中高亮 */
+        .preview-selection-highlight {
+            outline: 2px solid #1a73e8 !important;
+            outline-offset: 0px !important;
+            background: rgba(26, 115, 232, 0.08) !important;
+            position: relative !important;
+        }
+
+        /* 元素标签提示（类似Chrome DevTools） */
+        .element-tag-tooltip {
+            position: absolute;
+            top: -24px;
+            left: 0;
+            background: #1a73e8;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-weight: 500;
+            pointer-events: none;
+            z-index: 10000;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 局部编辑对话框样式 */
+        .local-edit-modal {
+            display: none;
+            position: fixed;
+            z-index: 2500;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .local-edit-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .local-edit-content {
+            background: #2d2d30;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .local-edit-header {
+            background: #252526;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .local-edit-header h2 {
+            font-size: 20px;
+            margin: 0;
+            color: white !important;
+        }
+
+        .local-edit-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .selected-content-display {
+            margin-bottom: 20px;
+        }
+
+        .selected-content-display h3 {
+            color: #ccc;
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+
+        .selected-text-box {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            padding: 15px;
+            color: #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 100px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .local-chat-area {
+            margin-bottom: 20px;
+        }
+
+        .local-chat-area h3 {
+            color: #ccc;
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+
+        .local-chat-messages {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .local-chat-welcome {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .local-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .local-message.user {
+            background: #0e639c;
+            color: white;
+            margin-left: 20%;
+        }
+
+        .local-message.ai {
+            background: #3e3e42;
+            color: #ccc;
+            margin-right: 20%;
+        }
+
+        .local-chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .local-edit-input {
+            flex: 1;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 6px;
+            color: #ccc;
+            padding: 10px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .local-edit-input:focus {
+            outline: none;
+            border-color: #0e639c;
+        }
+
+        .local-send-btn {
+            padding: 10px 20px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            height: fit-content;
+            align-self: flex-end;
+        }
+
+        .local-send-btn:hover {
+            background: #1177bb;
+        }
+
+        .local-send-btn:disabled {
+            background: #3e3e42;
+            cursor: not-allowed;
+        }
+
+        .local-edit-preview {
+            border-top: 1px solid #3e3e42;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .local-edit-preview h3 {
+            color: #ccc;
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+
+        .preview-box {
+            background: #1e1e1e;
+            border: 1px solid #16825d;
+            border-radius: 6px;
+            padding: 15px;
+            color: #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .preview-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* 导出对话框样式 */
+        .export-modal {
+            display: none;
+            position: fixed;
+            z-index: 2500;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .export-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .export-modal-content {
+            background: #2d2d30;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .export-modal-header {
+            background: #252526;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .export-modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .export-modal-body {
+            padding: 20px;
+            max-height: calc(85vh - 140px);
+            overflow-y: auto;
+        }
+
+        .export-option-group {
+            margin-bottom: 25px;
+        }
+
+        .export-option-group h3 {
+            color: #ccc;
+            font-size: 16px;
+            margin: 0 0 15px 0;
+        }
+
+        .export-radio-label {
+            display: block;
+            padding: 15px;
+            background: #1e1e1e;
+            border: 2px solid #3e3e42;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #ffffff;
+        }
+
+        .export-radio-label:hover {
+            border-color: #0e639c;
+            background: #252526;
+        }
+
+        .export-radio-label input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .export-radio-label input[type="radio"]:checked~* {
+            color: #0e639c;
+        }
+
+        .export-hint {
+            color: #888;
+            font-size: 12px;
+            margin: 5px 0 0 25px;
+        }
+
+        .export-checkbox-label {
+            display: block;
+            padding: 10px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .export-checkbox-label:hover {
+            color: white;
+        }
+
+        .export-checkbox-label input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .export-preview-section {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .export-preview-section h3 {
+            color: #ccc;
+            font-size: 16px;
+            margin: 0 0 10px 0;
+        }
+
+        .export-stats p {
+            color: #ccc;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .export-stats span {
+            color: #0e639c;
+            font-weight: 600;
+        }
+
+        .export-progress {
+            margin-top: 20px;
+        }
+
+        .export-modal-footer {
+            padding: 15px 20px;
+            background: #252526;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
 
         .content {
@@ -275,6 +1204,49 @@
             font-size: 12px;
         }
 
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #858585;
+            display: inline-block;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        @keyframes typingBounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
         .chat-input-area {
             padding: 15px;
             background: #252526;
@@ -332,6 +1304,26 @@
 
         .send-button.stop-mode:hover {
             background: #f44336;
+        }
+
+        .action-button {
+            padding: 10px 12px;
+            background: #2d2d30;
+            color: white;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            background: #3e3e42;
+            transform: scale(1.1);
+        }
+
+        .action-button:active {
+            transform: scale(0.95);
         }
 
         .chat-messages::-webkit-scrollbar {
@@ -432,6 +1424,126 @@
             outline: none;
             background: #252526;
         }
+
+        .toolbar-buttons-collapsed {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .toolbar-buttons-expanded {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+
+        /* 撤销/重做按钮样式 */
+        #undo-btn,
+        #redo-btn {
+            transition: all 0.2s ease;
+        }
+
+        #undo-btn:disabled,
+        #redo-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #2d2d30;
+        }
+
+        #undo-btn:disabled:hover,
+        #redo-btn:disabled:hover {
+            background: #2d2d30;
+            border-color: #4e4e4e;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #undo-btn:not(:disabled):hover,
+        #redo-btn:not(:disabled):hover {
+            background: #0e639c;
+            border-color: #0e639c;
+        }
+
+        /* 浮动工具栏子菜单样式 */
+        .toolbar-menu {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toolbar-back-btn {
+            border-right: 1px solid #3e3e42;
+            padding-right: 12px;
+            margin-right: 4px;
+        }
+
+        .style-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .style-control-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #1e1e1e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #3e3e42;
+        }
+
+        .style-control-group label {
+            color: #ccc;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .style-control-group select {
+            background: #2d2d30;
+            color: #ccc;
+            border: 1px solid #4e4e4e;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .style-control-group select:hover {
+            border-color: #0e639c;
+        }
+
+        .style-control-group select:focus {
+            border-color: #0e639c;
+            box-shadow: 0 0 0 2px rgba(14, 99, 156, 0.2);
+        }
+
+        .style-control-group input[type="color"] {
+            width: 32px;
+            height: 24px;
+            border: 1px solid #4e4e4e;
+            border-radius: 4px;
+            cursor: pointer;
+            background: transparent;
+            padding: 0;
+        }
+
+        .style-control-group input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+
+        .style-control-group input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        .style-control-group input[type="color"]:hover {
+            border-color: #0e639c;
+        }
     </style>
 </head>
 
@@ -440,15 +1552,45 @@
         <div class="header">
             <h1>🎨 天下文档，唯快不破</h1>
             <div class="header-controls">
-                <button id="toggle-editor-btn" onclick="toggleCodeEditor()">▶ 显示编辑器</button>
+                <button id="toolbar-toggle-btn" onclick="toggleToolbar()" style="background: #2196F3; display: none;">▼
+                    展开</button>
+                <div id="toolbar-buttons" class="toolbar-buttons-collapsed" style="display: none;">
+                    <button id="toggle-editor-btn" onclick="toggleCodeEditor()">▶ 显示编辑器</button>
+                    <button id="auto-insert-toggle" onclick="toggleAutoInsert()" style="background: #4CAF50;">🤖 自动插入:
+                        开</button>
+                    <button id="code-block-toggle" onclick="toggleCodeBlocks()" style="background: #f44336;">📋 显示代码块:
+                        关</button>
+                    <button onclick="runCode()">▶ 运行代码</button>
+                </div>
                 <button id="toggle-edit-btn" onclick="toggleEditMode()">🖊 启用预览编辑</button>
-                <button id="auto-insert-toggle" onclick="toggleAutoInsert()" style="background: #4CAF50;">🤖 自动插入:
-                    开</button>
-                <button id="code-block-toggle" onclick="toggleCodeBlocks()" style="background: #4CAF50;">ð 显示代码块:
-                    开</button>
-                <button onclick="runCode()">▶ 运行代码</button>
+                <button id="undo-btn" onclick="undoPreviewEdit()" style="display:none;" title="撤销 (最多5步)">↶ 撤销</button>
+                <button id="redo-btn" onclick="redoPreviewEdit()" style="display:none;" title="重做 (最多5步)">↷ 重做</button>
                 <button onclick="clearCode()">🗑 清空</button>
                 <button onclick="saveCode()">💾 保存</button>
+                <button onclick="openExportDialog()">📦 导出</button>
+
+                <!-- 未登录时的触发按钮 -->
+                <a href="/demos/login.html" id="login-trigger" style="display: flex !important; align-items: center !important; gap: 8px !important;
+                               padding: 6px 16px !important; background: #0e639c !important; color: white !important;
+                               border: none !important; border-radius: 3px !important; cursor: pointer !important;
+                               font-size: 13px !important; text-decoration: none !important;">
+                    <span style="font-size: 18px;">👤</span>
+                    <span>请登录</span>
+                </a>
+
+                <!-- 用户菜单区域 -->
+                <div class="user-menu" id="user-menu" style="display: none !important; flex-direction: row !important; align-items: center !important;
+                            gap: 10px !important; margin-left: 20px !important; position: relative !important;">
+                    <span class="user-name" id="user-name" onclick="toggleUserDropdown()"
+                        style="color: white !important; font-size: 14px !important; cursor: pointer !important;">用户</span>
+                    <span id="user-avatar-emoji" onclick="toggleUserDropdown()"
+                        style="font-size: 32px; cursor: pointer; display: inline-block;">👤</span>
+                    <div class="dropdown" id="user-dropdown">
+                        <a href="/profile.html" class="dropdown-item">👤 个人中心</a>
+                        <a href="/admin.html" class="dropdown-item" id="admin-link" style="display: none;">🛡️ 管理后台</a>
+                        <div class="dropdown-item" onclick="logout()">🚪 退出登录</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="content">
@@ -493,6 +1635,10 @@
                             <div class="chat-input-container">
                                 <textarea id="chat-input" class="chat-input"
                                     placeholder="输入消息...按 Enter 发送，Shift+Enter 换行" rows="1"></textarea>
+                                <button id="upload-image-btn" class="action-button" onclick="openImageUploadDialog()"
+                                    title="上传图片">📎</button>
+                                <button id="my-images-btn" class="action-button" onclick="openMyImagesDialog()"
+                                    title="我的图片库">🎨</button>
                                 <button id="send-btn" class="send-button" onclick="handleSendClick()">发送</button>
                             </div>
                         </div>
@@ -501,20 +1647,626 @@
             </div>
         </div>
     </div>
-    <script src="https://unpkg.com/monaco-editor@0.54.0/min/vs/loader.js"></script>
+
+
+    <!-- 浮动工具栏（预览区选中时显示）-->
+    <div class="floating-toolbar" id="floating-toolbar">
+        <!-- 主菜单 -->
+        <div id="toolbar-main-menu" class="toolbar-menu">
+            <button class="toolbar-btn" id="toolbar-ai-edit" onclick="openLocalEditDialog()" title="AI局部编辑">
+                ✏️ AI编辑
+            </button>
+            <button class="toolbar-btn" id="toolbar-insert-image" onclick="openImageInsertAtSelection()" title="插入图片">
+                📷 插入图片
+            </button>
+            <button class="toolbar-btn" id="toolbar-style" onclick="showStylePanel()" title="样式调整">
+                🎨 样式
+            </button>
+            <button class="toolbar-btn" id="toolbar-delete" onclick="deleteSelection()" title="删除选中内容">
+                🗑️ 删除
+            </button>
+        </div>
+
+        <!-- 样式编辑面板 -->
+        <div id="toolbar-style-panel" class="toolbar-menu" style="display:none;">
+            <button class="toolbar-btn toolbar-back-btn" onclick="showMainMenu()" title="返回主菜单">
+                ← 返回
+            </button>
+            <div class="style-controls">
+                <div class="style-control-group">
+                    <label>字号:</label>
+                    <select id="font-size-select" onchange="applyFontSize(this.value)">
+                        <option value="">默认</option>
+                        <option value="12px">12px</option>
+                        <option value="14px">14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                        <option value="20px">20px</option>
+                        <option value="24px">24px</option>
+                        <option value="28px">28px</option>
+                        <option value="32px">32px</option>
+                        <option value="36px">36px</option>
+                    </select>
+                </div>
+                <div class="style-control-group">
+                    <label>颜色:</label>
+                    <input type="color" id="font-color-picker" onchange="applyFontColor(this.value)" title="字体颜色">
+                </div>
+                <div class="style-control-group">
+                    <label>背景:</label>
+                    <input type="color" id="bg-color-picker" onchange="applyBgColor(this.value)" title="背景颜色">
+                </div>
+                <button class="toolbar-btn" onclick="toggleBold()" title="粗体">
+                    <strong>B</strong>
+                </button>
+                <button class="toolbar-btn" onclick="toggleItalic()" title="斜体">
+                    <em>I</em>
+                </button>
+                <button class="toolbar-btn" onclick="toggleUnderline()" title="下划线">
+                    <u>U</u>
+                </button>
+                <button class="toolbar-btn" onclick="clearStyles()" title="清除样式">
+                    🧹 清除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 局部编辑对话框 -->
+    <div class="local-edit-modal" id="local-edit-modal">
+        <div class="local-edit-content">
+            <div class="local-edit-header">
+                <h2>✏️ AI局部编辑</h2>
+                <button class="modal-close" onclick="closeLocalEditModal()">&times;</button>
+            </div>
+
+            <div class="local-edit-body">
+                <!-- 选中内容显示 -->
+                <div class="selected-content-display">
+                    <h3>选中的内容：</h3>
+                    <div class="selected-text-box" id="selected-text-display">
+                        请在预览区选中要编辑的内容
+                    </div>
+                </div>
+
+                <!-- AI对话区 -->
+                <div class="local-chat-area">
+                    <h3>编辑指令：</h3>
+                    <div class="local-chat-messages" id="local-chat-messages">
+                        <div class="local-chat-welcome">
+                            💡 请描述您想对选中内容进行的修改，例如：<br>
+                            • "改为加粗"<br>
+                            • "添加红色背景"<br>
+                            • "改写为更专业的表述"<br>
+                            • "在此位置插入一个按钮"<br>
+                            • "添加一个echarts柱状图"<br>
+                            • "替换为一个echarts饼图展示数据"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输入区 -->
+                <div class="local-chat-input-area">
+                    <textarea id="local-edit-input" class="local-edit-input"
+                        placeholder="输入编辑指令...（Enter发送，Shift+Enter换行）" rows="2"></textarea>
+                    <button class="local-send-btn" onclick="sendLocalEditRequest()">发送</button>
+                </div>
+
+                <!-- 预览修改 -->
+                <div class="local-edit-preview" id="local-edit-preview" style="display:none;">
+                    <h3>修改预览：</h3>
+                    <div class="preview-box" id="local-preview-box"></div>
+                    <div class="preview-actions">
+                        <button class="btn-secondary" onclick="rejectLocalEdit()">拒绝</button>
+                        <button class="btn-primary" onclick="applyLocalEdit()">应用修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片上传/选择对话框 -->
+    <div class="image-modal" id="image-modal">
+        <div class="image-modal-content">
+            <div class="image-modal-header">
+                <h2>📷 插入图片</h2>
+                <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            </div>
+
+            <div class="image-tabs">
+                <button class="image-tab active" id="tab-upload-image" onclick="switchImageTab('upload')">上传新图片</button>
+                <button class="image-tab" id="tab-library-image" onclick="switchImageTab('library')">我的图片库</button>
+                <button class="image-tab" id="tab-url-image" onclick="switchImageTab('url')">图片URL</button>
+            </div>
+
+            <div class="image-modal-body">
+                <!-- 上传新图片面板 -->
+                <div class="image-tab-pane active" id="upload-pane">
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📤</div>
+                        <p class="upload-text">点击或拖拽上传图片</p>
+                        <p class="upload-hint">支持：JPG, PNG, GIF, WebP, SVG | 最大：5MB</p>
+                        <input type="file" id="image-file-input" accept="image/*" hidden>
+                        <div class="upload-progress" id="upload-progress" style="display:none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <p class="progress-text" id="progress-text">上传中... 0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 我的图片库面板 -->
+                <div class="image-tab-pane" id="library-pane">
+                    <div class="image-library-search">
+                        <input type="text" id="image-search-input" placeholder="搜索图片..." class="search-input">
+                    </div>
+                    <div class="image-library-grid" id="image-library-grid">
+                        <p class="loading-text">加载中...</p>
+                    </div>
+                </div>
+
+                <!-- 图片URL面板 -->
+                <div class="image-tab-pane" id="url-pane">
+                    <div class="url-input-group">
+                        <label>图片URL地址：</label>
+                        <input type="text" id="image-url-input" placeholder="https://example.com/image.jpg"
+                            class="url-input">
+                        <button onclick="previewImageUrl()" class="btn-preview">预览</button>
+                    </div>
+                    <div id="url-preview-area" class="url-preview-area" style="display:none;">
+                        <img id="url-preview-img" src="" alt="预览">
+                    </div>
+                </div>
+
+                <!-- 插入选项 -->
+                <div class="insert-options">
+                    <div class="option-group">
+                        <label>宽度：</label>
+                        <input type="range" id="image-width-slider" min="10" max="100" value="80" step="5">
+                        <span id="width-value">80%</span>
+                    </div>
+                    <div class="option-group">
+                        <label>对齐：</label>
+                        <label class="radio-label">
+                            <input type="radio" name="image-align" value="left"> 左对齐
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="image-align" value="center" checked> 居中
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="image-align" value="right"> 右对齐
+                        </label>
+                    </div>
+                    <div class="option-group">
+                        <label>Alt文字：</label>
+                        <input type="text" id="image-alt-input" placeholder="图片描述" class="alt-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-modal-footer">
+                <button class="btn-secondary" onclick="closeImageModal()">取消</button>
+                <button class="btn-primary" id="insert-image-btn" onclick="confirmInsertImage()">插入图片</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出对话框 -->
+    <div class="export-modal" id="export-modal">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2>📦 导出项目</h2>
+                <button class="modal-close" onclick="closeExportDialog()">&times;</button>
+            </div>
+
+            <div class="export-modal-body">
+                <div class="export-option-group">
+                    <h3>导出格式：</h3>
+                    <label class="export-radio-label">
+                        <input type="radio" name="export-type" value="zip-images" checked>
+                        📦 ZIP包（HTML + 图片文件）
+                        <p class="export-hint">将HTML和所有图片打包成ZIP文件，适合离线使用或分享</p>
+                    </label>
+                    <label class="export-radio-label">
+                        <input type="radio" name="export-type" value="html-only">
+                        📝 仅HTML（保留图片URL）
+                        <p class="export-hint">只导出HTML代码，图片保持原URL链接（需要网络访问）</p>
+                    </label>
+                    <label class="export-radio-label">
+                        <input type="radio" name="export-type" value="pdf">
+                        📄 PDF文档
+                        <p class="export-hint">将页面导出为PDF文档，保留所有样式和布局</p>
+                    </label>
+                </div>
+
+                <div class="export-option-group">
+                    <h3>导出选项：</h3>
+                    <label class="export-checkbox-label">
+                        <input type="checkbox" id="export-minify" checked>
+                        压缩HTML（移除空格和注释）
+                    </label>
+                    <label class="export-checkbox-label">
+                        <input type="checkbox" id="export-include-css" checked>
+                        包含内联CSS
+                    </label>
+                    <label class="export-checkbox-label">
+                        <input type="checkbox" id="export-include-js" checked>
+                        包含内联JavaScript
+                    </label>
+                </div>
+
+                <div class="export-preview-section">
+                    <h3>导出预览：</h3>
+                    <div class="export-stats" id="export-stats">
+                        <p>HTML大小: <span id="html-size">计算中...</span></p>
+                        <p>图片数量: <span id="image-count">计算中...</span></p>
+                        <p>预计大小: <span id="total-size">计算中...</span></p>
+                    </div>
+                </div>
+
+                <div class="export-progress" id="export-progress" style="display:none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="export-progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="export-progress-text">准备导出...</p>
+                </div>
+            </div>
+
+            <div class="export-modal-footer">
+                <button class="btn-secondary" onclick="closeExportDialog()">取消</button>
+                <button class="btn-primary" id="start-export-btn" onclick="startExport()">开始导出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSZip库用于生成ZIP文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="/vs/loader.js"></script>
     <script>
         let editor, updateTimeout, syncTimeout;
         let conversationId = ''; // Dify 会话 ID
         let autoInsertCode = true; // 自动插入代码到编辑器
-        let showCodeBlocks = true; // 显示代码块开关
+        let showCodeBlocks = false;
+        let toolbarExpanded = false; // 显示代码块开关
         let isGeneratingCode = false;
         let abortController = null; // 用于中断生成的控制器 // 是否正在生成代码
         const DIFY_API_URL = 'https://yw.zjythb.cn/v1';
         const DIFY_API_KEY = 'app-pT423FIvwgtVMCPIrxZHFnXU';
+        // 自动检测API地址
+        const isRemoteAccess = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        let apiPort;
+        if (isRemoteAccess) {
+            // 通过FRP访问：8300端口(前端) -> 8301端口(后端API)
+            apiPort = window.location.port === '8300' ? '8301' : '3006';
+        } else {
+            // 本地访问：3005端口(前端) -> 3006端口(后端API)
+            apiPort = '3006';
+        }
+        const API_BASE_URL = isRemoteAccess
+            ? `http://${window.location.hostname}:${apiPort}/api`
+            : 'http://localhost:3006/api';
+        console.log('API地址:', API_BASE_URL, '(访问方式:', isRemoteAccess ? '远程' : '本地', ')');
+
+        // ==================== 版本管理 ====================
+        const APP_VERSION = '2.0.1'; // 当前版本号
+        const VERSION_KEY = 'app_version';
+        const LAST_UPDATE_KEY = 'last_update_time';
+
+        // 检查版本更新
+        function checkVersion() {
+            const savedVersion = localStorage.getItem(VERSION_KEY);
+            const lastUpdate = localStorage.getItem(LAST_UPDATE_KEY);
+            const currentTime = new Date().getTime();
+
+            console.log('[版本检查] 当前版本:', APP_VERSION);
+            console.log('[版本检查] 本地版本:', savedVersion);
+
+            if (!savedVersion || savedVersion !== APP_VERSION) {
+                console.log('[版本检查] 检测到版本更新，清除缓存');
+
+                // 保存重要数据
+                const token = localStorage.getItem('token');
+                const user = localStorage.getItem('user');
+
+                // 清除所有localStorage（除了登录信息）
+                const tempData = {
+                    token: token,
+                    user: user
+                };
+
+                localStorage.clear();
+
+                // 恢复登录信息
+                if (tempData.token) localStorage.setItem('token', tempData.token);
+                if (tempData.user) localStorage.setItem('user', tempData.user);
+
+                // 保存新版本号
+                localStorage.setItem(VERSION_KEY, APP_VERSION);
+                localStorage.setItem(LAST_UPDATE_KEY, currentTime.toString());
+
+                // 显示更新提示
+                if (savedVersion && savedVersion !== APP_VERSION) {
+                    showVersionUpdateNotice(savedVersion, APP_VERSION);
+                }
+            } else {
+                console.log('[版本检查] 版本一致，无需更新');
+            }
+        }
+
+        // 显示版本更新通知
+        function showVersionUpdateNotice(oldVersion, newVersion) {
+            const notice = document.createElement('div');
+            notice.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px 25px;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+                z-index: 10000;
+                font-family: 'Segoe UI', sans-serif;
+                max-width: 400px;
+                animation: slideInRight 0.5s ease-out;
+            `;
+
+            notice.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <span style="font-size: 24px;">🎉</span>
+                    <div>
+                        <div style="font-weight: 700; font-size: 16px;">系统已更新</div>
+                        <div style="font-size: 13px; opacity: 0.9;">Version ${oldVersion} → ${newVersion}</div>
+                    </div>
+                </div>
+                <div style="font-size: 14px; line-height: 1.6; margin-bottom: 15px; opacity: 0.95;">
+                    ✨ 缓存已清除，新功能已就绪！<br>
+                    如遇到问题，请按 Ctrl+Shift+R 强制刷新页面。
+                </div>
+                <button onclick="this.parentElement.remove()" style="
+                    background: rgba(255,255,255,0.2);
+                    border: 1px solid rgba(255,255,255,0.3);
+                    color: white;
+                    padding: 8px 20px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 13px;
+                    font-weight: 600;
+                    width: 100%;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+                   onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    我知道了
+                </button>
+            `;
+
+            document.body.appendChild(notice);
+
+            // 添加动画样式
+            if (!document.getElementById('version-notice-style')) {
+                const style = document.createElement('style');
+                style.id = 'version-notice-style';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(400px);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // 10秒后自动关闭
+            setTimeout(() => {
+                if (notice.parentElement) {
+                    notice.style.animation = 'slideOutRight 0.5s ease-out';
+                    setTimeout(() => notice.remove(), 500);
+                }
+            }, 10000);
+        }
+
+        // 获取版本信息
+        function getVersionInfo() {
+            return {
+                version: APP_VERSION,
+                lastUpdate: localStorage.getItem(LAST_UPDATE_KEY),
+                buildDate: '2025-11-17'
+            };
+        }
+
+        // 页面加载时检查版本
+        checkVersion();
+        console.log('[版本信息]', getVersionInfo());
+        // ==================== 版本管理结束 ====================
+
         let isEditMode = false;
         let isEditorVisible = false;
         let isUpdatingFromPreview = false;
         let isUpdatingFromEditor = false;
+        let currentUser = null;
+
+        // 撤销/重做相关变量
+        let previewHistory = [];
+        let previewHistoryIndex = -1;
+        const MAX_HISTORY_STEPS = 5;
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+
+            console.log('[登录检查] Token:', token ? '存在' : '不存在');
+            console.log('[登录检查] User:', user);
+
+            if (token && user) {
+                try {
+                    currentUser = JSON.parse(user);
+                    console.log('[登录检查] 已登录用户:', currentUser.username);
+                    showUserMenu();
+                } catch (e) {
+                    console.error('[登录检查] 解析用户信息失败:', e);
+                    showLoginButton();
+                }
+            } else {
+                console.log('[登录检查] 未登录，显示登录按钮');
+                showLoginButton();
+            }
+        }
+
+        // 显示用户菜单
+        function showUserMenu() {
+            const userMenu = document.getElementById('user-menu');
+            const loginTrigger = document.getElementById('login-trigger');
+            const userName = document.getElementById('user-name');
+            const adminLink = document.getElementById('admin-link');
+            const toolbarToggleBtn = document.getElementById('toolbar-toggle-btn');
+            const toolbarButtons = document.getElementById('toolbar-buttons');
+
+            console.log('[显示用户菜单] 开始执行, currentUser:', currentUser);
+
+            if (userMenu && loginTrigger && currentUser) {
+                userMenu.style.setProperty('display', 'flex', 'important');
+                loginTrigger.style.setProperty('display', 'none', 'important');
+                userName.textContent = currentUser.username;
+
+                console.log('[显示用户菜单] 已切换显示状态');
+                console.log('[显示用户菜单] userMenu.display:', window.getComputedStyle(userMenu).display);
+                console.log('[显示用户菜单] loginTrigger.display:', window.getComputedStyle(loginTrigger).display);
+
+                // 如果是管理员，显示管理后台链接和工具栏按钮
+                if (currentUser.role === 'admin') {
+                    if (adminLink) {
+                        adminLink.style.display = 'flex';
+                        console.log('[显示用户菜单] 显示管理员链接');
+                    }
+
+                    // 显示展开/收起按钮和工具栏
+                    if (toolbarToggleBtn) {
+                        toolbarToggleBtn.style.display = 'block';
+                        console.log('[显示用户菜单] 显示工具栏展开/收起按钮（管理员权限）');
+                    }
+                    if (toolbarButtons) {
+                        toolbarButtons.style.display = 'flex';
+                        console.log('[显示用户菜单] 启用工具栏功能（管理员权限）');
+                    }
+                } else {
+                    // 非管理员，确保工具栏按钮隐藏
+                    if (toolbarToggleBtn) {
+                        toolbarToggleBtn.style.display = 'none';
+                    }
+                    if (toolbarButtons) {
+                        toolbarButtons.style.display = 'none';
+                    }
+                    console.log('[显示用户菜单] 普通用户，隐藏工具栏功能');
+                }
+            } else {
+                console.error('[显示用户菜单] 元素或用户信息缺失', {
+                    userMenu: !!userMenu,
+                    loginTrigger: !!loginTrigger,
+                    currentUser: !!currentUser
+                });
+            }
+        }
+
+        // 显示登录按钮
+        function showLoginButton() {
+            const userMenu = document.getElementById('user-menu');
+            const loginTrigger = document.getElementById('login-trigger');
+            const toolbarToggleBtn = document.getElementById('toolbar-toggle-btn');
+            const toolbarButtons = document.getElementById('toolbar-buttons');
+
+            console.log('[显示登录按钮] 开始执行');
+
+            if (userMenu && loginTrigger) {
+                userMenu.style.setProperty('display', 'none', 'important');
+                loginTrigger.style.setProperty('display', 'flex', 'important');
+
+                // 隐藏工具栏按钮（未登录或非管理员时）
+                if (toolbarToggleBtn) {
+                    toolbarToggleBtn.style.display = 'none';
+                }
+                if (toolbarButtons) {
+                    toolbarButtons.style.display = 'none';
+                }
+
+                console.log('[显示登录按钮] 已切换显示状态，工具栏已隐藏');
+                console.log('[显示登录按钮] userMenu.display:', window.getComputedStyle(userMenu).display);
+                console.log('[显示登录按钮] loginTrigger.display:', window.getComputedStyle(loginTrigger).display);
+            } else {
+                console.error('[显示登录按钮] 元素缺失', {
+                    userMenu: !!userMenu,
+                    loginTrigger: !!loginTrigger
+                });
+            }
+        }
+
+        // 切换用户下拉菜单
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        // 点击外部关闭下拉菜单
+        document.addEventListener('click', function (e) {
+            const userMenu = document.getElementById('user-menu');
+            const dropdown = document.getElementById('user-dropdown');
+
+            if (dropdown && userMenu && !userMenu.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+
+        // 登出
+        async function logout() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    await fetch(`${API_BASE_URL}/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        credentials: 'include'
+                    });
+                }
+            } catch (error) {
+                console.error('登出错误:', error);
+            } finally {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                currentUser = null;
+                showLoginButton();
+            }
+        }
+
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('[页面加载] DOM内容已加载完成，开始检查登录状态');
+
+            // 调试信息
+            const loginTrigger = document.getElementById('login-trigger');
+            const userMenu = document.getElementById('user-menu');
+            console.log('[调试] 登录按钮元素:', loginTrigger);
+            console.log('[调试] 登录按钮显示状态:', loginTrigger ? window.getComputedStyle(loginTrigger).display : 'null');
+            console.log('[调试] 用户菜单元素:', userMenu);
+            console.log('[调试] 用户菜单显示状态:', userMenu ? window.getComputedStyle(userMenu).display : 'null');
+
+            checkLoginStatus();
+
+            // 初始化预览区选中监听
+            initPreviewSelection();
+            console.log('[功能] 预览区选中监听已初始化');
+        });
 
         // 提取代码块（支持markdown格式和纯文本）
         function extractCode(text) {
@@ -585,6 +2337,10 @@
 
         // 自动插入到编辑器
         function autoInsertToEditor(content) {
+            if (!editor) {
+                console.error('[ERROR] SmartOffice Editor not loaded yet');
+                return;
+            }
             const code = extractCode(content);
 
             // 只有当提取到的内容看起来像代码时才插入
@@ -677,7 +2433,7 @@
         // 从外部文件加载默认代码
         async function loadDefaultCode() {
             try {
-                const response = await fetch('frontend/demos/default-code-in-editor.html');
+                const response = await fetch('default-code-in-editor.html');
                 if (response.ok) {
                     defaultCode = await response.text();
                     console.log('✅ 默认代码已从文件加载');
@@ -693,7 +2449,41 @@
         }
 
 
-        require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.54.0/min/vs' } });
+        function toggleToolbar() {
+            toolbarExpanded = !toolbarExpanded;
+            const btn = document.getElementById('toolbar-toggle-btn');
+            const toolbar = document.getElementById('toolbar-buttons');
+
+            if (toolbarExpanded) {
+                toolbar.classList.remove('toolbar-buttons-collapsed');
+                toolbar.classList.add('toolbar-buttons-expanded');
+                btn.textContent = '▲ 收起';
+                btn.style.background = '#FF9800';
+            } else {
+                toolbar.classList.remove('toolbar-buttons-expanded');
+                toolbar.classList.add('toolbar-buttons-collapsed');
+                btn.textContent = '▼ 展开';
+                btn.style.background = '#2196F3';
+            }
+        }
+
+        function handleSendClick() {
+            if (isGeneratingCode) {
+                stopGeneration();
+            } else {
+                // 检查登录状态
+                if (!currentUser) {
+                    alert('请先登录后再使用 AI 对话助手功能');
+                    window.location.href = '/demos/login.html';
+                    return;
+                }
+                sendMessage();
+            }
+        }
+        function stopGeneration() { if (abortController) { abortController.abort(); abortController = null; } isGeneratingCode = false; updateSendButton(); updateStatus('已停止生成'); }
+        function updateSendButton() { const btn = document.getElementById('send-btn'); if (!btn) return; if (isGeneratingCode) { btn.textContent = '停止'; btn.classList.add('stop-mode'); } else { btn.textContent = '发送'; btn.classList.remove('stop-mode'); } }
+
+        require.config({ paths: { 'vs': '/vs' } });
         require(['vs/editor/editor.main'], async function () {
             await loadDefaultCode();
             editor = monaco.editor.create(document.getElementById('code-editor'), {
@@ -717,14 +2507,18 @@
             isUpdatingFromEditor = true;
             const code = editor.getValue();
             const iframe = document.getElementById('preview-frame');
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(code);
-            iframeDoc.close();
-            if (isEditMode) {
-                setTimeout(() => enableEditableMode(), 100);
-            }
-            updateStatus('预览已更新');
+
+            // Use srcdoc for smoother updates that preserve script state
+            iframe.srcdoc = code;
+
+            // Wait for iframe to load before enabling edit mode
+            iframe.onload = function () {
+                if (isEditMode) {
+                    setTimeout(() => enableEditableMode(), 100);
+                }
+                updateStatus('预览已更新');
+            };
+
             setTimeout(() => { isUpdatingFromEditor = false; }, 600);
         }
 
@@ -752,16 +2546,33 @@
             isEditMode = !isEditMode;
             const btn = document.getElementById('toggle-edit-btn');
             const badge = document.getElementById('edit-mode-badge');
+            const undoBtn = document.getElementById('undo-btn');
+            const redoBtn = document.getElementById('redo-btn');
+
             if (isEditMode) {
                 btn.textContent = '🔒 禁用预览编辑';
                 btn.classList.add('active');
                 badge.style.display = 'block';
+                undoBtn.style.display = 'inline-block';
+                redoBtn.style.display = 'inline-block';
+
+                // 启用编辑模式时，保存初始状态到历史记录
+                savePreviewHistory();
+                updateUndoRedoButtons();
+
                 enableEditableMode();
                 updateStatus('预览编辑模式已启用 - 可直接编辑预览内容');
             } else {
                 btn.textContent = '🖊 启用预览编辑';
                 btn.classList.remove('active');
                 badge.style.display = 'none';
+                undoBtn.style.display = 'none';
+                redoBtn.style.display = 'none';
+
+                // 清空历史记录
+                previewHistory = [];
+                previewHistoryIndex = -1;
+
                 disableEditableMode();
                 updateStatus('预览编辑模式已禁用');
             }
@@ -816,8 +2627,121 @@
             try {
                 editor.setPosition(currentPosition);
             } catch (e) { }
+
+            // 如果是编辑模式，保存历史记录
+            if (isEditMode) {
+                savePreviewHistory();
+                updateUndoRedoButtons();
+            }
+
             updateStatus('预览修改已同步到代码');
             setTimeout(() => { isUpdatingFromPreview = false; }, 600);
+        }
+
+        // 保存预览历史记录
+        function savePreviewHistory() {
+            const currentCode = editor.getValue();
+
+            // 避免重复保存相同内容
+            if (previewHistory.length > 0 && previewHistory[previewHistoryIndex] === currentCode) {
+                return;
+            }
+
+            // 如果当前不在历史记录末尾，删除后面的记录
+            if (previewHistoryIndex < previewHistory.length - 1) {
+                previewHistory = previewHistory.slice(0, previewHistoryIndex + 1);
+            }
+
+            // 添加新记录
+            previewHistory.push(currentCode);
+
+            // 限制历史记录数量为5步
+            if (previewHistory.length > MAX_HISTORY_STEPS) {
+                previewHistory.shift();
+                previewHistoryIndex = MAX_HISTORY_STEPS - 1;
+            } else {
+                previewHistoryIndex = previewHistory.length - 1;
+            }
+
+            console.log('[历史记录] 已保存，当前索引:', previewHistoryIndex, '总数:', previewHistory.length);
+        }
+
+        // 撤销预览编辑
+        function undoPreviewEdit() {
+            if (previewHistoryIndex <= 0) {
+                updateStatus('⚠️ 无法撤销，已到达最早的记录');
+                return;
+            }
+
+            previewHistoryIndex--;
+            const previousCode = previewHistory[previewHistoryIndex];
+
+            // 临时禁用保存历史记录
+            isUpdatingFromEditor = true;
+            editor.setValue(previousCode);
+            updatePreview();
+
+            setTimeout(() => {
+                isUpdatingFromEditor = false;
+                updateUndoRedoButtons();
+                updateStatus(`↶ 已撤销 (剩余 ${previewHistoryIndex} 步可撤销)`);
+            }, 100);
+
+            console.log('[撤销] 当前索引:', previewHistoryIndex);
+        }
+
+        // 重做预览编辑
+        function redoPreviewEdit() {
+            if (previewHistoryIndex >= previewHistory.length - 1) {
+                updateStatus('⚠️ 无法重做，已到达最新的记录');
+                return;
+            }
+
+            previewHistoryIndex++;
+            const nextCode = previewHistory[previewHistoryIndex];
+
+            // 临时禁用保存历史记录
+            isUpdatingFromEditor = true;
+            editor.setValue(nextCode);
+            updatePreview();
+
+            setTimeout(() => {
+                isUpdatingFromEditor = false;
+                updateUndoRedoButtons();
+                updateStatus(`↷ 已重做 (剩余 ${previewHistory.length - 1 - previewHistoryIndex} 步可重做)`);
+            }, 100);
+
+            console.log('[重做] 当前索引:', previewHistoryIndex);
+        }
+
+        // 更新撤销/重做按钮状态
+        function updateUndoRedoButtons() {
+            const undoBtn = document.getElementById('undo-btn');
+            const redoBtn = document.getElementById('redo-btn');
+
+            if (!undoBtn || !redoBtn) return;
+
+            // 更新撤销按钮
+            if (previewHistoryIndex > 0) {
+                undoBtn.disabled = false;
+                undoBtn.style.opacity = '1';
+                undoBtn.style.cursor = 'pointer';
+            } else {
+                undoBtn.disabled = true;
+                undoBtn.style.opacity = '0.5';
+                undoBtn.style.cursor = 'not-allowed';
+            }
+
+            // 更新重做按钮
+            if (previewHistoryIndex < previewHistory.length - 1) {
+                redoBtn.disabled = false;
+                redoBtn.style.opacity = '1';
+                redoBtn.style.cursor = 'pointer';
+            } else {
+                redoBtn.disabled = true;
+                redoBtn.style.opacity = '0.5';
+                redoBtn.style.cursor = 'not-allowed';
+            }
         }
 
         function runCode() { updatePreview(); updateStatus('代码已运行'); }
@@ -856,38 +2780,17 @@
         function formatMessageContent(t) { if (!t) return ''; const r = /```([\w]*)\n/g; const e = /```/g; const blocks = []; let match; e.lastIndex = 0; while ((match = r.exec(t)) !== null) { blocks.push({ start: match.index, startEnd: r.lastIndex, lang: match[1] || 'code' }) } for (let b of blocks) { e.lastIndex = b.startEnd; const endMatch = e.exec(t); if (endMatch) { b.end = endMatch.index; b.endEnd = e.lastIndex; b.code = t.substring(b.startEnd, b.end) } else { b.code = t.substring(b.startEnd); b.incomplete = true } } let o = '', pos = 0; for (let b of blocks) { if (pos < b.start) { o += escapeHtml(t.substring(pos, b.start)).replace(/\n/g, '<br>') } if (!showCodeBlocks) { const placeholder = isGeneratingCode ? '生成中...' : '←内容已完成'; o += `<div class="code-block-placeholder" style="padding:10px;background:#2d2d30;border-radius:4px;color:#888;font-style:italic;">${placeholder}</div>` } else { o += `<div class="code-block-container"><div class="code-block-header"><span class="code-block-lang">${b.lang}</span>`; if (!b.incomplete) { o += `<div class="code-block-actions"><button class="code-block-btn" onclick="copyCodeBlock(this)">📋 复制</button><button class="code-block-btn" onclick="insertCodeBlock(this)">➕ 插入编辑器</button></div>` } o += `</div><pre class="code-content"><code>${escapeHtml(b.code)}</code></pre></div>` } pos = b.endEnd || t.length } if (pos < t.length) { o += escapeHtml(t.substring(pos)).replace(/\n/g, '<br>') } return o }
         function escapeHtml(t) { const e = document.createElement('div'); e.textContent = t; return e.innerHTML }
         function copyCodeBlock(b) { const c = b.closest('.code-block-container').querySelector('code'); navigator.clipboard.writeText(c.textContent).then(() => { const o = b.textContent; b.textContent = '✅ 已复制'; b.style.background = '#4CAF50'; setTimeout(() => { b.textContent = o; b.style.background = '' }, 2000) }).catch(e => updateStatus('复制失败')) }
-        function insertCodeBlock(b) { const c = b.closest('.code-block-container').querySelector('code').textContent, p = editor.getPosition(), e = editor.getValue(); if (!e.trim()) { editor.setValue(c) } else if (p) { const l = p.lineNumber, col = p.column; editor.executeEdits('insert', [{ range: new monaco.Range(l, col, l, col), text: '\n' + c + '\n' }]); editor.setPosition({ lineNumber: l + c.split('\n').length, column: 1 }) } else { const l = editor.getModel().getLineCount(), m = editor.getModel().getLineMaxColumn(l); editor.executeEdits('insert', [{ range: new monaco.Range(l, m, l, m), text: '\n\n' + c }]) } updatePreview(); editor.revealLine(editor.getPosition().lineNumber); b.textContent = '✅ 已插入'; b.style.background = '#4CAF50'; setTimeout(() => { b.textContent = '➕ 插入编辑器'; b.style.background = '' }, 2000) }
-        function handleSendClick() {
-            if (isGeneratingCode) {
-                stopGeneration();
-            } else {
-                sendMessage();
-            }
-        }
-
-        function stopGeneration() {
-            if (abortController) {
-                abortController.abort();
-                abortController = null;
-            }
-            isGeneratingCode = false;
-            updateSendButton();
-            updateStatus('已停止生成');
-        }
-
-        function updateSendButton() {
-            const btn = document.getElementById('send-btn');
-            if (isGeneratingCode) {
-                btn.textContent = '停止';
-                btn.classList.add('stop-mode');
-            } else {
-                btn.textContent = '发送';
-                btn.classList.remove('stop-mode');
-            }
-        }
+        function insertCodeBlock(b) { if (!editor) { alert('编辑器尚未加载，请稍候再试'); return; } const c = b.closest('.code-block-container').querySelector('code').textContent, p = editor.getPosition(), e = editor.getValue(); if (!e.trim()) { editor.setValue(c) } else if (p) { const l = p.lineNumber, col = p.column; editor.executeEdits('insert', [{ range: new monaco.Range(l, col, l, col), text: '\n' + c + '\n' }]); editor.setPosition({ lineNumber: l + c.split('\n').length, column: 1 }) } else { const l = editor.getModel().getLineCount(), m = editor.getModel().getLineMaxColumn(l); editor.executeEdits('insert', [{ range: new monaco.Range(l, m, l, m), text: '\n\n' + c }]) } updatePreview(); editor.revealLine(editor.getPosition().lineNumber); b.textContent = '✅ 已插入'; b.style.background = '#4CAF50'; setTimeout(() => { b.textContent = '➕ 插入编辑器'; b.style.background = '' }, 2000) }
 
 
         async function sendMessage() {
+            // 再次检查登录状态（双重保险）
+            if (!currentUser) {
+                alert('请先登录后再使用 AI 对话助手功能');
+                window.location.href = '/demos/login.html';
+                return;
+            }
+
             abortController = new AbortController();
             isGeneratingCode = true;
             updateSendButton();
@@ -965,7 +2868,10 @@
                                     conversationId = data.conversation_id || conversationId;
                                     isGeneratingCode = false;
                                     updateSendButton();
-                                    if (messageElement) messageElement.setAttribute("data-is-generating", "false");
+                                    if (messageElement) {
+                                        messageElement.setAttribute("data-is-generating", "false");
+                                        messageElement.innerHTML = formatMessageContent(aiResponse);
+                                    }
 
                                     // 自动插入代码
                                     if (autoInsertCode && aiResponse.trim()) {
@@ -1037,7 +2943,11 @@
             }
         }
         document.getElementById('chat-input').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                // 使用 handleSendClick 统一处理登录检查
+                handleSendClick();
+            }
         });
         document.getElementById('chat-input').addEventListener('input', function () {
             this.style.height = 'auto';
@@ -1107,6 +3017,2343 @@
                 }
             });
         }
+
+        // ========== 预览区选中内容功能 ==========
+        let selectedRange = null;
+        let selectedElement = null;
+        let selectionText = '';
+
+        // 注入元素选择样式到iframe
+        function injectSelectionStylesToIframe(iframeDoc) {
+            // 检查是否已经注入
+            if (iframeDoc.getElementById('selection-styles-injected')) {
+                return;
+            }
+
+            const style = iframeDoc.createElement('style');
+            style.id = 'selection-styles-injected';
+            style.textContent = `
+                /* 元素悬停高亮 */
+                .preview-element-hover {
+                    outline: 2px solid rgba(101, 175, 255, 0.8) !important;
+                    outline-offset: 0px !important;
+                    background: rgba(101, 175, 255, 0.1) !important;
+                    cursor: pointer !important;
+                    transition: all 0.15s ease !important;
+                }
+
+                /* 元素选中高亮 */
+                .preview-selection-highlight {
+                    outline: 2px solid #1a73e8 !important;
+                    outline-offset: 0px !important;
+                    background: rgba(26, 115, 232, 0.08) !important;
+                    position: relative !important;
+                }
+            `;
+
+            iframeDoc.head.appendChild(style);
+            console.log('[样式注入] 元素选择样式已注入到iframe');
+        }
+
+        // 初始化预览区选中监听
+        function initPreviewSelection() {
+            const previewFrame = document.getElementById('preview-frame');
+
+            previewFrame.addEventListener('load', function () {
+                const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+                // 注入元素选择样式到iframe
+                injectSelectionStylesToIframe(iframeDoc);
+
+                // 监听文本选中事件
+                iframeDoc.addEventListener('mouseup', handlePreviewSelection);
+                iframeDoc.addEventListener('touchend', handlePreviewSelection);
+
+                // 监听元素点击选中（仅在编辑模式下）
+                // 监听元素悬停高亮（类似Chrome DevTools）
+                iframeDoc.addEventListener('mouseover', handleElementHover);
+                iframeDoc.addEventListener('mouseout', handleElementHoverOut);
+
+                iframeDoc.addEventListener('click', handleElementClick);
+
+                // 监听右键菜单
+                iframeDoc.addEventListener('contextmenu', handleContextMenu);
+
+                // 点击其他地方取消选中
+                iframeDoc.addEventListener('mousedown', function (e) {
+                    const toolbar = document.getElementById('floating-toolbar');
+                    if (!toolbar.contains(e.target)) {
+                        // 如果不是点击已选中的元素，则取消选中
+                        if (selectedElement && e.target !== selectedElement && !selectedElement.contains(e.target)) {
+                            const selection = iframeDoc.getSelection();
+                            if (selection.toString().trim() === '') {
+                                hideFloatingToolbar();
+                                clearElementHighlight();
+                            }
+                        }
+                    }
+                });
+
+                // 初始化图片可调整大小功能
+                initResizableImages();
+            });
+        }
+
+        // 初始化图片可调整大小功能
+        function initResizableImages() {
+            const previewFrame = document.getElementById('preview-frame');
+            if (!previewFrame.contentDocument) return;
+
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const images = iframeDoc.querySelectorAll('img');
+
+            images.forEach(img => {
+                makeImageResizable(img);
+            });
+
+            console.log(`[图片调整] 已为 ${images.length} 张图片启用大小调整功能`);
+        }
+
+        // 使单个图片可调整大小
+        function makeImageResizable(img) {
+            // 检查图片元素是否存在
+            if (!img || !img.tagName || img.tagName !== 'IMG') {
+                console.warn('[图片调整] 无效的图片元素', img);
+                return;
+            }
+
+            // 避免重复添加
+            if (img.hasAttribute('data-resizable')) return;
+            img.setAttribute('data-resizable', 'true');
+
+            // 添加选中状态样式
+            img.style.cursor = 'move';
+            img.style.transition = 'box-shadow 0.2s';
+
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+            let resizeHandle = null;
+
+            // 鼠标悬停时显示调整提示
+            img.addEventListener('mouseenter', function () {
+                if (!isResizing) {
+                    img.style.boxShadow = '0 0 0 2px #3b82f6';
+                }
+            });
+
+            img.addEventListener('mouseleave', function () {
+                if (!isResizing && !img.hasAttribute('data-selected-for-resize')) {
+                    img.style.boxShadow = '';
+                }
+            });
+
+            // 点击图片显示调整手柄
+            img.addEventListener('click', function (e) {
+                e.stopPropagation();
+                selectImageForResize(img);
+            });
+
+            // 双击图片恢复原始大小
+            img.addEventListener('dblclick', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                img.style.width = '';
+                img.style.height = '';
+                syncPreviewToCode();
+                updateStatus('✅ 图片已恢复原始大小');
+            });
+        }
+
+        // 选中图片准备调整大小
+        function selectImageForResize(img) {
+            if (!img) return;
+
+            const previewFrame = document.getElementById('preview-frame');
+            if (!previewFrame || !previewFrame.contentDocument) return;
+
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+            // 清除其他图片的选中状态
+            iframeDoc.querySelectorAll('img[data-selected-for-resize]').forEach(other => {
+                if (other !== img) {
+                    other.removeAttribute('data-selected-for-resize');
+                    other.style.boxShadow = '';
+                    removeResizeHandles(other);
+                }
+            });
+
+            // 选中当前图片
+            img.setAttribute('data-selected-for-resize', 'true');
+            img.style.boxShadow = '0 0 0 2px #3b82f6';
+
+            // 添加调整手柄
+            addResizeHandles(img);
+        }
+
+        // 添加调整大小手柄
+        function addResizeHandles(img) {
+            if (!img || !img.parentNode) return;
+
+            const previewFrame = document.getElementById('preview-frame');
+            if (!previewFrame || !previewFrame.contentDocument) return;
+
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+            // 移除已存在的手柄
+            removeResizeHandles(img);
+
+            // 创建容器
+            const wrapper = iframeDoc.createElement('div');
+            wrapper.className = 'image-resize-wrapper';
+            wrapper.style.cssText = `
+                position: relative;
+                display: inline-block;
+                max-width: 100%;
+            `;
+
+            // 将图片包装在容器中
+            img.parentNode.insertBefore(wrapper, img);
+            wrapper.appendChild(img);
+
+            // 创建8个调整手柄（四角+四边）
+            const handles = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+            handles.forEach(position => {
+                const handle = iframeDoc.createElement('div');
+                handle.className = `resize-handle resize-handle-${position}`;
+                handle.style.cssText = `
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background: #3b82f6;
+                    border: 2px solid white;
+                    border-radius: 50%;
+                    cursor: ${getCursorForHandle(position)};
+                    z-index: 1000;
+                `;
+
+                // 定位手柄
+                positionHandle(handle, position);
+
+                // 添加拖拽事件
+                handle.addEventListener('mousedown', (e) => startResize(e, img, position));
+
+                wrapper.appendChild(handle);
+            });
+        }
+
+        // 获取手柄的光标样式
+        function getCursorForHandle(position) {
+            const cursors = {
+                'nw': 'nw-resize', 'n': 'n-resize', 'ne': 'ne-resize',
+                'e': 'e-resize', 'se': 'se-resize', 's': 's-resize',
+                'sw': 'sw-resize', 'w': 'w-resize'
+            };
+            return cursors[position] || 'default';
+        }
+
+        // 定位手柄
+        function positionHandle(handle, position) {
+            const positions = {
+                'nw': { top: '-5px', left: '-5px' },
+                'n': { top: '-5px', left: '50%', transform: 'translateX(-50%)' },
+                'ne': { top: '-5px', right: '-5px' },
+                'e': { top: '50%', right: '-5px', transform: 'translateY(-50%)' },
+                'se': { bottom: '-5px', right: '-5px' },
+                's': { bottom: '-5px', left: '50%', transform: 'translateX(-50%)' },
+                'sw': { bottom: '-5px', left: '-5px' },
+                'w': { top: '50%', left: '-5px', transform: 'translateY(-50%)' }
+            };
+
+            Object.assign(handle.style, positions[position]);
+        }
+
+        // 开始调整大小
+        function startResize(e, img, position) {
+            if (!img || !e) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startWidth = img.offsetWidth;
+            const startHeight = img.offsetHeight;
+            const aspectRatio = startWidth / startHeight;
+
+            const previewFrame = document.getElementById('preview-frame');
+            if (!previewFrame || !previewFrame.contentDocument) return;
+
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+            function resize(e) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+
+                let newWidth = startWidth;
+                let newHeight = startHeight;
+
+                // 根据手柄位置计算新尺寸
+                if (position.includes('e')) newWidth = startWidth + deltaX;
+                if (position.includes('w')) newWidth = startWidth - deltaX;
+                if (position.includes('s')) newHeight = startHeight + deltaY;
+                if (position.includes('n')) newHeight = startHeight - deltaY;
+
+                // 保持宽高比（按住Shift键时）
+                if (e.shiftKey) {
+                    if (position.includes('e') || position.includes('w')) {
+                        newHeight = newWidth / aspectRatio;
+                    } else {
+                        newWidth = newHeight * aspectRatio;
+                    }
+                }
+
+                // 限制最小尺寸
+                newWidth = Math.max(50, newWidth);
+                newHeight = Math.max(50, newHeight);
+
+                // 应用新尺寸
+                img.style.width = newWidth + 'px';
+                img.style.height = newHeight + 'px';
+            }
+
+            function stopResize() {
+                iframeDoc.removeEventListener('mousemove', resize);
+                iframeDoc.removeEventListener('mouseup', stopResize);
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+
+                // 同步到编辑器
+                syncPreviewToCode();
+                updateStatus(`✅ 图片大小已调整为 ${Math.round(img.offsetWidth)}×${Math.round(img.offsetHeight)}px`);
+            }
+
+            iframeDoc.addEventListener('mousemove', resize);
+            iframeDoc.addEventListener('mouseup', stopResize);
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+        }
+
+        // 移除调整手柄
+        function removeResizeHandles(img) {
+            const wrapper = img.parentElement;
+            if (wrapper && wrapper.className === 'image-resize-wrapper') {
+                // 移除所有手柄
+                wrapper.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
+
+                // 如果需要移除wrapper
+                if (img.parentElement === wrapper && wrapper.parentElement) {
+                    wrapper.parentElement.insertBefore(img, wrapper);
+                    wrapper.remove();
+                }
+            }
+        }
+
+        // 处理元素悬停高亮（类似Chrome DevTools）
+        function handleElementHover(e) {
+            // 只在启用预览编辑时才支持悬停高亮
+            const toggleBtn = document.getElementById('toggle-edit-btn');
+            if (!toggleBtn || !toggleBtn.textContent.includes('禁用')) {
+                console.log('[元素悬停] 预览编辑未启用，按钮文本:', toggleBtn?.textContent);
+                return;
+            }
+
+            // 避免在工具栏上触发
+            if (e.target.closest && e.target.closest('.floating-toolbar')) {
+                return;
+            }
+
+            let hoveredElement = e.target;
+
+            // 如果已经选中，不显示悬停效果
+            if (hoveredElement.classList && hoveredElement.classList.contains('preview-selection-highlight')) {
+                return;
+            }
+
+            // 移除之前的悬停效果
+            const previewFrame = document.getElementById('preview-frame');
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const previousHover = iframeDoc.querySelector('.preview-element-hover');
+            if (previousHover) {
+                previousHover.classList.remove('preview-element-hover');
+                const tooltip = previousHover.querySelector('.element-tag-tooltip');
+                if (tooltip) tooltip.remove();
+            }
+
+            // 添加悬停效果
+            if (hoveredElement.classList) {
+                hoveredElement.classList.add('preview-element-hover');
+                console.log('[元素悬停] 已添加hover效果:', hoveredElement.tagName, hoveredElement.className);
+            }
+
+            e.stopPropagation();
+        }
+
+        // 处理元素悬停移出
+        function handleElementHoverOut(e) {
+            const toggleBtn = document.getElementById('toggle-edit-btn');
+            if (!toggleBtn || !toggleBtn.textContent.includes('禁用')) {
+                return;
+            }
+
+            // 移除悬停效果
+            if (e.target.classList) {
+                e.target.classList.remove('preview-element-hover');
+                const tooltip = e.target.querySelector('.element-tag-tooltip');
+                if (tooltip) tooltip.remove();
+            }
+        }
+
+
+        // 处理元素点击选中
+        function handleElementClick(e) {
+            // 只在启用预览编辑时才支持元素选中
+            const toggleBtn = document.getElementById('toggle-edit-btn');
+            if (!toggleBtn || !toggleBtn.textContent.includes('禁用')) {
+                return;
+            }
+
+            // 获取点击的元素
+            let clickedElement = e.target;
+
+            // 如果点击的是body或html，忽略
+            if (clickedElement.tagName === 'BODY' || clickedElement.tagName === 'HTML') {
+                return;
+            }
+
+            // 防止默认行为
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+            }
+
+            // 高亮选中的元素
+            highlightElement(clickedElement);
+
+            // 保存选中信息
+            selectedElement = clickedElement;
+            selectionText = clickedElement.outerHTML;
+
+            // 创建Range对象（用于后续插入内容）
+            const previewFrame = document.getElementById('preview-frame');
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const range = iframeDoc.createRange();
+            range.selectNode(clickedElement);
+            selectedRange = range;
+
+            // 显示浮动工具栏
+            showFloatingToolbar(e);
+        }
+
+        // 高亮选中的元素
+        function highlightElement(element) {
+            // 清除之前的高亮
+            clearElementHighlight();
+
+            // 移除悬停样式
+            element.classList.remove('preview-element-hover');
+
+            // 添加高亮样式
+            element.classList.add('preview-selection-highlight');
+            element.setAttribute('data-selected', 'true');
+
+            console.log('[元素选中] 已选中元素:', element.tagName, element.className);
+        }
+
+        // 清除元素高亮
+        function clearElementHighlight() {
+            const previewFrame = document.getElementById('preview-frame');
+            if (!previewFrame.contentDocument) return;
+
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const highlighted = iframeDoc.querySelectorAll('.preview-selection-highlight');
+            highlighted.forEach(el => {
+                el.classList.remove('preview-selection-highlight');
+                el.removeAttribute('data-selected');
+            });
+        }
+
+        // 处理右键菜单
+        function handleContextMenu(e) {
+            // 只在启用预览编辑时才支持右键菜单
+            const toggleBtn = document.getElementById('toggle-edit-btn');
+            if (!toggleBtn || !toggleBtn.textContent.includes('禁用')) {
+                return;
+            }
+
+            e.preventDefault();
+
+            // 获取右键点击的元素
+            let clickedElement = e.target;
+
+            // 如果点击的是body或html，忽略
+            if (clickedElement.tagName === 'BODY' || clickedElement.tagName === 'HTML') {
+                return;
+            }
+
+            // 高亮选中的元素
+            highlightElement(clickedElement);
+
+            // 保存选中信息
+            selectedElement = clickedElement;
+            selectionText = clickedElement.outerHTML;
+
+            // 创建Range对象
+            const previewFrame = document.getElementById('preview-frame');
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const range = iframeDoc.createRange();
+            range.selectNode(clickedElement);
+            selectedRange = range;
+
+            // 直接打开局部编辑对话框
+            openLocalEditDialog();
+        }
+
+        // 处理预览区选中
+        function handlePreviewSelection(e) {
+            const previewFrame = document.getElementById('preview-frame');
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            const selection = iframeDoc.getSelection();
+
+            selectionText = selection.toString().trim();
+
+            if (selectionText.length > 0) {
+                // 保存选中的Range对象
+                if (selection.rangeCount > 0) {
+                    selectedRange = selection.getRangeAt(0);
+                    selectedElement = selectedRange.commonAncestorContainer;
+
+                    // 如果是文本节点，获取其父元素
+                    if (selectedElement.nodeType === 3) {
+                        selectedElement = selectedElement.parentElement;
+                    }
+                }
+
+                // 显示浮动工具栏
+                showFloatingToolbar(e);
+            } else {
+                hideFloatingToolbar();
+            }
+        }
+
+        // 显示浮动工具栏
+        function showFloatingToolbar(e) {
+            const toolbar = document.getElementById('floating-toolbar');
+            const previewFrame = document.getElementById('preview-frame');
+
+            // 计算工具栏位置
+            const frameRect = previewFrame.getBoundingClientRect();
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+            let rect;
+
+            // 如果有选中的元素（元素选择模式），使用元素的边界
+            if (selectedElement && selectedElement.getBoundingClientRect) {
+                rect = selectedElement.getBoundingClientRect();
+            } else {
+                // 否则使用文本选区（文本选择模式）
+                const selection = iframeDoc.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    rect = range.getBoundingClientRect();
+                } else {
+                    return;
+                }
+            }
+
+            // 工具栏位置：选中内容上方，居中
+            let left = frameRect.left + rect.left + (rect.width / 2);
+            let top = frameRect.top + rect.top - 50; // 上方50px
+
+            // 防止超出屏幕
+            const toolbarWidth = 400; // 预估宽度
+            if (left + toolbarWidth / 2 > window.innerWidth) {
+                left = window.innerWidth - toolbarWidth - 20;
+            } else if (left - toolbarWidth / 2 < 0) {
+                left = 20;
+            } else {
+                left = left - toolbarWidth / 2;
+            }
+
+            // 如果上方空间不够，显示在选中内容下方
+            if (top < 60) {
+                top = frameRect.top + rect.bottom + 10;
+            }
+
+            toolbar.style.left = left + 'px';
+            toolbar.style.top = top + 'px';
+            toolbar.classList.add('show');
+        }
+
+        // 隐藏浮动工具栏
+        function hideFloatingToolbar(clearSelection = true) {
+            const toolbar = document.getElementById('floating-toolbar');
+            toolbar.classList.remove('show');
+
+            // 重置到主菜单状态
+            const mainMenu = document.getElementById('toolbar-main-menu');
+            const stylePanel = document.getElementById('toolbar-style-panel');
+            if (mainMenu && stylePanel) {
+                mainMenu.style.display = 'flex';
+                stylePanel.style.display = 'none';
+            }
+
+            // 只有在明确要求清除时才清除选中状态
+            if (clearSelection) {
+                selectedRange = null;
+                selectedElement = null;
+                selectionText = '';
+                clearElementHighlight();
+            }
+        }
+
+        // 打开局部编辑对话框
+        function openLocalEditDialog() {
+            if (!selectionText) {
+                alert('请先选中要编辑的内容');
+                return;
+            }
+
+            console.log('打开局部编辑对话框，选中内容:', selectionText);
+
+            // 显示选中的内容（使用pre标签保持格式）
+            const selectedTextDisplay = document.getElementById('selected-text-display');
+            selectedTextDisplay.innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 12px;">${selectionText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+
+            // 清空之前的对话
+            const localChatMessages = document.getElementById('local-chat-messages');
+            localChatMessages.innerHTML = `
+                <div class="local-chat-welcome">
+                    💡 请描述您想对选中内容进行的修改，例如：<br>
+                    • "改为加粗"<br>
+                    • "添加红色背景"<br>
+                    • "改写为更专业的表述"<br>
+                    • "在此位置插入一个按钮"<br>
+                    • "添加一个echarts柱状图"<br>
+                    • "替换为一个echarts饼图展示数据"
+                </div>
+            `;
+
+            // 隐藏预览区
+            document.getElementById('local-edit-preview').style.display = 'none';
+
+            // 显示对话框
+            const modal = document.getElementById('local-edit-modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            // 隐藏工具栏但不清除选中状态
+            hideFloatingToolbar(false);
+
+            // 聚焦输入框
+            setTimeout(() => {
+                document.getElementById('local-edit-input').focus();
+            }, 300);
+        }
+
+        // 关闭局部编辑对话框
+        function closeLocalEditModal() {
+            const modal = document.getElementById('local-edit-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 发送局部编辑请求
+        async function sendLocalEditRequest() {
+            const input = document.getElementById('local-edit-input');
+            const instruction = input.value.trim();
+
+            if (!instruction) {
+                alert('请输入编辑指令');
+                return;
+            }
+
+            // 不检查选中内容是否失效，保持选中状态
+            // 添加用户消息
+            addLocalMessage(instruction, 'user');
+            input.value = '';
+
+            // 检查选中内容
+            if (!selectionText || selectionText.trim() === '') {
+                addLocalMessage('❌ 错误：选中内容已丢失，请重新选择元素', 'ai');
+                console.error('selectionText为空:', selectionText);
+                return;
+            }
+
+            // 构建完整的提示词
+            const prompt = `我选中了以下HTML内容：
+
+${selectionText}
+
+请根据以下指令修改上述HTML：${instruction}
+
+要求：
+1. 只返回修改后的完整HTML代码
+2. 如果需要添加新功能（如图表、组件等），可以完全改变结构
+3. 如果需要添加echarts图表，必须包含完整的CDN引入、图表容器div和初始化脚本
+4. 如果需要添加其他库（如Chart.js等），也要包含完整的CDN和初始化代码
+5. 不要添加任何解释文字或markdown格式
+6. 确保HTML格式正确，可以直接使用
+7. 如果是简单修改（改颜色、文字等），保持原有结构即可`;
+
+
+            console.log('发送给AI的prompt:', prompt);
+
+            // 显示"AI思考中..."
+            const chatMessages = document.getElementById('local-chat-messages');
+            const thinkingMsg = document.createElement('div');
+            thinkingMsg.className = 'local-message ai';
+            thinkingMsg.textContent = 'AI思考中...';
+            thinkingMsg.id = 'thinking-msg';
+            chatMessages.appendChild(thinkingMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 禁用发送按钮
+            const sendBtn = document.querySelector('.local-send-btn');
+            sendBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${DIFY_API_URL}/chat-messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${DIFY_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: prompt,
+                        response_mode: 'streaming',
+                        conversation_id: '',
+                        user: currentUser ? currentUser.username : 'visual-editor-user'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API 请求失败: ${response.statusText}`);
+                }
+
+                // 处理流式响应
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiResponse = '';
+                let buffer = '';
+
+                // 流式接收数据过程中保持"AI思考中..."显示
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine && trimmedLine.startsWith('data: ')) {
+                            try {
+                                const jsonStr = trimmedLine.slice(6);
+                                if (!jsonStr) continue;
+                                const data = JSON.parse(jsonStr);
+
+                                if (data.event === 'message' || data.event === 'agent_message') {
+                                    aiResponse += data.answer;
+                                    // 更新"思考中"消息，显示进度
+                                    const thinkingElement = document.getElementById('thinking-msg');
+                                    if (thinkingElement) {
+                                        thinkingElement.textContent = `AI思考中... (已接收 ${aiResponse.length} 字符)`;
+                                    }
+                                } else if (data.event === 'error') {
+                                    throw new Error(data.message || 'AI响应错误');
+                                }
+                            } catch (e) {
+                                console.error('解析响应失败:', e);
+                            }
+                        }
+                    }
+                }
+
+                if (aiResponse) {
+                    // 更新"思考中"消息为"生成预览中..."
+                    const thinkingElement = document.getElementById('thinking-msg');
+                    if (thinkingElement) {
+                        thinkingElement.textContent = '生成预览中...';
+                    }
+
+                    // 提取代码
+                    const modifiedCode = extractCode(aiResponse);
+
+                    // 移除"思考中"消息（只在成功生成预览后才移除）
+                    if (thinkingElement) {
+                        thinkingElement.remove();
+                    }
+
+                    // 显示AI回复
+                    addLocalMessage('✅ 已生成修改方案，请查看预览', 'ai');
+
+                    // 显示预览
+                    showLocalEditPreview(modifiedCode);
+                } else {
+                    throw new Error('AI未返回有效响应');
+                }
+            } catch (error) {
+                console.error('局部编辑请求失败:', error);
+
+                // 移除"思考中"消息
+                const thinkingElement = document.getElementById('thinking-msg');
+                if (thinkingElement) {
+                    thinkingElement.remove();
+                }
+
+                addLocalMessage('请求失败: ' + error.message, 'ai');
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        // 添加局部对话消息
+        function addLocalMessage(content, type) {
+            const chatMessages = document.getElementById('local-chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `local-message ${type}`;
+            messageDiv.textContent = content;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 显示局部编辑预览
+        function showLocalEditPreview(modifiedCode) {
+            const previewSection = document.getElementById('local-edit-preview');
+            const previewBox = document.getElementById('local-preview-box');
+
+            // 清空预览区
+            previewBox.innerHTML = '';
+
+            // 创建iframe来显示预览，参考实时预览的逻辑
+            const previewIframe = document.createElement('iframe');
+            previewIframe.style.width = '100%';
+            previewIframe.style.minHeight = '200px';
+            previewIframe.style.border = '1px solid #3e3e42';
+            previewIframe.style.borderRadius = '4px';
+            previewIframe.style.background = '#fff';
+
+            previewBox.appendChild(previewIframe);
+
+            // 使用srcdoc加载完整HTML到iframe中，这样echarts等外部库会在iframe上下文中正确加载
+            previewIframe.srcdoc = modifiedCode;
+
+            // 等待iframe加载完成
+            previewIframe.onload = () => {
+                console.log('[预览] 内容已加载到iframe');
+
+                // 自动调整iframe高度以适应内容
+                try {
+                    const iframeDoc = previewIframe.contentDocument || previewIframe.contentWindow.document;
+                    const contentHeight = iframeDoc.body.scrollHeight;
+                    if (contentHeight > 0) {
+                        previewIframe.style.height = Math.max(200, contentHeight + 20) + 'px';
+                    }
+                } catch (e) {
+                    console.error('[预览] 调整iframe高度失败:', e);
+                }
+            };
+
+            previewSection.style.display = 'block';
+
+            // 保存修改后的代码
+            window.pendingLocalEdit = modifiedCode;
+        }
+
+        // 应用局部编辑
+        function applyLocalEdit() {
+            if (!window.pendingLocalEdit || !selectedRange) {
+                alert('没有待应用的修改');
+                return;
+            }
+
+            try {
+                const previewFrame = document.getElementById('preview-frame');
+                const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+                // 创建临时div来解析HTML
+                const tempDiv = iframeDoc.createElement('div');
+                tempDiv.innerHTML = window.pendingLocalEdit;
+
+                // 删除原内容并插入新内容
+                selectedRange.deleteContents();
+
+                // 提取并单独处理script标签
+                const scripts = tempDiv.querySelectorAll('script');
+                const scriptContents = [];
+                const scriptSrcs = [];
+
+                scripts.forEach(script => {
+                    if (script.src) {
+                        // 外部脚本（如echarts CDN）
+                        scriptSrcs.push(script.src);
+                    } else if (script.textContent) {
+                        // 内联脚本（如echarts初始化代码）
+                        scriptContents.push(script.textContent);
+                    }
+                    script.remove(); // 从tempDiv中移除，稍后单独处理
+                });
+
+                // 插入所有新节点（不包括script）
+                while (tempDiv.firstChild) {
+                    selectedRange.insertNode(tempDiv.lastChild);
+                }
+
+                // 加载外部脚本
+                let loadedScripts = 0;
+                const totalScripts = scriptSrcs.length;
+
+                const executeInlineScripts = () => {
+                    // 执行内联脚本
+                    scriptContents.forEach(content => {
+                        try {
+                            // 在iframe的window上下文中执行
+                            const scriptElement = iframeDoc.createElement('script');
+                            scriptElement.textContent = content;
+                            iframeDoc.body.appendChild(scriptElement);
+                            console.log('[脚本执行] 内联脚本已执行');
+                        } catch (e) {
+                            console.error('[脚本执行] 内联脚本执行失败:', e);
+                        }
+                    });
+                };
+
+                if (totalScripts > 0) {
+                    // 依次加载外部脚本
+                    scriptSrcs.forEach((src, index) => {
+                        // 检查是否已经加载过
+                        const existingScript = iframeDoc.querySelector(`script[src="${src}"]`);
+                        if (existingScript) {
+                            console.log('[脚本加载] 已存在，跳过:', src);
+                            loadedScripts++;
+                            if (loadedScripts === totalScripts) {
+                                executeInlineScripts();
+                            }
+                            return;
+                        }
+
+                        const scriptElement = iframeDoc.createElement('script');
+                        scriptElement.src = src;
+                        scriptElement.onload = () => {
+                            console.log('[脚本加载] 成功:', src);
+                            loadedScripts++;
+                            if (loadedScripts === totalScripts) {
+                                // 所有外部脚本加载完成后，执行内联脚本
+                                setTimeout(executeInlineScripts, 100);
+                            }
+                        };
+                        scriptElement.onerror = () => {
+                            console.error('[脚本加载] 失败:', src);
+                            loadedScripts++;
+                            if (loadedScripts === totalScripts) {
+                                executeInlineScripts();
+                            }
+                        };
+                        iframeDoc.head.appendChild(scriptElement);
+                    });
+                } else {
+                    // 没有外部脚本，直接执行内联脚本
+                    executeInlineScripts();
+                }
+
+                // 同步到编辑器
+                syncPreviewToCode();
+                updateStatus('✅ 修改已应用');
+
+                // 关闭对话框
+                closeLocalEditModal();
+
+                // 清理
+                window.pendingLocalEdit = null;
+                selectedRange = null;
+                selectedElement = null;
+                selectionText = '';
+            } catch (error) {
+                console.error('应用修改失败:', error);
+                alert('应用修改失败: ' + error.message);
+            }
+        }
+
+        // 拒绝局部编辑
+        function rejectLocalEdit() {
+            document.getElementById('local-edit-preview').style.display = 'none';
+            window.pendingLocalEdit = null;
+            addLocalMessage('已拒绝此修改方案，请重新描述', 'ai');
+        }
+
+        // Enter键发送（Shift+Enter换行）
+        document.addEventListener('DOMContentLoaded', function () {
+            const localInput = document.getElementById('local-edit-input');
+            if (localInput) {
+                localInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendLocalEditRequest();
+                    }
+                });
+            }
+        });
+
+        // 在选中位置插入图片
+        function openImageInsertAtSelection() {
+            if (!selectedRange) {
+                alert('请先选中要插入图片的位置');
+                return;
+            }
+
+            // 检查登录状态
+            if (!currentUser) {
+                alert('请先登录后再使用图片上传功能');
+                window.location.href = '/demos/login.html';
+                return;
+            }
+
+            // 保存当前的Range和Element（打开对话框后会失效）
+            savedRange = selectedRange;
+            console.log('[图片插入] 已保存选中位置:', savedRange);
+
+            // 设置上下文为选中位置插入
+            currentImageContext = 'selection';
+
+            // 打开图片上传对话框
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            // 初始化事件监听
+            initImageUploadEvents();
+
+            // 隐藏工具栏
+            hideFloatingToolbar();
+        }
+
+        // 显示样式编辑面板
+        function showStylePanel() {
+            if (!selectedElement) {
+                alert('请先选中要调整样式的内容');
+                return;
+            }
+
+            const mainMenu = document.getElementById('toolbar-main-menu');
+            const stylePanel = document.getElementById('toolbar-style-panel');
+
+            mainMenu.style.display = 'none';
+            stylePanel.style.display = 'flex';
+
+            // 读取当前样式并设置到控件
+            loadCurrentStyles();
+
+            updateStatus('🎨 样式编辑面板已打开');
+        }
+
+        // 显示主菜单
+        function showMainMenu() {
+            const mainMenu = document.getElementById('toolbar-main-menu');
+            const stylePanel = document.getElementById('toolbar-style-panel');
+
+            mainMenu.style.display = 'flex';
+            stylePanel.style.display = 'none';
+
+            updateStatus('↩️ 已返回主菜单');
+        }
+
+        // 读取当前元素样式到控件
+        function loadCurrentStyles() {
+            if (!selectedElement) return;
+
+            const computedStyle = window.getComputedStyle(selectedElement);
+
+            // 设置字号
+            const fontSize = selectedElement.style.fontSize || computedStyle.fontSize;
+            const fontSizeSelect = document.getElementById('font-size-select');
+            if (fontSize && fontSizeSelect) {
+                fontSizeSelect.value = fontSize;
+            }
+
+            // 设置字体颜色
+            const color = selectedElement.style.color || computedStyle.color;
+            const fontColorPicker = document.getElementById('font-color-picker');
+            if (color && fontColorPicker) {
+                fontColorPicker.value = rgbToHex(color);
+            }
+
+            // 设置背景颜色
+            const bgColor = selectedElement.style.backgroundColor || computedStyle.backgroundColor;
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            if (bgColor && bgColorPicker) {
+                bgColorPicker.value = rgbToHex(bgColor);
+            }
+        }
+
+        // RGB颜色转HEX
+        function rgbToHex(rgb) {
+            if (!rgb || rgb === 'transparent' || rgb === 'rgba(0, 0, 0, 0)') {
+                return '#000000';
+            }
+
+            if (rgb.startsWith('#')) {
+                return rgb;
+            }
+
+            const result = rgb.match(/\d+/g);
+            if (!result || result.length < 3) {
+                return '#000000';
+            }
+
+            const r = parseInt(result[0]);
+            const g = parseInt(result[1]);
+            const b = parseInt(result[2]);
+
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        // 应用字体大小
+        function applyFontSize(size) {
+            if (!selectedElement) return;
+
+            if (size) {
+                selectedElement.style.fontSize = size;
+                syncPreviewToCode();
+                updateStatus(`✅ 已设置字号: ${size}`);
+            } else {
+                selectedElement.style.fontSize = '';
+                syncPreviewToCode();
+                updateStatus('✅ 已恢复默认字号');
+            }
+        }
+
+        // 应用字体颜色
+        function applyFontColor(color) {
+            if (!selectedElement) return;
+
+            selectedElement.style.color = color;
+            syncPreviewToCode();
+            updateStatus(`✅ 已设置字体颜色: ${color}`);
+        }
+
+        // 应用背景颜色
+        function applyBgColor(color) {
+            if (!selectedElement) return;
+
+            selectedElement.style.backgroundColor = color;
+            syncPreviewToCode();
+            updateStatus(`✅ 已设置背景颜色: ${color}`);
+        }
+
+        // 切换粗体
+        function toggleBold() {
+            if (!selectedElement) return;
+
+            const currentWeight = selectedElement.style.fontWeight;
+            if (currentWeight === 'bold' || currentWeight === '700') {
+                selectedElement.style.fontWeight = 'normal';
+                updateStatus('✅ 已取消粗体');
+            } else {
+                selectedElement.style.fontWeight = 'bold';
+                updateStatus('✅ 已设置粗体');
+            }
+
+            syncPreviewToCode();
+        }
+
+        // 切换斜体
+        function toggleItalic() {
+            if (!selectedElement) return;
+
+            const currentStyle = selectedElement.style.fontStyle;
+            if (currentStyle === 'italic') {
+                selectedElement.style.fontStyle = 'normal';
+                updateStatus('✅ 已取消斜体');
+            } else {
+                selectedElement.style.fontStyle = 'italic';
+                updateStatus('✅ 已设置斜体');
+            }
+
+            syncPreviewToCode();
+        }
+
+        // 切换下划线
+        function toggleUnderline() {
+            if (!selectedElement) return;
+
+            const currentDecoration = selectedElement.style.textDecoration;
+            if (currentDecoration.includes('underline')) {
+                selectedElement.style.textDecoration = 'none';
+                updateStatus('✅ 已取消下划线');
+            } else {
+                selectedElement.style.textDecoration = 'underline';
+                updateStatus('✅ 已设置下划线');
+            }
+
+            syncPreviewToCode();
+        }
+
+        // 清除样式
+        function clearStyles() {
+            if (!selectedElement) return;
+
+            if (confirm('确定要清除所有自定义样式吗？')) {
+                selectedElement.removeAttribute('style');
+                syncPreviewToCode();
+                updateStatus('✅ 已清除所有样式');
+
+                // 重新加载控件状态
+                loadCurrentStyles();
+            }
+        }
+
+        // 删除选中内容
+        function deleteSelection() {
+            if (!selectedRange) {
+                alert('请先选中要删除的内容');
+                return;
+            }
+
+            if (confirm('确定要删除选中的内容吗？')) {
+                try {
+                    selectedRange.deleteContents();
+
+                    // 同步到编辑器
+                    syncPreviewToCode();
+                    updateStatus('✅ 内容已删除');
+
+                    hideFloatingToolbar();
+                } catch (error) {
+                    alert('删除失败: ' + error.message);
+                }
+            }
+        }
+
+        // ========== 图片上传功能 ==========
+        let selectedImageData = null;
+        let currentImageContext = 'ai-chat'; // 'ai-chat', 'selection', 'global'
+        let savedRange = null; // 保存打开对话框前的Range
+
+        // 打开图片上传对话框
+        function openImageUploadDialog() {
+            // 检查登录状态
+            if (!currentUser) {
+                alert('请先登录后再使用图片上传功能');
+                window.location.href = '/demos/login.html';
+                return;
+            }
+
+            currentImageContext = 'ai-chat';
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            // 初始化事件监听
+            initImageUploadEvents();
+        }
+
+        // 打开我的图片库对话框
+        function openMyImagesDialog() {
+            // 检查登录状态
+            if (!currentUser) {
+                alert('请先登录后再使用图片库功能');
+                window.location.href = '/demos/login.html';
+                return;
+            }
+
+            currentImageContext = 'ai-chat';
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            // 切换到图片库标签页
+            switchImageTab('library');
+
+            // 初始化事件监听
+            initImageUploadEvents();
+            // 加载用户图片库
+            loadUserImages();
+        }
+
+        // 关闭图片对话框
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            selectedImageData = null;
+        }
+
+        // 切换图片标签页
+        function switchImageTab(tab) {
+            // 更新标签激活状态
+            document.querySelectorAll('.image-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.image-tab-pane').forEach(p => p.classList.remove('active'));
+
+            if (tab === 'upload') {
+                document.getElementById('tab-upload-image').classList.add('active');
+                document.getElementById('upload-pane').classList.add('active');
+            } else if (tab === 'library') {
+                document.getElementById('tab-library-image').classList.add('active');
+                document.getElementById('library-pane').classList.add('active');
+                loadUserImages();
+            } else if (tab === 'url') {
+                document.getElementById('tab-url-image').classList.add('active');
+                document.getElementById('url-pane').classList.add('active');
+            }
+        }
+
+        // 初始化图片上传事件
+        function initImageUploadEvents() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('image-file-input');
+            const widthSlider = document.getElementById('image-width-slider');
+            const widthValue = document.getElementById('width-value');
+
+            // 点击上传区域
+            uploadArea.onclick = function (e) {
+                if (e.target === uploadArea || e.target.classList.contains('upload-icon') ||
+                    e.target.classList.contains('upload-text') || e.target.classList.contains('upload-hint')) {
+                    fileInput.click();
+                }
+            };
+
+            // 文件选择
+            fileInput.onchange = function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    handleImageFile(file);
+                }
+            };
+
+            // 拖拽上传
+            uploadArea.ondragover = function (e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            };
+
+            uploadArea.ondragleave = function (e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            };
+
+            uploadArea.ondrop = function (e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleImageFile(file);
+                } else {
+                    alert('请上传图片文件');
+                }
+            };
+
+            // 宽度滑块
+            widthSlider.oninput = function () {
+                widthValue.textContent = this.value + '%';
+            };
+        }
+
+        // 处理图片文件
+        async function handleImageFile(file) {
+            // 验证文件大小
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                alert('图片大小不能超过5MB');
+                return;
+            }
+
+            // 验证文件类型
+            if (!file.type.startsWith('image/')) {
+                alert('只支持图片文件');
+                return;
+            }
+
+            // 显示上传进度
+            const progressDiv = document.getElementById('upload-progress');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            progressDiv.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '上传中... 0%';
+
+            // 创建FormData
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('请先登录');
+                    closeImageModal();
+                    window.location.href = '/demos/login.html';
+                    return;
+                }
+
+                // 模拟进度（实际应该用XMLHttpRequest监听上传进度）
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress <= 90) {
+                        progressFill.style.width = progress + '%';
+                        progressText.textContent = `上传中... ${progress}%`;
+                    }
+                }, 100);
+
+                const response = await fetch(`${API_BASE_URL}/images/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: 'include',
+                    body: formData
+                });
+
+                clearInterval(progressInterval);
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    progressFill.style.width = '100%';
+                    progressText.textContent = '上传成功！';
+
+                    // 保存图片数据
+                    selectedImageData = data.data;
+
+                    setTimeout(() => {
+                        progressDiv.style.display = 'none';
+                        alert('图片上传成功！现在可以设置插入选项');
+                    }, 500);
+                } else {
+                    throw new Error(data.message || '上传失败');
+                }
+            } catch (error) {
+                console.error('上传图片错误:', error);
+                alert('上传失败: ' + error.message);
+                progressDiv.style.display = 'none';
+            }
+        }
+
+        // 加载用户图片库
+        async function loadUserImages() {
+            const grid = document.getElementById('image-library-grid');
+            grid.innerHTML = '<p class="loading-text">加载中...</p>';
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    grid.innerHTML = '<p class="loading-text">请先登录</p>';
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/images/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const images = data.data.images || [];
+
+                    if (images.length === 0) {
+                        grid.innerHTML = '<p class="loading-text">暂无图片，请先上传</p>';
+                        return;
+                    }
+
+                    grid.innerHTML = '';
+                    images.forEach(image => {
+                        const item = document.createElement('div');
+                        item.className = 'image-item';
+                        item.setAttribute('data-image-id', image.id);
+                        // 构建完整的图片URL（添加后端服务器地址）
+                        const backendURL = API_BASE_URL.replace('/api', '');
+                        const thumbnailSrc = (image.thumbnail_url || image.url).startsWith('http')
+                            ? (image.thumbnail_url || image.url)
+                            : `${backendURL}${image.thumbnail_url || image.url}`;
+                        item.innerHTML = `
+        <img src="${thumbnailSrc}" alt="${image.original_name}">
+        <button class="image-item-delete" onclick="deleteImageFromLibrary(event, ${image.id})" title="删除图片">×</button>
+        <div class="image-item-info">
+            <div class="image-item-name" title="${image.original_name}">${image.original_name}</div>
+            <div class="image-item-size">${formatFileSize(image.file_size)}</div>
+        </div>
+        `;
+                        item.onclick = function (e) {
+                            // 如果点击的是删除按钮，不触发选中
+                            if (e.target.classList.contains('image-item-delete')) {
+                                return;
+                            }
+                            // 移除其他选中状态
+                            document.querySelectorAll('.image-item').forEach(i => i.classList.remove('selected'));
+                            // 添加选中状态
+                            this.classList.add('selected');
+                            // 保存选中的图片数据
+                            selectedImageData = image;
+                        };
+                        grid.appendChild(item);
+                    });
+                } else {
+                    throw new Error(data.message || '加载失败');
+                }
+            } catch (error) {
+                console.error('加载图片库错误:', error);
+                grid.innerHTML = `<p class="loading-text">加载失败: ${error.message}</p>`;
+            }
+        }
+
+        // 删除图片库中的图片
+        async function deleteImageFromLibrary(event, imageId) {
+            event.stopPropagation();
+
+            if (!confirm('确定要删除这张图片吗？删除后无法恢复。')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('请先登录');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/images/${imageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    updateStatus('✅ 图片已删除');
+
+                    // 从DOM中移除图片项
+                    const imageItem = document.querySelector(`[data-image-id="${imageId}"]`);
+                    if (imageItem) {
+                        imageItem.style.opacity = '0';
+                        imageItem.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            imageItem.remove();
+
+                            // 检查是否还有图片
+                            const grid = document.getElementById('image-library-grid');
+                            if (grid.children.length === 0) {
+                                grid.innerHTML = '<p class="loading-text">暂无图片，请先上传</p>';
+                            }
+                        }, 300);
+                    }
+
+                    // 如果删除的是当前选中的图片，清除选中状态
+                    if (selectedImageData && selectedImageData.id === imageId) {
+                        selectedImageData = null;
+                    }
+                } else {
+                    throw new Error(data.message || '删除失败');
+                }
+            } catch (error) {
+                console.error('删除图片错误:', error);
+                alert('删除失败: ' + error.message);
+            }
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // 预览URL图片
+        function previewImageUrl() {
+            const urlInput = document.getElementById('image-url-input');
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                alert('请输入图片URL');
+                return;
+            }
+
+            const previewArea = document.getElementById('url-preview-area');
+            const previewImg = document.getElementById('url-preview-img');
+
+            previewImg.src = url;
+            previewImg.onload = function () {
+                previewArea.style.display = 'block';
+                selectedImageData = {
+                    url: url,
+                    original_name: 'external-image',
+                    type: 'url'
+                };
+            };
+
+            previewImg.onerror = function () {
+                alert('图片加载失败，请检查URL是否正确');
+                previewArea.style.display = 'none';
+            };
+        }
+
+        // 确认插入图片
+        function confirmInsertImage() {
+            if (!selectedImageData) {
+                alert('请先选择或上传一张图片');
+                return;
+            }
+
+            // 获取插入选项
+            const width = document.getElementById('image-width-slider').value;
+            const align = document.querySelector('input[name="image-align"]:checked').value;
+            const alt = document.getElementById('image-alt-input').value || selectedImageData.original_name;
+
+            // 构建完整的图片URL（添加后端服务器地址）
+            const backendURL = API_BASE_URL.replace('/api', '');
+            const fullImageUrl = selectedImageData.url.startsWith('http')
+                ? selectedImageData.url
+                : `${backendURL}${selectedImageData.url}`;
+
+            console.log('插入图片URL:', fullImageUrl);
+
+            // 生成图片HTML代码
+            const imageHtml = generateImageHtml(fullImageUrl, alt, width, align);
+
+            // 根据上下文插入图片
+            if (currentImageContext === 'ai-chat') {
+                // AI对话模式：发送给AI让其智能插入
+                insertImageViaAI(selectedImageData, imageHtml);
+            } else if (currentImageContext === 'selection') {
+                // 选中内容模式：插入到选中位置
+                insertImageAtSelection(imageHtml);
+            } else {
+                // 全局模式：追加到编辑器末尾
+                insertImageToEditor(imageHtml);
+            }
+
+            // 关闭对话框
+            closeImageModal();
+        }
+
+        // 生成图片HTML代码
+        function generateImageHtml(url, alt, width, align) {
+            let style = `width: ${width}%;`;
+
+            if (align === 'center') {
+                style += ' display: block; margin: 20px auto;';
+            } else if (align === 'right') {
+                style += ' float: right; margin: 0 0 10px 10px;';
+            } else {
+                style += ' float: left; margin: 0 10px 10px 0;';
+            }
+
+            return `<img src="${url}" alt="${alt}" style="${style}">`;
+        }
+
+        // 通过AI智能插入图片
+        function insertImageViaAI(imageData, imageHtml) {
+            // 自动发送消息给AI
+            const message = `我上传了一张图片：${imageData.original_name}，请帮我将它插入到合适的位置。图片代码：\n\n${imageHtml}`;
+
+            // 添加到聊天消息
+            addMessage(`[已上传图片: ${imageData.original_name}]`, 'user');
+
+            // 发送给AI处理
+            sendMessageToAI(message, { hasImage: true, imageHtml: imageHtml });
+        }
+
+        // 发送消息给AI（带图片信息）
+        async function sendMessageToAI(message, options = {}) {
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(`${DIFY_API_URL}/chat-messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${DIFY_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: message,
+                        response_mode: 'streaming',
+                        conversation_id: conversationId,
+                        user: currentUser ? currentUser.username : 'visual-editor-user'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API 请求失败: ${response.statusText}`);
+                }
+
+                hideTypingIndicator();
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiResponse = '';
+                let messageElement = null;
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine && trimmedLine.startsWith('data: ')) {
+                            try {
+                                const jsonStr = trimmedLine.slice(6);
+                                if (!jsonStr) continue;
+                                const data = JSON.parse(jsonStr);
+
+                                if (data.event === 'message' || data.event === 'agent_message') {
+                                    aiResponse += data.answer;
+
+                                    if (!messageElement) {
+                                        addMessage('', 'ai');
+                                        const messages = document.querySelectorAll('.message-content');
+                                        messageElement = messages[messages.length - 1];
+                                        messageElement.setAttribute("data-is-generating", "true");
+                                    }
+
+                                    messageElement.setAttribute('data-original-content', aiResponse);
+                                    messageElement.innerHTML = formatMessageContent(aiResponse, true);
+                                } else if (data.event === 'message_end') {
+                                    conversationId = data.conversation_id || conversationId;
+                                    if (messageElement) {
+                                        messageElement.setAttribute("data-is-generating", "false");
+                                        messageElement.innerHTML = formatMessageContent(aiResponse);
+                                    }
+
+                                    // 如果包含图片，自动插入代码
+                                    if (options.hasImage && options.imageHtml && autoInsertCode) {
+                                        setTimeout(() => {
+                                            // AI生成的代码应该已经包含了图片，这里只是确保同步
+                                            autoInsertToEditor(aiResponse);
+                                        }, 500);
+                                    } else if (autoInsertCode && aiResponse.trim()) {
+                                        setTimeout(() => {
+                                            autoInsertToEditor(aiResponse);
+                                        }, 500);
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('解析错误:', e);
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage(`发送失败: ${error.message}`, 'ai');
+            }
+        }
+
+        // 插入图片到选中位置
+        function insertImageAtSelection(imageHtml) {
+            // 优先使用保存的Range
+            const rangeToUse = savedRange || selectedRange;
+
+            if (!rangeToUse) {
+                console.log('选中位置已失效，将插入到编辑器末尾');
+                insertImageToEditor(imageHtml);
+                updateStatus('⚠️ 选中位置已失效，图片已插入到编辑器末尾');
+                return;
+            }
+
+            try {
+                const previewFrame = document.getElementById('preview-frame');
+                const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+                // 创建临时div来解析HTML
+                const tempDiv = iframeDoc.createElement('div');
+                tempDiv.innerHTML = imageHtml;
+                const imgElement = tempDiv.firstElementChild;
+
+                console.log('[图片插入] 使用Range插入:', rangeToUse);
+
+                // 使用保存的Range插入
+                try {
+                    // 尝试删除选中内容（如果有的话）
+                    if (!rangeToUse.collapsed) {
+                        rangeToUse.deleteContents();
+                    }
+                    rangeToUse.insertNode(imgElement);
+                    console.log('✅ 图片已插入到选中位置');
+                } catch (e) {
+                    console.warn('Range插入失败，尝试使用selectedElement:', e);
+                    // 如果Range失效，尝试使用selectedElement
+                    if (selectedElement && selectedElement.parentNode) {
+                        selectedElement.parentNode.insertBefore(imgElement, selectedElement.nextSibling);
+                        console.log('✅ 图片已插入到选中元素后面');
+                    } else {
+                        throw new Error('Range和Element都失效');
+                    }
+                }
+
+                // 同步到编辑器
+                syncPreviewToCode();
+
+                // 为新插入的图片启用调整大小功能
+                makeImageResizable(imgElement);
+
+                // 清除保存的Range
+                savedRange = null;
+
+                updateStatus('✅ 图片已插入成功');
+            } catch (error) {
+                console.error('选中位置插入失败:', error);
+                alert('插入失败，将添加到编辑器末尾');
+                insertImageToEditor(imageHtml);
+                savedRange = null;
+            }
+        }
+
+        // 插入图片到编辑器
+        function insertImageToEditor(imageHtml) {
+            if (!editor) {
+                alert('编辑器尚未加载');
+                return;
+            }
+
+            const position = editor.getPosition();
+            const line = position ? position.lineNumber : editor.getModel().getLineCount();
+            const column = position ? position.column : 1;
+
+            editor.executeEdits('insert-image', [{
+                range: new monaco.Range(line, column, line, column),
+                text: '\n' + imageHtml + '\n'
+            }]);
+
+            updatePreview();
+            updateStatus('✅ 图片已插入到编辑器');
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('image-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+
+        // ========== 导出功能 ==========
+
+        // 打开导出对话框
+        function openExportDialog() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            // 计算统计信息
+            calculateExportStats();
+        }
+
+        // 关闭导出对话框
+        function closeExportDialog() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 计算导出统计信息
+        function calculateExportStats() {
+            const htmlCode = editor.getValue();
+            const htmlSize = new Blob([htmlCode]).size;
+
+            // 提取所有图片URL
+            const imgRegex = /<img[^>]+src="([^"]+)"/gi;
+            const images = [];
+            let match;
+
+            while ((match = imgRegex.exec(htmlCode)) !== null) {
+                images.push(match[1]);
+            }
+
+            document.getElementById('html-size').textContent = formatBytes(htmlSize);
+            document.getElementById('image-count').textContent = images.length + ' 张';
+            document.getElementById('total-size').textContent = '预计 ' + formatBytes(htmlSize + images.length * 100 *
+                1024); // 粗略估算
+        }
+
+        // 格式化字节大小
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // 开始导出
+        async function startExport() {
+            const exportType = document.querySelector('input[name="export-type"]:checked').value;
+            const minify = document.getElementById('export-minify').checked;
+
+            // 显示进度
+            document.getElementById('export-progress').style.display = 'block';
+            document.getElementById('start-export-btn').disabled = true;
+
+            try {
+                if (exportType === 'zip-images') {
+                    await exportAsZIP();
+                } else if (exportType === 'pdf') {
+                    await exportAsPDF();
+                } else {
+                    await exportAsHTMLOnly();
+                }
+            } catch (error) {
+                console.error('导出失败:', error);
+                alert('导出失败: ' + error.message);
+            } finally {
+                document.getElementById('export-progress').style.display = 'none';
+                document.getElementById('start-export-btn').disabled = false;
+            }
+        }
+
+        // 导出为ZIP包
+        async function exportAsZIP() {
+            updateExportProgress(0, '正在准备导出...');
+
+            const htmlCode = editor.getValue();
+            const zip = new JSZip();
+
+            // 提取所有图片URL
+            const imgRegex = /<img[^>]+src="([^"]+)"/gi;
+            const images = [];
+            let match;
+
+            while ((match = imgRegex.exec(htmlCode)) !== null) {
+                images.push(match[1]);
+            }
+
+            // 提取所有外部JavaScript库URL（包括echarts）
+            const scriptRegex = /<script[^>]+src="([^"]+)"/gi;
+            const scripts = [];
+            while ((match = scriptRegex.exec(htmlCode)) !== null) {
+                scripts.push(match[1]);
+            }
+
+            updateExportProgress(5, `找到 ${images.length} 张图片和 ${scripts.length} 个外部脚本`);
+
+            let htmlWithLocalResources = htmlCode;
+
+            // 下载外部JavaScript库
+            const jsFolderName = 'js';
+            for (let i = 0; i < scripts.length; i++) {
+                const scriptUrl = scripts[i];
+                updateExportProgress(5 + (i / (scripts.length + images.length)) * 40, `下载脚本 ${i + 1}/${scripts.length}...`);
+
+                try {
+                    // 下载外部CDN脚本（如echarts）
+                    if (scriptUrl.startsWith('http://') || scriptUrl.startsWith('https://')) {
+                        const response = await fetch(scriptUrl);
+                        const scriptContent = await response.text();
+
+                        // 生成本地文件名
+                        const fileName = scriptUrl.split('/').pop().split('?')[0] || `script-${i}.js`;
+                        const filePath = `${jsFolderName}/${fileName}`;
+
+                        // 添加到ZIP
+                        zip.file(filePath, scriptContent);
+
+                        // 转义URL中的特殊字符用于正则表达式
+                        const escapedUrl = scriptUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+                        // 替换HTML中的脚本路径 - 支持双引号、单引号和无引号的情况
+                        // 同时移除integrity和crossorigin属性（这些属性在本地使用时会导致问题）
+                        htmlWithLocalResources = htmlWithLocalResources.replace(
+                            new RegExp(`<script([^>]*?)\\s+src=["']?${escapedUrl}["']?([^>]*?)>`, 'gi'),
+                            (match, before, after) => {
+                                // 移除integrity和crossorigin属性
+                                before = before.replace(/\s+integrity=["'][^"']*["']/gi, '');
+                                before = before.replace(/\s+crossorigin=["'][^"']*["']/gi, '');
+                                after = after.replace(/\s+integrity=["'][^"']*["']/gi, '');
+                                after = after.replace(/\s+crossorigin=["'][^"']*["']/gi, '');
+                                return `<script${before} src="${filePath}"${after}>`;
+                            }
+                        );
+
+                        console.log(`[导出] 已下载脚本: ${scriptUrl} -> ${filePath}`);
+                    }
+                } catch (error) {
+                    console.error('下载脚本失败:', scriptUrl, error);
+                    // 脚本下载失败时，保留原CDN链接，添加注释提示
+                    const comment = `\n<!-- 注意: ${scriptUrl} 下载失败，需要网络连接才能使用 -->`;
+                    const escapedUrl = scriptUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    htmlWithLocalResources = htmlWithLocalResources.replace(
+                        new RegExp(`(<script[^>]*\\s+src=["']?${escapedUrl}["']?)`, 'gi'),
+                        `${comment}\n$1`
+                    );
+                }
+            }
+
+            // 下载图片
+            const imageFolderName = 'images';
+            const scriptCount = scripts.length;
+
+            // 获取当前服务器的基础URL
+            const currentHost = window.location.hostname;
+            const apiHost = API_BASE_URL.replace('/api', '').replace(/^https?:\/\//, '');
+
+            for (let i = 0; i < images.length; i++) {
+                const imgUrl = images[i];
+                updateExportProgress(45 + (i / images.length) * 40, `下载图片 ${i + 1}/${images.length}...`);
+
+                try {
+                    // 判断是否是本地服务器的图片
+                    const isLocalImage =
+                        imgUrl.startsWith('/uploads/') || // 相对路径
+                        imgUrl.startsWith(`http://${currentHost}`) || // 当前主机
+                        imgUrl.startsWith(`http://localhost`) || // localhost
+                        imgUrl.startsWith(`http://127.0.0.1`) || // 127.0.0.1
+                        imgUrl.includes(apiHost) || // API服务器
+                        imgUrl.startsWith(API_BASE_URL.replace('/api', '')); // API基础URL
+
+                    if (isLocalImage) {
+                        console.log(`[导出] 下载图片: ${imgUrl}`);
+                        const response = await fetch(imgUrl);
+                        const blob = await response.blob();
+
+                        // 生成文件名（保留原始文件名）
+                        const fileName = imgUrl.split('/').pop().split('?')[0]; // 移除查询参数
+                        const filePath = `${imageFolderName}/${fileName}`;
+
+                        // 添加到ZIP
+                        zip.file(filePath, blob);
+
+                        // 转义URL用于正则表达式
+                        const escapedUrl = imgUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+                        // 替换HTML中的图片路径（支持src和srcset）
+                        htmlWithLocalResources = htmlWithLocalResources.replace(
+                            new RegExp(`(src|srcset)=["']?${escapedUrl}["']?`, 'gi'),
+                            `$1="${filePath}"`
+                        );
+
+                        console.log(`[导出] 图片已保存: ${imgUrl} -> ${filePath}`);
+                    } else {
+                        console.log(`[导出] 跳过外部图片: ${imgUrl}`);
+                    }
+                } catch (error) {
+                    console.error('[导出] 下载图片失败:', imgUrl, error);
+                }
+            }
+
+            updateExportProgress(85, '生成HTML文件...');
+
+            // 调试：输出替换后的脚本标签
+            console.log('[导出调试] 检查HTML中的script标签替换结果:');
+            const debugScriptRegex = /<script[^>]*src=["']?([^"'\s>]+)["']?[^>]*>/gi;
+            let debugMatch;
+            while ((debugMatch = debugScriptRegex.exec(htmlWithLocalResources)) !== null) {
+                console.log('  - 脚本路径:', debugMatch[1]);
+            }
+
+            // 调试：输出替换后的图片标签
+            console.log('[导出调试] 检查HTML中的img标签替换结果:');
+            const debugImgRegex = /<img[^>]*src=["']?([^"'\s>]+)["']?[^>]*>/gi;
+            let debugImgMatch;
+            while ((debugImgMatch = debugImgRegex.exec(htmlWithLocalResources)) !== null) {
+                console.log('  - 图片路径:', debugImgMatch[1]);
+            }
+
+            // 在HTML开头添加调试注释
+            const debugComment = `<!--
+导出调试信息:
+- 导出时间: ${new Date().toLocaleString()}
+- 脚本数量: ${scripts.length}
+- 图片数量: ${images.length}
+- 注意: 如果图表不显示，请检查浏览器控制台的错误信息
+- 确认js文件夹中包含所有必要的库文件
+-->
+`;
+
+            // 添加HTML文件（带调试注释）
+            const finalHtml = debugComment + htmlWithLocalResources;
+            zip.file('index.html', finalHtml);
+
+            // 添加README说明文件
+            const readmeContent = `# 导出说明
+
+## 文件结构
+\`\`\`
+├── index.html          (主HTML文件)
+├── js/                 (JavaScript库文件夹)
+${scripts.length > 0 ? scripts.map((s, i) => `│   ├── ${s.split('/').pop().split('?')[0]}`).join('\n') : '│   (无外部脚本)'}
+├── images/             (图片文件夹)
+${images.length > 0 ? '│   ├── ... (图片文件)' : '│   (无图片)'}
+└── README.txt          (本说明文件)
+\`\`\`
+
+## 使用方法
+1. 解压此ZIP文件到任意文件夹
+2. 双击打开 index.html 文件
+3. 如果使用Chrome浏览器，建议右键 -> "打开方式" -> 选择Chrome
+
+## 如果echarts图表不显示，请检查：
+
+### 方法1：检查浏览器控制台
+1. 按F12打开开发者工具
+2. 切换到"Console"（控制台）标签
+3. 查看是否有红色错误信息
+4. 常见错误：
+   - "Failed to load resource" - 资源加载失败
+   - "echarts is not defined" - echarts未定义
+   - "CORS policy" - 跨域问题（需要使用Web服务器）
+
+### 方法2：检查文件结构
+1. 确认js文件夹存在
+2. 确认js文件夹中有echarts.min.js文件
+3. 文件大小应该在几百KB到几MB之间
+
+### 方法3：使用本地Web服务器
+某些浏览器对本地文件有安全限制，建议使用本地服务器：
+
+**使用Python启动：**
+\`\`\`bash
+# Python 3
+python -m http.server 8000
+
+# Python 2
+python -m SimpleHTTPServer 8000
+\`\`\`
+
+然后访问：http://localhost:8000
+
+**使用Node.js启动：**
+\`\`\`bash
+npx http-server -p 8000
+\`\`\`
+
+### 方法4：检查HTML源代码
+1. 右键查看网页源代码
+2. 搜索 <script 标签
+3. 确认src路径是相对路径（如：src="js/echarts.min.js"）
+4. 不应该包含http://或https://的CDN链接
+
+## 导出信息
+- 导出时间: ${new Date().toLocaleString()}
+- 脚本数量: ${scripts.length}
+- 图片数量: ${images.length}
+- 外部脚本列表:
+${scripts.length > 0 ? scripts.map((s, i) => `  ${i + 1}. ${s}`).join('\n') : '  (无外部脚本)'}
+
+## 技术支持
+如果问题仍然存在，请检查：
+1. 浏览器版本是否过旧
+2. 是否启用了广告拦截插件（可能拦截JavaScript）
+3. echarts版本是否兼容
+
+## 常见问题
+
+**Q: 为什么要使用本地Web服务器？**
+A: 现代浏览器对本地文件有安全限制（CORS），使用Web服务器可以避免这些问题。
+
+**Q: 图表显示空白但没有错误？**
+A: 检查图表容器的宽度和高度是否正确设置（不能为0或auto）。
+
+**Q: 部分功能正常但echarts不工作？**
+A: echarts库可能未正确下载，检查js文件夹中的文件大小。
+`;
+            zip.file('README.txt', readmeContent);
+
+            updateExportProgress(92, '打包ZIP文件...');
+
+            // 生成ZIP并下载
+            const content = await zip.generateAsync({
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 6 }
+            });
+
+            updateExportProgress(100, '导出完成！');
+
+            // 触发下载
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = `smartoffice-export-${Date.now()}.zip`;
+            link.click();
+
+            setTimeout(() => {
+                closeExportDialog();
+            }, 1000);
+        }
+
+        // 导出为单个HTML（Base64嵌入）
+        async function exportAsHTMLWithBase64() {
+            updateExportProgress(0, '正在准备导出...');
+
+            const htmlCode = editor.getValue();
+            const maxSize = parseInt(document.getElementById('base64-max-size').value) * 1024 || 500 * 1024;
+
+            // 提取所有图片URL
+            const imgRegex = /<img[^>]+src="([^"]+)"/gi;
+            const images = [];
+            let match;
+
+            while ((match = imgRegex.exec(htmlCode)) !== null) {
+                images.push(match[1]);
+            }
+
+            updateExportProgress(10, `找到 ${images.length} 张图片`);
+
+            let htmlWithBase64 = htmlCode;
+
+            for (let i = 0; i < images.length; i++) {
+                const imgUrl = images[i];
+                updateExportProgress(10 + (i / images.length) * 80, `处理图片 ${i + 1}/${images.length}...`);
+
+                try {
+                    if (imgUrl.startsWith('/uploads/') || imgUrl.startsWith('http://localhost')) {
+                        const response = await fetch(imgUrl);
+                        const blob = await response.blob();
+
+                        // 检查文件大小
+                        if (blob.size > maxSize) {
+                            console.warn(`图片过大，跳过: ${imgUrl} (${formatBytes(blob.size)})`);
+                            continue;
+                        }
+
+                        // 转换为Base64
+                        const base64 = await blobToBase64(blob);
+
+                        // 替换URL为Base64
+                        htmlWithBase64 = htmlWithBase64.replace(
+                            new RegExp(imgUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+                            base64
+                        );
+                    }
+                } catch (error) {
+                    console.error('处理图片失败:', imgUrl, error);
+                }
+            }
+
+            updateExportProgress(100, '导出完成！');
+
+            // 触发下载
+            downloadHTML(htmlWithBase64, `smartoffice-export-${Date.now()}.html`);
+
+            setTimeout(() => {
+                closeExportDialog();
+                alert('导出成功！HTML文件已下载');
+            }, 1000);
+        }
+
+        // 导出为纯HTML
+        async function exportAsHTMLOnly() {
+            updateExportProgress(50, '准备HTML文件...');
+
+            const htmlCode = editor.getValue();
+
+            updateExportProgress(100, '导出完成！');
+
+            // 触发下载
+            downloadHTML(htmlCode, `smartoffice-export-${Date.now()}.html`);
+
+            setTimeout(() => {
+                closeExportDialog();
+                alert('导出成功！HTML文件已下载');
+            }, 500);
+        }
+
+        // 导出为PDF
+        async function exportAsPDF() {
+            updateExportProgress(0, '正在准备PDF导出...');
+
+            try {
+                // 获取预览iframe的内容
+                const previewFrame = document.getElementById('preview-frame');
+                const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+                updateExportProgress(20, '正在渲染页面...');
+
+                // 创建一个新的窗口来渲染PDF
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    throw new Error('无法打开打印窗口，请允许浏览器弹出窗口');
+                }
+
+                // 获取完整HTML
+                const htmlContent = iframeDoc.documentElement.outerHTML;
+
+                updateExportProgress(40, '正在生成PDF...');
+
+                // 写入内容到新窗口
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+
+                // 等待资源加载完成
+                await new Promise((resolve) => {
+                    if (printWindow.document.readyState === 'complete') {
+                        resolve();
+                    } else {
+                        printWindow.addEventListener('load', resolve);
+                    }
+                });
+
+                updateExportProgress(60, '正在配置打印选项...');
+
+                // 给一点时间让样式生效
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                updateExportProgress(80, '正在打开打印对话框...');
+
+                // 调用打印对话框
+                printWindow.focus();
+                printWindow.print();
+
+                updateExportProgress(100, '导出完成！');
+
+                setTimeout(() => {
+                    closeExportDialog();
+                }, 1000);
+
+                console.log('[PDF导出] 已打开打印对话框，请在打印对话框中选择"另存为PDF"');
+            } catch (error) {
+                console.error('[PDF导出] 导出失败:', error);
+                throw error;
+            }
+        }
+
+        // Blob转Base64
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // 下载HTML文件
+        function downloadHTML(content, filename) {
+            const blob = new Blob([content], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        // 更新导出进度
+        function updateExportProgress(percent, text) {
+            document.getElementById('export-progress-fill').style.width = percent + '%';
+            document.getElementById('export-progress-text').textContent = text;
+        }
+
+        // 点击模态框外部关闭导出对话框
+        document.getElementById('export-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeExportDialog();
+            }
+        });
     </script>
 </body>
 

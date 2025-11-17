@@ -15,15 +15,59 @@ FLUSH PRIVILEGES;
 -- 使用新创建的数据库
 USE monaco_editor_db;
 
--- 创建用户表
+-- 创建用户表（扩展版本）
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
+    avatar_url VARCHAR(500) DEFAULT '/assets/avatars/default-avatar.png',
+    role ENUM('user', 'admin') DEFAULT 'user',
+    full_name VARCHAR(100),
+    phone VARCHAR(20),
+    bio TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    last_login_at TIMESTAMP NULL,
+    login_attempts INT DEFAULT 0,
+    locked_until TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE
+    INDEX idx_username (username),
+    INDEX idx_email (email),
+    INDEX idx_role (role)
+);
+
+-- 创建会话表
+CREATE TABLE IF NOT EXISTS sessions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(500) NOT NULL,
+    refresh_token VARCHAR(500),
+    ip_address VARCHAR(50),
+    user_agent TEXT,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token(255)),
+    INDEX idx_user_id (user_id),
+    INDEX idx_expires_at (expires_at)
+);
+
+-- 创建用户操作日志表
+CREATE TABLE IF NOT EXISTS user_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(100) NOT NULL,
+    description TEXT,
+    ip_address VARCHAR(50),
+    user_agent TEXT,
+    status ENUM('success', 'failed') DEFAULT 'success',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_user_id (user_id),
+    INDEX idx_action (action),
+    INDEX idx_created_at (created_at),
+    INDEX idx_status (status)
 );
 
 -- 创建代码片段表
@@ -36,9 +80,13 @@ CREATE TABLE IF NOT EXISTS code_snippets (
     description TEXT,
     tags JSON,
     is_public BOOLEAN DEFAULT FALSE,
+    shared_with JSON,
+    view_count INT DEFAULT 0,
+    fork_from INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (fork_from) REFERENCES code_snippets(id) ON DELETE SET NULL
 );
 
 -- 创建AI对话记录表
@@ -116,6 +164,13 @@ CREATE INDEX idx_ai_conversations_created_at ON ai_conversations(created_at);
 
 -- 显示创建的表
 SHOW TABLES;
+
+-- 插入默认管理员账户
+-- 密码: Ad123456 (已使用bcrypt加密)
+-- 注意：这个hash是示例，实际运行时会通过初始化脚本生成
+INSERT INTO users (username, email, password_hash, role, full_name, is_active)
+VALUES ('admin', 'admin@monaco-editor.local', '$2b$10$placeholder', 'admin', '系统管理员', TRUE)
+ON DUPLICATE KEY UPDATE username = username;
 
 -- 显示数据库信息
 SELECT 'Monaco Editor 数据库创建完成！' as message;

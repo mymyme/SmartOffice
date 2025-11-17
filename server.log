@@ -6,3 +6,6 @@ nohup: 忽略输入
 🤖 AI 演示: http://localhost:3005/ai
 🎨 可视化编辑器: http://localhost:3005/visual
 ⏹️  按 Ctrl+C 停止服务器
+
+🛑 正在关闭服务器...
+✅ 服务器已关闭

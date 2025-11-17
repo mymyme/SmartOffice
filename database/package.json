@@ -10,9 +10,9 @@
     "restore": "mysql -h localhost -P 3307 -u monaco_user -p monaco_editor_db < backup.sql"
   },
   "dependencies": {
-    "mysql2": "^3.6.5"
+    "bcrypt": "^6.0.0",
+    "mysql2": "^3.15.3"
   },
-  "devDependencies": {},
   "keywords": [
     "monaco-editor",
     "mysql",
@@ -26,4 +26,3 @@
     "node": ">=14.0.0"
   }
 }
-

@@ -18,10 +18,12 @@ const mimeTypes = {
     '.wav': 'audio/wav',
     '.mp4': 'video/mp4',
     '.woff': 'application/font-woff',
+    '.woff2': 'application/font-woff2',
     '.ttf': 'application/font-ttf',
     '.eot': 'application/vnd.ms-fontobject',
     '.otf': 'application/font-otf',
-    '.wasm': 'application/wasm'
+    '.wasm': 'application/wasm',
+    '.map': 'application/json'
 };
 
 const server = http.createServer((req, res) => {
@@ -29,18 +31,67 @@ const server = http.createServer((req, res) => {
     const parsedUrl = url.parse(req.url);
     let pathname = parsedUrl.pathname;
 
+    // 本地 monaco-editor 静态映射：/vs/* -> node_modules/monaco-editor/min/vs/*
+    if (pathname.startsWith('/vs/')) {
+        const vsRoot = path.join(__dirname, '..', 'node_modules', 'monaco-editor', 'min');
+        const filePath = path.join(vsRoot, pathname); // pathname 已以 /vs 开头，对应 min/vs/...
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+                res.end('Not Found');
+                return;
+            }
+            const ext = path.extname(filePath).toLowerCase();
+            const contentType = mimeTypes[ext] || 'application/octet-stream';
+            fs.readFile(filePath, (readErr, data) => {
+                if (readErr) {
+                    res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                    res.end('Internal Server Error');
+                    return;
+                }
+                res.writeHead(200, {
+                    'Content-Type': contentType + '; charset=utf-8',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                });
+                res.end(data);
+            });
+        });
+        return;
+    }
+
     // 默认页面
     if (pathname === '/') {
-        pathname = '/demo.html';
+        pathname = '/demos/visual-editor.html';
     }
 
     // AI 演示页面
     if (pathname === '/ai') {
-        pathname = '/ai-demo.html';
+        pathname = '/demos/ai-demo.html';
     }
 
-    // 构建文件路径
-    const filePath = path.join(__dirname, pathname);
+    // 路径别名映射
+    if (pathname === '/visual-editor.html') {
+        pathname = '/demos/visual-editor.html';
+    }
+    if (pathname === '/default-code-in-editor.html') {
+        pathname = '/demos/default-code-in-editor.html';
+    }
+    if (pathname === '/profile.html') {
+        pathname = '/demos/profile.html';
+    }
+    if (pathname === '/admin.html') {
+        pathname = '/demos/admin.html';
+    }
+    if (pathname === '/login.html') {
+        pathname = '/demos/login.html';
+    }
+
+    // 构建文件路径 - 相对于 frontend 目录
+    // __dirname 是 frontend/services，所以需要回到上一级
+    const baseDir = path.join(__dirname, '..');
+    const filePath = path.join(baseDir, pathname);
 
     // 检查文件是否存在
     fs.access(filePath, fs.constants.F_OK, (err) => {
