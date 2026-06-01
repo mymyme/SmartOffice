@@ -69,3 +69,4 @@ docker-compose.mysql.yml
 
 # 一次性修复脚本
 database/fix-html-content.js
+frontend/demos/visual-editor/assets/js/config/local.js

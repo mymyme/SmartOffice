@@ -590,11 +590,12 @@
         checkAppVersion(APP_VERSION);
         // ==================== 版本管理结束 ====================
 
+<script src="assets/js/config/local.js"></script>
         // 自动检测 API 地址
         const isRemoteAccess = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-        const API_BASE_URL = isRemoteAccess
+        const API_BASE_URL = window.API_BASE_URL || (isRemoteAccess
             ? `http://${window.location.hostname}:3006/api`
-            : 'http://localhost:3006/api';
+            : 'http://localhost:3006/api');
         console.log('API地址:', API_BASE_URL, '(访问方式:', isRemoteAccess ? '远程' : '本地', ')');
 
         createApp({
