@@ -18,6 +18,9 @@ A visual document editing platform built on [Monaco Editor](https://github.com/m
 - **Code Versioning** -- Track and manage document/code revisions with history
 - **Word Export** -- Export documents to DOCX format
 
+![SmartOffice Screenshot 1](215713.png)
+![SmartOffice Screenshot 2](20260601220604.jpg)
+
 ## Tech Stack
 
 | Layer | Technology |
