@@ -1,0 +1,303 @@
+/* =====================================================
+   Component Styles - 组件样式
+   包含：Buttons、Inputs、Tabs、Progress
+   ===================================================== */
+
+/* ==================== Buttons 按钮 ==================== */
+.header-controls button {
+    padding: 6px 16px;
+    background: #0e639c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.header-controls button:hover {
+    background: #1177bb;
+}
+
+.header-controls button.active {
+    background: #16825d;
+}
+
+/* 启用编辑按钮 - 特殊样式 */
+#toggle-edit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #00d4ff 100%);
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+#toggle-edit-btn:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #00bfe6 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
+}
+
+#toggle-edit-btn.active {
+    background: linear-gradient(135deg, #16825d 0%, #10b981 100%);
+    box-shadow: 0 2px 8px rgba(22, 130, 93, 0.4);
+}
+
+#toggle-edit-btn.active:hover {
+    background: linear-gradient(135deg, #15765a 0%, #0ea574 100%);
+    box-shadow: 0 4px 12px rgba(22, 130, 93, 0.5);
+}
+
+/* 撤销/重做按钮 */
+#undo-btn,
+#redo-btn {
+    transition: all 0.2s ease;
+}
+
+#undo-btn:disabled,
+#redo-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #2d2d30;
+}
+
+#undo-btn:disabled:hover,
+#redo-btn:disabled:hover {
+    background: #2d2d30;
+    border-color: #4e4e4e;
+    transform: none;
+    box-shadow: none;
+}
+
+#undo-btn:not(:disabled):hover,
+#redo-btn:not(:disabled):hover {
+    background: #0e639c;
+    border-color: #0e639c;
+}
+
+/* 通用按钮样式 */
+.btn-primary {
+    padding: 10px 20px;
+    background: #0e639c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1177bb;
+}
+
+.btn-primary:disabled {
+    background: #3e3e42;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background: #3e3e42;
+    color: #ccc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #4e4e4e;
+}
+
+.btn-preview {
+    padding: 10px 20px;
+    background: #0e639c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-preview:hover {
+    background: #1177bb;
+}
+
+.action-button {
+    padding: 10px 12px;
+    background: #2d2d30;
+    color: white;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    background: #3e3e42;
+    transform: scale(1.1);
+}
+
+.action-button:active {
+    transform: scale(0.95);
+}
+
+/* ==================== Inputs 输入框 ==================== */
+.search-input,
+.url-input,
+.alt-input {
+    width: 100%;
+    padding: 10px 15px;
+    background: #1e1e1e;
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.search-input:focus,
+.url-input:focus,
+.alt-input:focus {
+    outline: none;
+    border-color: #0e639c;
+}
+
+.alt-input {
+    padding: 8px 12px;
+    margin-top: 5px;
+}
+
+/* ==================== Progress Bar 进度条 ==================== */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #3e3e42;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0e639c, #16825d);
+    transition: width 0.3s;
+    width: 0%;
+}
+
+.progress-text {
+    color: #ccc;
+    font-size: 13px;
+}
+
+.upload-progress {
+    margin-top: 20px;
+}
+
+/* ==================== Options & Forms 选项和表单 ==================== */
+.option-group {
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.option-group label {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.radio-label {
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.radio-label input {
+    margin-right: 5px;
+}
+
+.url-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.url-input-group label {
+    color: #ccc;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.url-input {
+    flex: 1;
+}
+
+/* ==================== Slider 滑块 ==================== */
+#image-width-slider {
+    width: 200px;
+    margin: 0 10px;
+}
+
+#width-value {
+    color: #0e639c;
+    font-weight: 600;
+}
+
+/* ==================== Tabs 标签页 ==================== */
+.image-tabs {
+    display: flex;
+    background: #252526;
+    border-bottom: 2px solid #3e3e42;
+}
+
+.image-tab {
+    flex: 1;
+    padding: 12px 15px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.image-tab:hover {
+    background: #2d2d30;
+    color: #ccc;
+}
+
+.image-tab.active {
+    color: #0e639c;
+    border-bottom-color: #0e639c;
+    background: #2d2d30;
+}
+
+.image-tab-pane {
+    display: none;
+}
+
+.image-tab-pane.active {
+    display: block;
+}
+
+/* ==================== Toolbar Buttons 工具栏按钮 ==================== */
+.toolbar-buttons-collapsed {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.toolbar-buttons-expanded {
+    max-height: 500px;
+    transition: max-height 0.3s ease-in;
+}
+

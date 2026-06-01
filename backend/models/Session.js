@@ -98,6 +98,42 @@ class Session {
         );
         return sessions;
     }
+
+    /**
+     * 获取在线用户数（最近5分钟内活跃）
+     * 定义：会话未过期且最近5分钟内有更新活动
+     */
+    static async getOnlineUsersCount() {
+        const result = await db.query(
+            `SELECT COUNT(DISTINCT user_id) as count
+             FROM ${db.tables.sessions}
+             WHERE expires_at > NOW()
+               AND updated_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)`,
+            []
+        );
+        return result[0]?.count || 0;
+    }
+
+    /**
+     * 获取在线用户详情列表（最近5分钟内活跃）
+     * 返回在线用户的基本信息
+     */
+    static async getOnlineUsers() {
+        const users = await db.query(
+            `SELECT DISTINCT
+                u.id,
+                u.username,
+                u.avatar_url,
+                s.updated_at as last_activity
+             FROM ${db.tables.sessions} s
+             JOIN ${db.tables.users} u ON s.user_id = u.id
+             WHERE s.expires_at > NOW()
+               AND s.updated_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+             ORDER BY s.updated_at DESC`,
+            []
+        );
+        return users;
+    }
 }
 
 module.exports = Session;

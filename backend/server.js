@@ -14,6 +14,8 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
 const imageRoutes = require('./routes/images');
+const conversationRoutes = require('./routes/conversations');
+const codeVersionRoutes = require('./routes/codeVersions');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
@@ -25,9 +27,7 @@ const PORT = process.env.PORT || 3006;
 // CORS 配置 - 必须在所有其他中间件之前
 const defaultOrigins = [
     'http://localhost:3005',
-    'http://localhost:3006',
-    'http://8.152.98.33:8300',  // FRP前端端口
-    'http://8.152.98.33:8301'   // FRP后端端口
+    'http://localhost:3006'
 ];
 
 // 检查 origin 是否允许的函数
@@ -39,10 +39,6 @@ function isOriginAllowed(origin) {
         : defaultOrigins;
 
     if (allowedOrigins.indexOf(origin) !== -1) {
-        return true;
-    }
-
-    if (origin.match(/^http:\/\/(8\.152\.98\.33|191\.0\.12\.75):\d+$/)) {
         return true;
     }
 
@@ -163,6 +159,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/code-versions', codeVersionRoutes);
 
 // 根路径
 app.get('/', (req, res) => {
@@ -298,4 +296,3 @@ process.on('unhandledRejection', (reason, promise) => {
 startServer();
 
 module.exports = app;
-

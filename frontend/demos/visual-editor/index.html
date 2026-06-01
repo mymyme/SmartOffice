@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- 注意：移除了 no-cache 以允许静态资源缓存 -->
+	<title>天下文档，唯快不破</title>
+	<link rel="icon"
+		href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+	<base href="/demos/visual-editor/">
+
+	<!-- ========== 模块化CSS文件 ========== -->
+	<link rel="stylesheet" href="assets/css/base.css">
+	<link rel="stylesheet" href="assets/css/layout.css">
+	<link rel="stylesheet" href="assets/css/components.css">
+	<link rel="stylesheet" href="assets/css/modals.css">
+	<link rel="stylesheet" href="assets/css/editor.css">
+	<link rel="stylesheet" href="assets/css/chat.css">
+	<link rel="stylesheet" href="assets/css/toolbar.css">
+	<link rel="stylesheet" href="assets/css/version-management.css">
+	<link rel="stylesheet" href="assets/css/icons.css">
+	<link rel="stylesheet" href="assets/css/markdown.css">
+</head>
+
+<body>
+	<div class="main-container">
+		<div class="header">
+			<h1><span class="icon icon-lg icon-palette"></span> 天下文档，唯快不破</h1>
+			<div class="header-controls">
+				<button id="toolbar-toggle-btn" onclick="toggleToolbar()" style="background: #2196F3; display: none;"><span class="icon icon-arrow-down"></span>
+					展开</button>
+				<div id="toolbar-buttons" class="toolbar-buttons-collapsed" style="display: none;">
+					<button id="toggle-editor-btn" onclick="toggleCodeEditor()"><span class="icon icon-play"></span> 显示编辑器</button>
+					<button id="auto-insert-toggle" onclick="toggleAutoInsert()" style="background: #4CAF50;"><span class="icon icon-robot"></span> 自动插入:
+						开</button>
+					<button id="code-block-toggle" onclick="toggleCodeBlocks()" style="background: #f44336;"><span class="icon icon-clipboard"></span> 显示代码块:
+						关</button>
+					<button onclick="runCode()"><span class="icon icon-play"></span> 运行代码</button>
+				</div>
+				<button id="toggle-edit-btn" onclick="toggleEditMode()"><span class="icon icon-edit"></span> 启用编辑</button>
+				<button id="undo-btn" onclick="undoPreviewEdit()" style="display:none;" title="撤销 (最多5步)"><span class="icon icon-undo"></span> 撤销</button>
+				<button id="redo-btn" onclick="redoPreviewEdit()" style="display:none;" title="重做 (最多5步)"><span class="icon icon-redo"></span> 重做</button>
+				<button onclick="clearCode()"><span class="icon icon-trash"></span> 清空</button>
+				<button onclick="openExportDialog()"><span class="icon icon-package"></span> 导出</button>
+
+				<!-- 未登录时的触发按钮 -->
+				<a href="./login.html" id="login-trigger" style="display: flex !important; align-items: center !important; gap: 8px !important;
+                               padding: 6px 16px !important; background: #0e639c !important; color: white !important;
+                               border: none !important; border-radius: 3px !important; cursor: pointer !important;
+                               font-size: 13px !important; text-decoration: none !important;">
+					<span class="icon icon-lg icon-user" style="font-size: 18px;"></span>
+					<span>请登录</span>
+				</a>
+
+				<!-- 用户菜单区域 -->
+				<div class="user-menu" id="user-menu" style="display: none !important; flex-direction: row !important; align-items: center !important;
+                            gap: 10px !important; margin-left: 20px !important; position: relative !important;">
+					<span class="user-name" id="user-name" onclick="toggleUserDropdown()"
+						style="color: white !important; font-size: 14px !important; cursor: pointer !important;">用户</span>
+					<img id="user-avatar-img" onclick="toggleUserDropdown()" class="user-avatar"
+						src="assets/avatars/default-avatar.svg" alt="用户头像">
+					<div class="dropdown" id="user-dropdown">
+						<a href="./profile.html" class="dropdown-item" id="profile-link" style="display: flex !important; color: #cccccc !important; visibility: visible !important; opacity: 1 !important;">👤 个人中心</a>
+						<a href="./admin.html" class="dropdown-item" id="admin-link" style="display: none;"><span class="icon icon-shield"></span> 管理后台</a>
+						<div class="dropdown-item" onclick="logout()"><span class="icon icon-logout"></span> 退出登录</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="content">
+			<div class="panel left-panel hidden">
+				<div class="panel-header">代码编辑器</div>
+				<div class="panel-content">
+					<div id="code-editor"></div>
+				</div>
+			</div>
+			<div class="panel middle-panel expanded">
+				<div class="panel-header">
+					<span>实时预览</span>
+					<span id="edit-mode-badge" class="panel-badge" style="display:none;">可编辑</span>
+					<!-- 版本管理标签容器 -->
+					<div id="version-tags-container" class="version-tags-container" style="display:none;"></div>
+					<!-- 保存按钮 -->
+					<button id="save-code-btn" onclick="saveCode()" class="preview-save-btn" title="保存当前代码为新版本"><span class="icon icon-save"></span> 保存</button>
+				</div>
+				<div class="panel-content"><iframe id="preview-frame"></iframe></div>
+			</div>
+			<div class="resizer" id="resizer"></div>
+			<div class="panel right-panel expanded">
+				<div class="panel-header">
+					<span>AI 对话助手</span>
+					<button id="new-conversation-btn" class="conversation-list-btn" onclick="newConversation()"
+						title="新增对话">
+						<span class="icon icon-plus"></span>
+					</button>
+					<button id="conversation-list-btn" class="conversation-list-btn" onclick="openConversationList()"
+						title="对话记录">
+						<span class="icon icon-clipboard"></span>
+					</button>
+				</div>
+				<div class="panel-content">
+					<div class="chat-container">
+						<div class="chat-messages" id="chat-messages">
+							<div class="chat-message">
+								<div class="message-avatar ai-avatar">AI</div>
+								<div class="message-content">
+									你好！我是你的文档编写助手，可以尝试和我说：<br>
+									我要给政府的领导汇报，请帮我根据以下内容生成汇报材料，着重突出数据对比的内容，要求层次结构分明，样式好看。<br>
+									#项目建设方案<br>
+									Xxxxx<br>
+									#参考文档名字1<br>
+									Xxxxx<br>
+									#参考文档名字2<br>
+									xxxxx<br>
+									📝tips：<br>
+									1、可以在“#参考文档名字”后的xxx中，丢给我以下材料，以文本形式复制进来<br>
+									• 如: 项目的建设方案、参考的各类文档、示例风格稿等<br>
+								</div>
+							</div>
+						</div>
+						<div class="chat-input-area">
+							<div class="chat-input-container">
+								<textarea id="chat-input" class="chat-input"
+									placeholder="输入消息...按 Enter 发送，Shift+Enter 换行" rows="1"></textarea>
+								<button id="upload-image-btn" class="action-button" onclick="openImageUploadDialog()"
+									title="上传图片"><span class="icon icon-attach"></span></button>
+								<button id="my-images-btn" class="action-button" onclick="openMyImagesDialog()"
+									title="我的图片库"><span class="icon icon-image"></span></button>
+								<button id="send-btn" class="send-button" onclick="handleSendClick()">发送</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 浮动工具栏（预览区选中时显示）-->
+	<div class="floating-toolbar" id="floating-toolbar">
+		<!-- 主菜单 -->
+		<div id="toolbar-main-menu" class="toolbar-menu">
+			<button class="toolbar-btn" id="toolbar-ai-edit" onclick="openLocalEditDialog()" title="AI局部编辑">
+				<span class="icon icon-edit"></span> AI编辑
+			</button>
+			<button class="toolbar-btn" id="toolbar-insert-image" onclick="openImageInsertAtSelection()" title="插入图片">
+				<span class="icon icon-camera"></span> 插入图片
+			</button>
+			<button class="toolbar-btn" id="toolbar-style" onclick="showStylePanel()" title="样式调整">
+				<span class="icon icon-palette"></span> 样式
+			</button>
+			<button class="toolbar-btn" id="toolbar-delete" onclick="deleteSelection()" title="删除选中内容">
+				<span class="icon icon-trash"></span> 删除
+			</button>
+		</div>
+
+		<!-- 样式编辑面板 -->
+		<div id="toolbar-style-panel" class="toolbar-menu" style="display:none;">
+			<button class="toolbar-btn toolbar-back-btn" onclick="showMainMenu()" title="返回主菜单">
+				← 返回
+			</button>
+			<div class="style-controls">
+				<div class="style-control-group">
+					<label>字号:</label>
+					<select id="font-size-select" onchange="applyFontSize(this.value)">
+						<option value="">默认</option>
+						<option value="12px">12px</option>
+						<option value="14px">14px</option>
+						<option value="16px">16px</option>
+						<option value="18px">18px</option>
+						<option value="20px">20px</option>
+						<option value="24px">24px</option>
+						<option value="28px">28px</option>
+						<option value="32px">32px</option>
+						<option value="36px">36px</option>
+					</select>
+				</div>
+				<div class="style-control-group">
+					<label>颜色:</label>
+					<input type="color" id="font-color-picker" onchange="applyFontColor(this.value)" title="字体颜色">
+				</div>
+				<div class="style-control-group">
+					<label>背景:</label>
+					<input type="color" id="bg-color-picker" onchange="applyBgColor(this.value)" title="背景颜色">
+				</div>
+				<button class="toolbar-btn" onclick="toggleBold()" title="粗体">
+					<strong>B</strong>
+				</button>
+				<button class="toolbar-btn" onclick="toggleItalic()" title="斜体">
+					<em>I</em>
+				</button>
+				<button class="toolbar-btn" onclick="toggleUnderline()" title="下划线">
+					<u>U</u>
+				</button>
+				<button class="toolbar-btn" onclick="clearStyles()" title="清除样式">
+					<span class="icon icon-broom"></span> 清除
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 局部编辑对话框 -->
+	<div class="local-edit-modal" id="local-edit-modal">
+		<div class="local-edit-content">
+			<div class="local-edit-header">
+				<h2><span class="icon icon-edit"></span> AI局部编辑</h2>
+				<button class="modal-close" onclick="closeLocalEditModal()">&times;</button>
+			</div>
+
+			<div class="local-edit-body">
+				<!-- 选中内容显示 -->
+				<div class="selected-content-display">
+					<h3>选中的内容：</h3>
+					<div class="selected-text-box" id="selected-text-display">
+						请在预览区选中要编辑的内容
+					</div>
+				</div>
+
+				<!-- AI对话区 -->
+				<div class="local-chat-area">
+					<h3>编辑指令：</h3>
+					<div class="local-chat-messages" id="local-chat-messages">
+						<div class="local-chat-welcome">
+							<span class="icon icon-lightbulb"></span> 请描述您想对选中内容进行的修改，例如：<br>
+							• "改为加粗"<br>
+							• "添加红色背景"<br>
+							• "改写为更专业的表述"<br>
+							• "在此位置插入一个按钮"<br>
+							• "添加一个echarts柱状图"<br>
+							• "替换为一个echarts饼图展示数据"
+						</div>
+					</div>
+				</div>
+
+				<!-- 输入区 -->
+				<div class="local-chat-input-area">
+					<textarea id="local-edit-input" class="local-edit-input"
+						placeholder="输入编辑指令...（Enter发送，Shift+Enter换行）" rows="2"></textarea>
+					<button class="local-send-btn" onclick="sendLocalEditRequest()">发送</button>
+				</div>
+
+				<!-- 预览修改 -->
+				<div class="local-edit-preview" id="local-edit-preview" style="display:none;">
+					<h3>修改预览：</h3>
+					<div class="preview-box" id="local-preview-box"></div>
+					<div class="preview-actions">
+						<button class="btn-secondary" onclick="rejectLocalEdit()">拒绝</button>
+						<button class="btn-primary" onclick="applyLocalEdit()">应用修改</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 对话列表弹窗 -->
+	<div class="conversation-list-modal" id="conversation-list-modal">
+		<div class="conversation-list-content">
+			<div class="conversation-list-header">
+				<h2><span class="icon icon-clipboard"></span> 对话记录</h2>
+				<button class="modal-close" onclick="closeConversationList()">&times;</button>
+			</div>
+			<div class="conversation-list-body" id="conversation-list-body">
+				<div class="conversation-loading">
+					加载中...
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 图片上传/选择对话框 -->
+	<div class="image-modal" id="image-modal">
+		<div class="image-modal-content">
+			<div class="image-modal-header">
+				<h2><span class="icon icon-camera"></span> 插入图片</h2>
+				<button class="modal-close" onclick="closeImageModal()">&times;</button>
+			</div>
+
+			<div class="image-tabs">
+				<button class="image-tab active" id="tab-upload-image" onclick="switchImageTab('upload')">上传新图片</button>
+				<button class="image-tab" id="tab-library-image" onclick="switchImageTab('library')">我的图片库</button>
+				<button class="image-tab" id="tab-url-image" onclick="switchImageTab('url')">图片URL</button>
+			</div>
+
+			<div class="image-modal-body">
+				<!-- 上传新图片面板 -->
+				<div class="image-tab-pane active" id="upload-pane">
+					<div class="upload-area" id="upload-area">
+						<div class="upload-icon-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6c757d"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></div>
+						<p class="upload-text">点击或拖拽上传图片</p>
+						<p class="upload-hint">支持：JPG, PNG, GIF, WebP, SVG | 最大：5MB</p>
+						<input type="file" id="image-file-input" accept="image/*" hidden>
+						<div class="upload-progress" id="upload-progress" style="display:none;">
+							<div class="progress-bar">
+								<div class="progress-fill" id="progress-fill"></div>
+							</div>
+							<p class="progress-text" id="progress-text">上传中... 0%</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- 我的图片库面板 -->
+				<div class="image-tab-pane" id="library-pane">
+					<div class="image-library-search">
+						<input type="text" id="image-search-input" placeholder="搜索图片..." class="search-input">
+					</div>
+					<div class="image-library-grid" id="image-library-grid">
+						<p class="loading-text">加载中...</p>
+					</div>
+				</div>
+
+				<!-- 图片URL面板 -->
+				<div class="image-tab-pane" id="url-pane">
+					<div class="url-input-group">
+						<label>图片URL地址：</label>
+						<input type="text" id="image-url-input" placeholder="https://example.com/image.jpg"
+							class="url-input">
+						<button onclick="previewImageUrl()" class="btn-preview">预览</button>
+					</div>
+					<div id="url-preview-area" class="url-preview-area" style="display:none;">
+						<img id="url-preview-img" src="" alt="预览">
+					</div>
+				</div>
+
+				<!-- 插入选项 -->
+				<div class="insert-options">
+					<div class="option-group">
+						<label>宽度：</label>
+						<input type="range" id="image-width-slider" min="10" max="100" value="80" step="5">
+						<span id="width-value">80%</span>
+					</div>
+					<div class="option-group">
+						<label>对齐：</label>
+						<label class="radio-label">
+							<input type="radio" name="image-align" value="left"> 左对齐
+						</label>
+						<label class="radio-label">
+							<input type="radio" name="image-align" value="center" checked> 居中
+						</label>
+						<label class="radio-label">
+							<input type="radio" name="image-align" value="right"> 右对齐
+						</label>
+					</div>
+					<div class="option-group">
+						<label>Alt文字：</label>
+						<input type="text" id="image-alt-input" placeholder="图片描述" class="alt-input">
+					</div>
+				</div>
+			</div>
+
+			<div class="image-modal-footer">
+				<button class="btn-secondary" onclick="closeImageModal()">取消</button>
+				<button class="btn-primary" id="insert-image-btn" onclick="confirmInsertImage()">插入图片</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 导出对话框 -->
+	<div class="export-modal" id="export-modal">
+		<div class="export-modal-content">
+			<div class="export-modal-header">
+				<h2><span class="icon icon-package"></span> 导出项目</h2>
+				<button class="modal-close" onclick="closeExportDialog()">&times;</button>
+			</div>
+
+			<div class="export-modal-body">
+				<div class="export-option-group">
+					<h3>导出格式：</h3>
+					<label class="export-radio-label">
+						<input type="radio" name="export-type" value="zip-images" checked>
+						<span class="icon icon-zip"></span> ZIP包（HTML + 图片文件）
+						<p class="export-hint">将HTML和所有图片打包成ZIP文件，适合离线使用或分享</p>
+					</label>
+					<label class="export-radio-label">
+						<input type="radio" name="export-type" value="html-only">
+						<span class="icon icon-doc"></span> 仅HTML（保留图片URL）
+						<p class="export-hint">只导出HTML代码，图片保持原URL链接（需要网络访问）</p>
+					</label>
+					<label class="export-radio-label">
+						<input type="radio" name="export-type" value="pdf">
+						<span class="icon icon-doc"></span> PDF文档
+						<p class="export-hint">将页面导出为PDF文档，保留所有样式和布局</p>
+					</label>
+					<label class="export-radio-label">
+						<input type="radio" name="export-type" value="docx">
+						<span class="icon icon-doc"></span> Word文档 (.docx)
+						<p class="export-hint">高保真导出为Word文档，支持复杂样式和布局（88%保真度）</p>
+					</label>
+				</div>
+
+				<div class="export-option-group">
+					<h3>导出选项：</h3>
+					<label class="export-checkbox-label">
+						<input type="checkbox" id="export-minify" checked>
+						压缩HTML（移除空格和注释）
+					</label>
+					<label class="export-checkbox-label">
+						<input type="checkbox" id="export-include-css" checked>
+						包含内联CSS
+					</label>
+					<label class="export-checkbox-label">
+						<input type="checkbox" id="export-include-js" checked>
+						包含内联JavaScript
+					</label>
+				</div>
+
+				<div class="export-preview-section">
+					<h3>导出预览：</h3>
+					<div class="export-stats" id="export-stats">
+						<p>HTML大小: <span id="html-size">计算中...</span></p>
+						<p>图片数量: <span id="image-count">计算中...</span></p>
+						<p>预计大小: <span id="total-size">计算中...</span></p>
+					</div>
+				</div>
+
+				<div class="export-progress" id="export-progress" style="display:none;">
+					<div class="progress-bar">
+						<div class="progress-fill" id="export-progress-fill"></div>
+					</div>
+					<p class="progress-text" id="export-progress-text">准备导出...</p>
+				</div>
+			</div>
+
+			<div class="export-modal-footer">
+				<button class="btn-secondary" onclick="closeExportDialog()">取消</button>
+				<button class="btn-primary" id="start-export-btn" onclick="startExport()">开始导出</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ========== JavaScript文件 ========== -->
+	<!-- ⚠️ 关键库必须在 Monaco Editor 之前加载，避免 AMD 加载器干扰 -->
+
+	<!-- JSZip 库（用于 ZIP 导出） -->
+	<script src="assets/libs/jszip.min.js?v=20250121003"></script>
+	<script>
+		// 立即保存 JSZip 引用，防止被其他库覆盖
+		console.log('✅ JSZip 预加载检查:', typeof JSZip);
+		if (typeof JSZip !== 'undefined') {
+			window._JSZipSafe = JSZip;
+			console.log('✅ JSZip 已加载并保存安全副本，版本:', JSZip.version);
+		} else {
+			console.error('❌ JSZip 加载失败！');
+		}
+	</script>
+
+	<!-- Markdown 渲染器 -->
+	<script src="assets/libs/markdown-renderer.js"></script>
+	<script>
+		console.log('🔍 Markdown 渲染器预加载检查:', typeof MarkdownRenderer);
+		if (typeof MarkdownRenderer !== 'undefined') {
+			window._MarkdownRendererSafe = MarkdownRenderer;
+			console.log('✅ Markdown 渲染器已加载并保存安全副本');
+		} else {
+			console.error('❌ Markdown 渲染器加载失败！');
+		}
+	</script>
+
+	<!-- docx.js 库（用于 Word 导出）- 本地版本 v7.8.2 -->
+	<script src="assets/libs/docx.min.js"></script>
+	<script>
+		// 立即保存 docx 引用，防止被其他库覆盖
+		console.log('🔍 docx 预加载检查:', typeof docx);
+		if (typeof docx !== 'undefined') {
+			window._docxSafe = docx;
+			console.log('✅ docx.js 已加载并保存安全副本（本地版本 v7.8.2）');
+		} else {
+			console.error('❌ docx.js 加载失败！Word 导出功能将不可用');
+		}
+	</script>
+
+	<!-- 第三方库 -->
+	<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+
+	<script>
+		// Monaco Editor 加载后，恢复被覆盖的库
+		if (typeof JSZip === 'undefined' && window._JSZipSafe) {
+			window.JSZip = window._JSZipSafe;
+			console.log('✅ JSZip 已从安全副本恢复');
+		}
+
+		if (typeof docx === 'undefined' && window._docxSafe) {
+			window.docx = window._docxSafe;
+			console.log('✅ docx 已从安全副本恢复');
+		}
+	</script>
+
+	<!-- 配置文件 -->
+	<script src="assets/js/config/constants.js"></script>
+
+	<!-- 版本管理模块 -->
+	<script src="assets/js/version-manager.js"></script>
+
+	<!-- 注意：不在主页面加载 echarts/mermaid，避免与 Monaco Editor AMD 加载器冲突 -->
+	<!-- 这些库由 iframe 内部按需加载，通过服务器缓存头优化加载速度 -->
+
+	<!-- Word 导出模块（按依赖顺序加载） -->
+	<script src="assets/js/word-export/utils.js"></script>
+	<script src="assets/js/word-export/style-mapper.js"></script>
+	<script src="assets/js/word-export/image-processor.js"></script>
+	<script src="assets/js/word-export/echarts-processor.js"></script>
+	<script src="assets/js/word-export/layout-optimizer.js"></script>
+	<script src="assets/js/word-export/preprocessor.js"></script>
+	<script src="assets/js/word-export/element-handlers.js"></script>
+	<script src="assets/js/word-export/converter.js"></script>
+
+	<!-- 主应用文件 -->
+	<script src="assets/js/app.js"></script>
+</body>
+
+</html>

@@ -8,8 +8,8 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 -- 创建专用用户（可选，更安全）
-CREATE USER IF NOT EXISTS 'monaco_user'@'localhost' IDENTIFIED BY 'monaco_password_2024';
-GRANT ALL PRIVILEGES ON monaco_editor_db.* TO 'monaco_user'@'localhost';
+CREATE USER IF NOT EXISTS 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password_here';
+GRANT ALL PRIVILEGES ON monaco_editor_db.* TO 'your_db_user'@'localhost';
 FLUSH PRIVILEGES;
 
 -- 使用新创建的数据库
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    avatar_url VARCHAR(500) DEFAULT '/assets/avatars/default-avatar.png',
+    avatar_url VARCHAR(500) DEFAULT '/assets/avatars/default-avatar.svg',
     role ENUM('user', 'admin') DEFAULT 'user',
     full_name VARCHAR(100),
     phone VARCHAR(20),

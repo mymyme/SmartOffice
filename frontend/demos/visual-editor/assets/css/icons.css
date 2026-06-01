@@ -1,0 +1,436 @@
+/* ========================================
+   SVG Icons System - Iconfont Style
+   线性风格图标，更加精致美观
+   ======================================== */
+
+/* 基础图标样式 */
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.15em;
+	flex-shrink: 0;
+}
+
+.icon svg {
+	width: 100%;
+	height: 100%;
+	fill: currentColor;
+}
+
+/* 图标尺寸变体 */
+.icon-sm {
+	width: 0.875em;
+	height: 0.875em;
+}
+
+.icon-lg {
+	width: 1.25em;
+	height: 1.25em;
+}
+
+.icon-xl {
+	width: 1.5em;
+	height: 1.5em;
+}
+
+/* 图标颜色变体 */
+.icon-white {
+	filter: brightness(0) invert(1);
+}
+
+.icon-dark {
+	filter: brightness(0);
+}
+
+/* ========================================
+   精致线性图标 - Iconfont风格
+   ======================================== */
+
+/* 调色板/画笔图标 */
+.icon-palette {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448c25 0 45.3-20.3 45.3-45.3 0-11.8-4.5-22.5-11.8-30.6-7.1-8-11.6-18.5-11.6-30 0-25 20.3-45.4 45.4-45.4h53.4c137.5 0 249.1-111.6 249.1-249.1C881.9 249.2 714.5 64 512 64zM256 512c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m128-192c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m256 0c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m128 192c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 上传图标 */
+.icon-upload {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M544 864V672h128L512 480 352 672h128v192H320V672H160l352-352 352 352H704v192H544zM160 192h704v64H160z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 锁定图标 */
+.icon-lock {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M832 464h-68V240c0-70.7-57.3-128-128-128H388c-70.7 0-128 57.3-128 128v224h-68c-17.7 0-32 14.3-32 32v384c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V496c0-17.7-14.3-32-32-32zM332 240c0-30.9 25.1-56 56-56h248c30.9 0 56 25.1 56 56v224H332V240z m280 560c0 4.4-3.6 8-8 8h-56v56c0 4.4-3.6 8-8 8h-56c-4.4 0-8-3.6-8-8v-56h-56c-4.4 0-8-3.6-8-8v-56c0-4.4 3.6-8 8-8h56v-56c0-4.4 3.6-8 8-8h56c4.4 0 8 3.6 8 8v56h56c4.4 0 8 3.6 8 8v56z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 消息/对话图标 */
+.icon-chat {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M573.7 765.6c143.2-26.5 252.3-152.4 252.3-304.1 0-169.7-141.1-307.2-315.2-307.2S195.6 291.8 195.6 461.5c0 94.8 44.7 179.5 114.5 235.3l-47.5 118.6 166.9-95.7c28.5 6.6 58.3 10.2 88.9 10.2 18.7 0 37.1-1.5 55.3-4.3z m-267-333c-25.9 0-46.9-21-46.9-46.9s21-46.9 46.9-46.9 46.9 21 46.9 46.9-21 46.9-46.9 46.9z m204.5 0c-25.9 0-46.9-21-46.9-46.9s21-46.9 46.9-46.9 46.9 21 46.9 46.9-21 46.9-46.9 46.9z m204.5 0c-25.9 0-46.9-21-46.9-46.9s21-46.9 46.9-46.9 46.9 21 46.9 46.9-21 46.9-46.9 46.9z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 错误/警告图标 */
+.icon-error {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ff4d4f'%3E%3Cpath d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m165.4 618.2l-66-0.3L512 563.4l-99.3 118.4-66.1 0.3c-4.4 0-8-3.5-8-8 0-1.9 0.7-3.7 1.9-5.2l130.1-155L340.5 359c-1.2-1.5-1.9-3.3-1.9-5.2 0-4.4 3.6-8 8-8l66.1 0.3L512 464.6l99.3-118.4 66-0.3c4.4 0 8 3.5 8 8 0 1.9-0.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 删除/垃圾桶图标 */
+.icon-trash {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72z'/%3E%3Cpath d='M864 256H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 编辑/铅笔图标 */
+.icon-edit {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M257.7 752c2 0 4-0.2 6-0.5L431.9 722c2-0.4 3.9-1.3 5.3-2.8l423.9-423.9c3.9-3.9 3.9-10.2 0-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2c-1.9 11.1 1.5 21.9 9.4 29.8 6.6 6.4 14.9 9.9 23.8 9.9z m67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89z'/%3E%3Cpath d='M880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 添加/加号图标 */
+.icon-plus {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M482 152h60c8.8 0 16 7.2 16 16v304h304c8.8 0 16 7.2 16 16v60c0 8.8-7.2 16-16 16H558v304c0 8.8-7.2 16-16 16h-60c-8.8 0-16-7.2-16-16V564H162c-8.8 0-16-7.2-16-16v-60c0-8.8 7.2-16 16-16h304V168c0-8.8 7.2-16 16-16z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 剪贴板/复制图标 */
+.icon-clipboard {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M832 112H724V72c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v40H500V72c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v40H320c-17.7 0-32 14.3-32 32v120h-96c-17.7 0-32 14.3-32 32v568c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V296c0-17.7-14.3-32-32-32h-96V144c0-17.7-14.3-32-32-32z m-40 64v40H360v-40h432z m0 184v504H232V360h560z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 用户图标 */
+.icon-user {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M858.5 763.6c-18.9-44.8-46.1-85-80.6-119.5-34.5-34.5-74.7-61.6-119.5-80.6-0.4-0.2-0.8-0.3-1.2-0.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-0.4 0.2-0.8 0.3-1.2 0.5-44.8 18.9-85 46-119.5 80.6-34.5 34.5-61.6 74.7-80.6 119.5C146.9 807.5 137 854 136 901.8c-0.1 4.5 3.5 8.2 8 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9c54.8 54.8 85.8 127.1 87.8 204.3 0.1 4.3 3.6 7.8 8 7.8h60c4.5 0 8.1-3.7 8-8.2-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 保存图标 */
+.icon-save {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M893.3 293.3L730.7 130.7c-7.5-7.5-16.7-13-26.7-16V112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V338.5c0-17-6.7-33.2-18.7-45.2zM384 184h256v104H384V184z m456 656H184V184h136v136c0 17.7 14.3 32 32 32h320c17.7 0 32-14.3 32-32V205.8l136 136V840z'/%3E%3Cpath d='M512 442c-79.5 0-144 64.5-144 144s64.5 144 144 144 144-64.5 144-144-64.5-144-144-144z m0 224c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 相机/拍照图标 */
+.icon-camera {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M864 260H728l-32.4-90.8c-5.5-15.3-20.1-25.2-36.4-25.2H364.8c-16.3 0-30.9 9.9-36.4 25.2L296 260H160c-44.2 0-80 35.8-80 80v456c0 44.2 35.8 80 80 80h704c44.2 0 80-35.8 80-80V340c0-44.2-35.8-80-80-80z m16 536c0 8.8-7.2 16-16 16H160c-8.8 0-16-7.2-16-16V340c0-8.8 7.2-16 16-16h176c16.3 0 30.9-9.9 36.4-25.2L404.8 208h214.4l32.4 90.8c5.5 15.3 20.1 25.2 36.4 25.2h176c8.8 0 16 7.2 16 16v456z'/%3E%3Cpath d='M512 384c-88.4 0-160 71.6-160 160s71.6 160 160 160 160-71.6 160-160-71.6-160-160-160z m0 256c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 附件/回形针图标 */
+.icon-attach {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M779.3 196.6c-94.2-94.2-247.6-94.2-341.7 0l-261 260.8c-1.7 1.7-2.6 4-2.6 6.4s0.9 4.7 2.6 6.4l36.9 36.9c3.5 3.5 9.2 3.5 12.7 0l261-260.8c32.4-32.4 75.5-50.2 121.3-50.2s88.9 17.8 121.2 50.2c32.4 32.4 50.2 75.5 50.2 121.2 0 45.8-17.8 88.8-50.2 121.2l-266 265.9-43.1 43.1c-40.3 40.3-105.8 40.3-146.1 0-19.5-19.5-30.2-45.4-30.2-73s10.7-53.5 30.2-73l263.9-263.8c6.7-6.6 15.5-10.3 24.9-10.3h0.1c9.4 0 18.1 3.7 24.7 10.3 6.7 6.7 10.3 15.5 10.3 24.9 0 9.3-3.7 18.1-10.3 24.7L372.4 653c-1.7 1.7-2.6 4-2.6 6.4s0.9 4.7 2.6 6.4l36.9 36.9c3.5 3.5 9.2 3.5 12.7 0l215.6-215.6c19.9-19.9 30.8-46.3 30.8-74.4s-11-54.6-30.8-74.4c-41.1-41.1-107.9-41-149 0L224 598.2c-35.2 35.2-54.5 82-54.5 131.8s19.4 96.6 54.5 131.8c72.5 72.5 190.1 72.5 262.6 0l339.5-339.6c94.1-94.1 94.1-247.5-0.1-341.6l0.3 15.4z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 机器人/AI图标 */
+.icon-robot {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M300 328c-22.1 0-40 17.9-40 40v160c0 22.1 17.9 40 40 40s40-17.9 40-40V368c0-22.1-17.9-40-40-40z m424 0c-22.1 0-40 17.9-40 40v160c0 22.1 17.9 40 40 40s40-17.9 40-40V368c0-22.1-17.9-40-40-40z'/%3E%3Cpath d='M852 64H172c-17.7 0-32 14.3-32 32v660c0 17.7 14.3 32 32 32h680c17.7 0 32-14.3 32-32V96c0-17.7-14.3-32-32-32z m-32 660H204V128h616v596z'/%3E%3Cpath d='M300 624h424v64H300z m60 192h304v64H360z'/%3E%3Cpath d='M512 896c35.3 0 64-28.7 64-64h-128c0 35.3 28.7 64 64 64z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 包/导出图标 */
+.icon-package {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M888.3 757.4h-53.8c-4.2 0-7.7 3.5-7.7 7.7v61.8H197.1V197.1h629.8v61.8c0 4.2 3.5 7.7 7.7 7.7h53.8c4.2 0 7.7-3.4 7.7-7.7V158c0-17-13.7-30.7-30.7-30.7H158c-17 0-30.7 13.7-30.7 30.7v707.9c0 17 13.7 30.7 30.7 30.7h707.9c17 0 30.7-13.7 30.7-30.7V765.1c0-4.3-3.5-7.7-7.7-7.7z'/%3E%3Cpath d='M902 476H588v-76c0-6.7-7.8-10.5-13-6.3l-141.9 120c-4.1 3.5-4.1 9.9 0 13.4l141.9 120c5.3 4.5 13 0.3 13-6.3v-76h314c4.4 0 8-3.6 8-8v-73c0-4.4-3.6-7.8-8-7.8z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 清除/扫把图标 */
+.icon-broom {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M899.1 869.6l-53-305.6H864c14.4 0 26-11.6 26-26V346c0-14.4-11.6-26-26-26H618V138c0-14.4-11.6-26-26-26H432c-14.4 0-26 11.6-26 26v182H160c-14.4 0-26 11.6-26 26v192c0 14.4 11.6 26 26 26h17.9l-53 305.6c-0.3 1.5-0.4 3-0.4 4.4 0 14.4 11.6 26 26 26h723c1.5 0 3-0.1 4.4-0.4 14.2-2.4 23.7-15.9 21.2-30zM204 390h272V182h72v208h272v104H204V390z m468 440V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H416V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H202.8l45.1-260H776l45.1 260H672z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 灯泡/提示图标 */
+.icon-lightbulb {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23faad14'%3E%3Cpath d='M632 888H392c-4.4 0-8 3.6-8 8v32c0 17.7 14.3 32 32 32h192c17.7 0 32-14.3 32-32v-32c0-4.4-3.6-8-8-8zM512 64c-181.1 0-328 146.9-328 328 0 121.4 66 227.4 164 284.1V792c0 17.7 14.3 32 32 32h264c17.7 0 32-14.3 32-32V676.1c98-56.7 164-162.7 164-284.1 0-181.1-146.9-328-328-328z m127.9 549.8L604 634.6V752H420V634.6l-35.9-20.8C305.4 568.3 256 484.5 256 392c0-141.4 114.6-256 256-256s256 114.6 256 256c0 92.5-49.4 176.3-128.1 221.8z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 盾牌/管理图标 */
+.icon-shield {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M866.9 169.9L527.1 54.1C523 52.7 517.5 52 512 52s-11 0.7-15.1 2.1L157.1 169.9c-8.3 2.8-15.1 12.4-15.1 21.2v482.4c0 8.8 5.7 20.4 12.6 25.9L499.3 968c3.5 2.7 8 4.1 12.6 4.1s9.2-1.4 12.6-4.1l344.7-268.6c6.9-5.4 12.6-17 12.6-25.9V191.1c0.2-8.8-6.6-18.3-14.9-21.2zM810 654.3L512 886.5 214 654.3V226.7l298-101.6 298 101.6v427.6z'/%3E%3Cpath d='M402.9 528.8l-77.5 77.5c-4.5 4.5-3.6 11.9 1.7 15.4l160.8 105.1c7.8 5.1 18.2-0.7 18.2-10.1V497.1c0-8.3-9.5-12.8-15.6-7.5l-87.6 39.2z m218.2 0l87.5-39.1c6.1-5.4 15.6-0.9 15.6 7.5v219.5c0 9.5-10.4 15.2-18.2 10.1L545.2 621.7c-5.3-3.5-6.2-10.9-1.7-15.4l77.6-77.5z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 退出/门图标 */
+.icon-logout {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M868 732h-70.3c-4.8 0-9.3 2.1-12.3 5.8-7 8.5-14.5 16.7-22.4 24.5-32.1 31.8-69.5 56.8-111.2 74.2-43.2 18-89.1 27.2-136.3 27.2s-93.1-9.1-136.3-27.2c-41.7-17.4-79.1-42.4-111.2-74.2-32.1-31.8-57.2-68.9-74.6-110.3C176 609.4 167 563.9 167 517s9-92.4 26.8-134.8c17.4-41.4 42.4-78.5 74.6-110.3 32.1-31.8 69.5-56.8 111.2-74.2 43.2-18 89.1-27.2 136.3-27.2s93.1 9.1 136.3 27.2c41.7 17.4 79.1 42.4 111.2 74.2 7.9 7.8 15.4 16 22.4 24.5 3.1 3.7 7.5 5.8 12.3 5.8H868c6.3 0 10.2-7 6.7-12.3C798 160.5 663.9 81.6 511.3 82 271.7 82.6 79.6 277.1 82 516.4 84.4 751.9 276.2 942 512.4 942c152.1 0 285.7-78.8 362.3-197.7 3.4-5.3-0.4-12.3-6.7-12.3z'/%3E%3Cpath d='M727.9 476H412c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h315.9l-98.5 98.5c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.4c3.1 3.1 8.2 3.1 11.3 0l176.8-176.8c3.1-3.1 3.1-8.2 0-11.3l-176.8-176.8c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.4c-3.1 3.1-3.1 8.2 0 11.3l98.5 98.5z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 文档图标 */
+.icon-doc {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326z m1.8 562H232V136h302v216c0 23.2 18.8 42 42 42h216v494z'/%3E%3Cpath d='M544 472c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h232c4.4 0 8-3.6 8-8v-48z m0 144c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h232c4.4 0 8-3.6 8-8v-48z m176-64c0-4.4-3.6-8-8-8H304c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h408c4.4 0 8-3.6 8-8v-48z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* ZIP/压缩包图标 */
+.icon-zip {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M854.6 288.7c6 6 9.4 14.1 9.4 22.6V928c0 17.7-14.3 32-32 32H192c-17.7 0-32-14.3-32-32V96c0-17.7 14.3-32 32-32h424.7c8.5 0 16.7 3.4 22.7 9.4l215.2 215.3zM790.2 326L602 137.8V326h188.2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 图片图标 */
+.icon-image {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M928 160H96c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h832c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32z m-40 632H136V232h752v560z'/%3E%3Cpath d='M304 456c48.6 0 88-39.4 88-88s-39.4-88-88-88-88 39.4-88 88 39.4 88 88 88z m0-120c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32z'/%3E%3Cpath d='M886.4 610.3L768 448.6l-79.2 99.2-143.6-188.8c-4.1-5.4-10.6-8.6-17.4-8.6h-0.4c-7 0.1-13.5 3.6-17.4 9.3L332.2 623.1l-44.2-66.4c-4.1-6.1-10.9-9.7-18-9.7s-13.9 3.7-18 9.7l-88 132v51.8h680l42.4-130.2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* ========================================
+   方向箭头图标
+   ======================================== */
+
+/* 向下箭头 */
+.icon-arrow-down {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3 0.1-12.7-6.4-12.7z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 向上箭头 */
+.icon-arrow-up {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3c-3.8 5.3-0.1 12.7 6.5 12.7h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 向左箭头 */
+.icon-arrow-left {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8c-16.4 12.8-16.4 37.5 0 50.3l450.8 352.1c5.3 4.1 12.9 0.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 向右箭头 */
+.icon-arrow-right {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M765.7 486.8L314.9 134.7c-5.3-4.1-12.9-0.4-12.9 6.3v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1c16.4-12.8 16.4-37.6 0-50.4z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 播放/运行图标 */
+.icon-play {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m144.1 454.9L437.7 677.8c-4.1 2.6-9.7-0.2-9.7-5.1V351.3c0-4.8 5.5-7.7 9.7-5.1l218.4 158.8c3.8 2.8 3.8 8.5 0 11.2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 撤销图标 */
+.icon-undo {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M511.4 124C290.5 124.3 112 303 112 523.9c0 128 60.2 242 153.8 315.2l-37.5 48c-4.1 5.3-0.3 13 6.3 12.9l167-0.8c5.2 0 9-4.9 7.7-9.9L369.8 727c-1.6-6.2-10-8-14.2-2.9l-37.9 48.5C244 704.1 192 617.2 192 519.6 192 347.5 332.5 207.2 504.3 207.5c171 0.3 310.6 141.4 310.6 312.3 0 170.2-138.9 308.1-308.9 308.2 0 0-21.6-0.1-42.3-3.1-4.7-0.7-9.3 1.6-11.4 5.8l-16.5 33.7c-3.3 6.7 1.5 14.3 9 14.3 0 0 25.8 2.3 61.2 2.3 211.2 0 382.5-171.3 382.5-382.5S722.4 115.7 511.4 124z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 重做图标 */
+.icon-redo {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M758.2 839.1C851.8 765.9 912 651.9 912 523.9 912 303 733.5 124.3 512.6 124c-211 0.2-382.4 172-382.4 383.5 0 211.2 171.3 382.5 382.5 382.5 35.4 0 61.2-2.3 61.2-2.3 7.5 0 12.3-7.6 9-14.3l-16.5-33.7c-2.1-4.2-6.7-6.5-11.4-5.8-20.7 3-42.3 3.1-42.3 3.1-170 0.1-308.9-138-308.9-308.2 0-169.2 138.9-310.3 310.6-312.3 171.8-0.3 312.3 140 312.3 312.1 0 97.6-52 184.5-125.7 253l-37.9-48.5c-4.2-5.1-12.6-3.3-14.2 2.9l-39.5 162.4c-1.3 5 2.5 9.9 7.7 9.9l167 0.8c6.6 0.1 10.4-7.6 6.3-12.9l-37.5-48z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 返回图标 */
+.icon-back {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 474c-8.3 7.1-8.3 20.3 0 27.4l377 315.2c2.9 2.4 6.6 3.8 10.5 3.8H632c7.4 0 10.8-9.2 5.2-14L286.9 502H872c4.4 0 8-3.6 8-8v-12c0-4.4-3.6-8-8-8z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* ========================================
+   状态图标
+   ======================================== */
+
+/* 成功/勾选图标 */
+.icon-check {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%2352c41a'%3E%3Cpath d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 301.7l-210.6 292c-12.7 17.7-39 17.7-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 关闭/X图标 */
+.icon-close {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M563.8 512l262.5-312.9c4.4-5.2 0.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L512 442.1 295.9 191.7c-3-3.6-7.5-5.7-12.3-5.7H203.8c-6.8 0-10.5 7.9-6.1 13.1L460.2 512 197.7 824.9c-4.4 5.2-0.7 13.1 6.1 13.1h79.8c4.7 0 9.2-2.1 12.3-5.7L512 581.9l216.1 250.4c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 星星图标 */
+.icon-star {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23fadb14'%3E%3Cpath d='M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3-12.3 12.7-12.1 32.9 0.6 45.3l183.7 179.1-43.4 252.9c-1.2 6.9-0.1 14.1 3.2 20.3 8.2 15.6 27.6 21.7 43.2 13.4L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 刷新/同步图标 */
+.icon-refresh {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M168 504.2c1-43.7 10-86.1 26.9-126 17.3-41 42.1-77.7 73.7-109.4 31.6-31.6 68.4-56.4 109.3-73.8 42.1-17.9 87.4-27.1 134.6-27.3v50c0 6.5 7.5 10.1 12.6 6.1L649 156.2c3.8-2.9 3.8-8.9 0-11.8L524.4 76c-5.1-3.9-12.6-0.4-12.6 6.1V133c-56.2 0.2-110.8 11.4-162.4 33.2-49.8 21-94.6 51.1-133.1 89.5S142.8 329 121.7 378.9C100.1 430.6 88.9 485.5 88 542h80.2z'/%3E%3Cpath d='M879.8 481.8c-0.9-56.5-12.1-111.4-33.7-163-21.1-49.8-51.1-94.6-89.5-133-38.4-38.4-83.3-68.5-133.1-89.5-51.6-21.8-106.2-33-162.4-33.2V11.9c0-6.5-7.5-10.1-12.6-6.1L323.5 74.1c-3.8 2.9-3.8 8.9 0 11.8l124.9 68.1c5.1 3.9 12.6 0.4 12.6-6.1v-50c47.2 0.2 92.5 9.4 134.6 27.3 40.9 17.3 77.7 42.1 109.3 73.8s56.4 68.4 73.7 109.4c16.9 39.9 25.9 82.3 26.9 126h79.8z' transform='rotate(180 512 512)'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* ========================================
+   管理后台图标
+   ======================================== */
+
+/* 用户组图标 */
+.icon-users {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M824.2 699.9c-25.4-25.4-54.7-45.7-86.4-60.4 37.8-30.1 62.2-76.6 62.2-128.5 0-90.9-73.8-164.6-164.6-164.6-90.9 0-164.6 73.8-164.6 164.6 0 51.9 24.4 98.4 62.2 128.5-31.7 14.7-61 35-86.4 60.4-45.2 45.2-78.1 100.6-95.5 160.6-3.8 13.2 3.8 27.1 17 30.9 13.2 3.8 27.1-3.8 30.9-17 26.9-92.7 103.5-163 192.6-184.1 14.9-3.5 30.4-5.4 46.3-5.4s31.4 1.9 46.3 5.4c89.1 21.1 165.7 91.4 192.6 184.1 3.8 13.2 17.7 20.8 30.9 17 13.2-3.8 20.8-17.7 17-30.9-17.4-60-50.4-115.4-95.6-160.6z m-188.8-60c-50.4 0-91.6-41.1-91.6-91.6s41.1-91.6 91.6-91.6 91.6 41.1 91.6 91.6-41.2 91.6-91.6 91.6z'/%3E%3Cpath d='M411 503.6c37.8-30.1 62.2-76.6 62.2-128.5 0-90.9-73.8-164.6-164.6-164.6-90.9 0-164.6 73.8-164.6 164.6 0 51.9 24.4 98.4 62.2 128.5-31.7 14.7-61 35-86.4 60.4C74.6 609.2 41.7 664.6 24.3 724.6c-3.8 13.2 3.8 27.1 17 30.9 13.2 3.8 27.1-3.8 30.9-17 26.9-92.7 103.5-163 192.6-184.1 14.9-3.5 30.4-5.4 46.3-5.4 15.9 0 31.4 1.9 46.3 5.4 24.7 5.8 47.8 15.7 68.4 29.2 8.3-11.6 17.5-22.5 27.5-32.5 13.6-13.6 28.4-25.7 44.3-36.4-30.4-8.8-56.6-27.5-75.1-52.3-9.7 5.1-20.1 9-31 11.5-14.9 3.5-30.4 5.4-46.3 5.4-16 0-31.4-1.9-46.3-5.4-10.9-2.6-21.3-6.4-31-11.5-23.3 31.3-58.8 51.5-98.5 54.9-2.2 0.2-4.4 0.3-6.7 0.3H71.8c-3.8 0-6.9-3.1-6.9-6.9v-1.2c0-3.8 3.1-6.9 6.9-6.9h236.8c50.4 0 91.6-41.1 91.6-91.6s-41.1-91.6-91.6-91.6-91.6 41.1-91.6 91.6c0 39.7 25.5 73.6 61 86.2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 皇冠/管理员图标 */
+.icon-crown {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M899.6 276.5L705 396.4 518.4 147.5c-3.4-4.6-9.8-5.5-14.4-2.1-1.1 0.8-2 1.8-2.7 3l-0.7 1-0.4 0.6-181.2 244.1L125.1 275.4c-3.7-2.8-8.8-2.1-11.6 1.6-1.2 1.5-1.8 3.4-1.8 5.3v520.6c0 4.4 3.6 8 8 8l383.9 1.5v0.6l383.9-1.5c4.4 0 8-3.6 8-8V282.2c0-4.5-3.7-8.1-8.2-8.1-1.5 0.1-3 0.5-4.4 1.3l0.7 1.1z m-375.9 530l-0.4 0.6-310.4-1.2V354.2l203.4 139.3c4.7 3.2 11.1 2 14.3-2.7l175.6-236.6L780.8 490l0.4 0.5 0.2 0.3v315.4l-257.7 1z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 在线状态图标 */
+.icon-online {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%2352c41a'%3E%3Cpath d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 301.7l-210.6 292c-12.7 17.7-39 17.7-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 火箭/启动图标 */
+.icon-rocket {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M864 736c0-111.6-65.4-208-160-252.9V317.3c0-15.1-5.3-29.7-15.1-41.2L536.5 95.4C530.1 87.8 521 84 512 84s-18.1 3.8-24.5 11.4L335.1 276.1c-9.8 11.5-15.1 26.1-15.1 41.2v165.8C225.4 528 160 624.4 160 736h156.5c-2.3 7.2-3.5 15-3.5 23.8 0 22.1 7.6 43.7 21.4 60.8L391.7 889c13.8 17.1 32.9 27 53.1 27h134.4c20.2 0 39.3-9.9 53.1-27l57.3-68.4c13.8-17.1 21.4-38.7 21.4-60.8 0-8.8-1.2-16.6-3.5-23.8H864z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* 工具/扳手图标 */
+.icon-wrench {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' fill='%23ffffff'%3E%3Cpath d='M876.6 239.5c-0.5-0.9-1.2-1.8-2-2.5-5-5-13.1-5-18.1 0L684.2 409.3l-67.9-67.9L788.7 169c0.8-0.8 1.4-1.6 2-2.5 3.6-6.1 1.6-13.9-4.5-17.5-98.2-58-226.8-44.7-311.3 39.7-67 67-89.2 162-66.5 247.4l-293 293c-3 3-2.8 7.9 0.3 11l169.7 169.7c3.1 3.1 8.1 3.3 11 0.3l293-293c85.5 22.8 180.5 0.7 247.6-66.4 84.4-84.5 97.7-213.1 39.6-311.3zM786 499.8c-58.1 58.1-145.3 69.3-214.6 33.6l-8.8 8.8-0.3 0.3-314.4 314.3L151.9 761l314.4-314.3 0.3-0.3 8.8-8.8c-35.6-69.4-24.4-156.5 33.7-214.6 50.4-50.4 124.5-67 189.8-49.7l-134 134c-3.1 3.1-3.1 8.2 0 11.3l80.1 80.1c3.1 3.1 8.2 3.1 11.3 0l134-134c17.2 65.3 0.6 139.4-49.8 189.8z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+/* ========================================
+   上传区域特殊样式
+   ======================================== */
+.upload-icon-svg {
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+}
+
+.upload-icon-svg svg {
+	width: 100%;
+	height: 100%;
+	fill: #6c757d;
+}
+
+/* ========================================
+   按钮内图标样式
+   ======================================== */
+.btn-icon {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.btn-icon .icon {
+	width: 16px;
+	height: 16px;
+}
+
+/* ========================================
+   空状态图标
+   ======================================== */
+.empty-icon {
+	width: 64px;
+	height: 64px;
+	margin-bottom: 16px;
+	opacity: 0.6;
+}
+
+/* ========================================
+   会话列表图标
+   ======================================== */
+.conversation-empty-icon-svg {
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+}
+
+/* 空状态图标样式 - 放大显示 */
+.conversation-empty-icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.conversation-empty-icon svg {
+	width: 48px;
+	height: 48px;
+	opacity: 0.6;
+}

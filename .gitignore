@@ -6,3 +6,66 @@
 /test/smoke/parcel/.cache/**
 **/dist/
 **/out/
+
+# 环境变量（含敏感信息，禁止提交）
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# 日志与进程文件
+logs/
+*.log
+*.pid
+
+# 用户上传文件
+uploads/
+
+# 备份文件
+**/*.bak
+**/*.backup
+**/*.backup_*
+
+# 内部总结文档
+**/总结/
+frontend/demos/visual-editor/docs/
+CURRENT_STATUS.md
+DEPLOYMENT_GUIDE.md
+PROGRESS_REPORT.md
+PROJECT_README.md
+README_QUICKSTART.md
+SERVICE-DEPLOYMENT.md
+UPDATE_LOG.md
+
+# 测试诊断页
+frontend/demos/visual-editor/diagnose.html
+frontend/demos/visual-editor/test-*.html
+test-images-api.html
+
+# 本地运维与部署文件
+check-firewall.sh
+setup-firewall.sh
+deploy-services.sh
+aicode-backend.service
+aicode-frontend.service
+restart-backend.sh
+
+# 遗留演示文件
+frontend/services/visual-editor.html
+frontend/demos/visual-editor/README.md
+frontend/demos/visual-editor/快速测试指南.md
+
+# macOS 系统文件
+.DS_Store
+**/.DS_Store
+
+# Monaco 构建符号链接
+vs
+
+# Docker 配置（含密码，仅本地使用）
+docker-compose.mysql.yml
+
+# 一次性修复脚本
+database/fix-html-content.js

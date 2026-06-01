@@ -634,6 +634,9 @@ async function getStats(req, res) {
         const activeUsers = await User.count({ isActive: true });
         const adminUsers = await User.count({ role: 'admin' });
 
+        // 在线用户统计（最近5分钟内活跃）
+        const onlineUsers = await Session.getOnlineUsersCount();
+
         // 代码片段统计
         const snippetsResult = await db.query(
             `SELECT COUNT(*) as total,
@@ -671,7 +674,8 @@ async function getStats(req, res) {
                     total: totalUsers,
                     active: activeUsers,
                     inactive: totalUsers - activeUsers,
-                    admins: adminUsers
+                    admins: adminUsers,
+                    online: onlineUsers
                 },
                 codeSnippets: {
                     total: snippetsResult[0].total,

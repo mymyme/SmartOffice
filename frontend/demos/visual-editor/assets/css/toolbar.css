@@ -1,0 +1,141 @@
+/* =====================================================
+   Toolbar Styles - 工具栏样式
+   包含：浮动工具栏、样式编辑面板
+   ===================================================== */
+
+/* ==================== 浮动工具栏 ==================== */
+.floating-toolbar {
+    position: fixed;
+    display: none;
+    background: linear-gradient(135deg, #2d2d30 0%, #1e1e1e 100%);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 3000;
+    border: 1px solid #3e3e42;
+    backdrop-filter: blur(10px);
+    animation: toolbarFadeIn 0.2s ease-out;
+    max-width: 90vw;
+}
+
+.floating-toolbar.show {
+    display: block;
+}
+
+@keyframes toolbarFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.toolbar-btn {
+    padding: 8px 12px;
+    background: #3e3e42;
+    color: #ccc;
+    border: 1px solid #4e4e4e;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.toolbar-btn:hover {
+    background: #0e639c;
+    border-color: #0e639c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 99, 156, 0.3);
+}
+
+.toolbar-btn:active {
+    transform: translateY(0);
+}
+
+/* ==================== 样式编辑面板 ==================== */
+.toolbar-menu {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.toolbar-back-btn {
+    border-right: 1px solid #3e3e42;
+    padding-right: 12px;
+    margin-right: 4px;
+}
+
+.style-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.style-control-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1e1e1e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #3e3e42;
+}
+
+.style-control-group label {
+    color: #ccc;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.style-control-group select {
+    background: #2d2d30;
+    color: #ccc;
+    border: 1px solid #4e4e4e;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+}
+
+.style-control-group select:hover {
+    border-color: #0e639c;
+}
+
+.style-control-group select:focus {
+    border-color: #0e639c;
+    box-shadow: 0 0 0 2px rgba(14, 99, 156, 0.2);
+}
+
+.style-control-group input[type="color"] {
+    width: 32px;
+    height: 24px;
+    border: 1px solid #4e4e4e;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+}
+
+.style-control-group input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.style-control-group input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.style-control-group input[type="color"]:hover {
+    border-color: #0e639c;
+}
+

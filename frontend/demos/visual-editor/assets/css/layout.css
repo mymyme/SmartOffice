@@ -1,0 +1,250 @@
+/* =====================================================
+   Layout Styles - 布局样式
+   包含：Header、Panel System、Resizer
+   ===================================================== */
+
+/* ==================== Header 头部 ==================== */
+.header {
+    background: #2d2d30;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3e3e42;
+    z-index: 10100;
+    overflow: visible;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+    overflow: visible;
+    position: relative;
+}
+
+/* ==================== User Menu 用户菜单 ==================== */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
+    overflow: visible;
+    z-index: 10000;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #0e639c;
+    object-fit: cover;
+}
+
+.user-name {
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #2d2d30;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    min-width: 180px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 10003;
+}
+
+.dropdown.show {
+    display: block;
+}
+
+.dropdown-item,
+a.dropdown-item,
+a.dropdown-item:link,
+a.dropdown-item:visited,
+a.dropdown-item:active {
+    padding: 10px 15px;
+    color: #cccccc !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #3e3e42;
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    min-height: 40px;
+    background: transparent;
+}
+
+.dropdown-item:last-child,
+a.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover,
+a.dropdown-item:hover {
+    background: #3e3e42 !important;
+    color: #ffffff !important;
+}
+
+.dropdown-item .icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 1;
+    visibility: visible;
+    display: inline-block !important;
+}
+
+/* ==================== Content & Panels 内容和面板 ==================== */
+.content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #3e3e42;
+}
+
+.panel:last-child {
+    border-right: none;
+}
+
+.panel-header {
+    background: #2d2d30;
+    color: #cccccc;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 500;
+    border-bottom: 1px solid #3e3e42;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1001;
+}
+
+.panel-badge {
+    background: #16825d;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.conversation-list-btn {
+    background: transparent;
+    border: none;
+    color: #cccccc;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.conversation-list-btn:hover {
+    background: #3e3e42;
+    transform: scale(1.1);
+}
+
+#new-conversation-btn {
+    margin-left: auto;
+    margin-right: 8px;
+    filter: brightness(0) invert(1);
+}
+
+.panel-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.left-panel {
+    width: 35%;
+    min-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.left-panel.hidden {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.middle-panel {
+    width: 50%;
+    min-width: 200px;
+    background: white;
+    transition: none;
+}
+
+.middle-panel.expanded {
+    width: 65%;
+}
+
+.right-panel {
+    width: 50%;
+    min-width: 200px;
+    background: #252526;
+    transition: none;
+}
+
+.right-panel.expanded {
+    width: 35%;
+}
+
+/* ==================== Resizer 分隔条 ==================== */
+.resizer {
+    width: 5px;
+    background: #3e3e42;
+    cursor: col-resize;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.resizer:hover {
+    background: #0e639c;
+}
+
+.resizer.resizing {
+    background: #1177bb;
+}
+
+/* ==================== Editor & Preview 编辑器和预览 ==================== */
+#code-editor {
+    height: 100%;
+}
+
+#preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+}
+
+.editable-mode #preview-frame {
+    cursor: text;
+}

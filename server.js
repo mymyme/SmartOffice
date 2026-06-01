@@ -109,12 +109,48 @@ const server = http.createServer((req, res) => {
                 return;
             }
 
+            // 根据文件类型设置不同的缓存策略
+            let cacheHeaders = {};
+
+            // 库文件（echarts, mermaid等）- 长期缓存30天
+            if (pathname.includes('/assets/libs/') && (ext === '.js' || ext === '.css')) {
+                cacheHeaders = {
+                    'Cache-Control': 'public, max-age=2592000, immutable',
+                    'Vary': 'Accept-Encoding'
+                };
+                console.log(`📦 [缓存] 库文件启用30天缓存: ${pathname}`);
+            }
+            // 其他静态资源（图片、字体等）- 缓存7天
+            else if (['.png', '.jpg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.otf'].includes(ext)) {
+                cacheHeaders = {
+                    'Cache-Control': 'public, max-age=604800'
+                };
+            }
+            // CSS和普通JS文件 - 缓存1小时
+            else if (ext === '.css' || ext === '.js') {
+                cacheHeaders = {
+                    'Cache-Control': 'public, max-age=3600'
+                };
+            }
+            // HTML文件 - 不缓存（确保获取最新版本）
+            else if (ext === '.html') {
+                cacheHeaders = {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                };
+            }
+            // 其他文件 - 默认不缓存
+            else {
+                cacheHeaders = {
+                    'Cache-Control': 'no-cache'
+                };
+            }
+
             // 设置响应头
             res.writeHead(200, {
                 'Content-Type': contentType + '; charset=utf-8',
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
+                ...cacheHeaders
             });
 
             // 发送文件内容
@@ -124,7 +160,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`🚀 Monaco Editor 服务器已启动！`);
+    console.log(`🚀 SmartOffice 服务器已启动！`);
     console.log(`📁 服务目录: ${__dirname}`);
     console.log(`🌐 访问地址: http://localhost:${PORT}`);
     console.log(`📄 基础演示: http://localhost:${PORT}/`);
@@ -149,4 +185,5 @@ process.on('SIGTERM', () => {
         process.exit(0);
     });
 });
+
 

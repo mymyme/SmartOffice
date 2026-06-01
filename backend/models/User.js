@@ -242,12 +242,22 @@ class User {
         // LIMIT 和 OFFSET 不能使用参数绑定，需要直接拼接（已确保是整数）
         const limitValue = parseInt(limit);
         const offsetValue = parseInt(offset);
+
+        // 查询用户数据并统计对话次数
         const users = await db.query(
-            `SELECT id, username, email, avatar_url, role, full_name, phone, bio,
-                    is_active, last_login_at, created_at, updated_at
-             FROM ${db.tables.users}
+            `SELECT
+                u.id, u.username, u.email, u.avatar_url, u.role, u.full_name, u.phone, u.bio,
+                u.is_active, u.last_login_at, u.created_at, u.updated_at,
+                COUNT(DISTINCT ac.session_id) as conversation_count,
+                COALESCE(SUM(ac.input_tokens), 0) as total_input_tokens,
+                COALESCE(SUM(ac.output_tokens), 0) as total_output_tokens,
+                COALESCE(SUM(ac.total_tokens), 0) as total_tokens
+             FROM ${db.tables.users} u
+             LEFT JOIN ${db.tables.aiConversations} ac ON u.id = ac.user_id
              ${whereClause}
-             ORDER BY ${validSortBy} ${validSortOrder}
+             GROUP BY u.id, u.username, u.email, u.avatar_url, u.role, u.full_name, u.phone, u.bio,
+                      u.is_active, u.last_login_at, u.created_at, u.updated_at
+             ORDER BY u.${validSortBy} ${validSortOrder}
              LIMIT ${limitValue} OFFSET ${offsetValue}`,
             values
         );

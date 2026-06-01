@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预览模板</title>
+    <style>
+        /* 预览容器样式 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+        #preview-content {
+            width: 100%;
+            min-height: 100%;
+        }
+        /* 加载提示 */
+        #loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        #loading-indicator.hidden {
+            display: none;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载提示 -->
+    <div id="loading-indicator">
+        <div class="loading-spinner"></div>
+        <div id="loading-text">正在加载预览库...</div>
+        <div id="loading-progress" style="font-size: 12px; color: #999; margin-top: 8px;"></div>
+    </div>
+
+    <!-- 预览内容容器 -->
+    <div id="preview-content"></div>
+
+    <script>
+    // 记录加载开始时间
+    window.__templateLoadStart = performance.now();
+    window.__libsLoaded = { echarts: false, mermaid: false };
+
+    function updateLoadingProgress(lib, status) {
+        window.__libsLoaded[lib] = status;
+        var progress = document.getElementById('loading-progress');
+        var text = document.getElementById('loading-text');
+        if (progress && text) {
+            var elapsed = ((performance.now() - window.__templateLoadStart) / 1000).toFixed(1);
+            var loaded = [];
+            if (window.__libsLoaded.echarts) loaded.push('ECharts ✓');
+            if (window.__libsLoaded.mermaid) loaded.push('Mermaid ✓');
+            progress.textContent = loaded.join(' | ') + ' (' + elapsed + '秒)';
+            if (loaded.length === 2) {
+                text.textContent = '库加载完成，准备就绪';
+            }
+        }
+    }
+    </script>
+
+    <!-- 预加载大型库文件（利用浏览器缓存） -->
+    <script src="assets/libs/echarts.min.js" onload="updateLoadingProgress('echarts', true)"></script>
+    <script src="assets/libs/mermaid.min.js" onload="updateLoadingProgress('mermaid', true)"></script>
+    <script src="assets/libs/markdown-renderer.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        console.log('🚀 [预览模板] 初始化开始');
+        const startTime = window.__templateLoadStart || performance.now();
+
+        // ==================== 状态管理 ====================
+        let isReady = false;
+        let pendingUpdates = [];
+        let currentContent = '';
+        let lastChartHash = '';
+
+        // ==================== 库初始化 ====================
+
+        // 初始化 Mermaid
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'default',
+                securityLevel: 'loose',
+                logLevel: 'error'
+            });
+            console.log('✅ [预览模板] Mermaid 已初始化');
+        }
+
+        // 初始化 Markdown 渲染器
+        if (typeof MarkdownRenderer !== 'undefined') {
+            console.log('✅ [预览模板] Markdown 渲染器已加载');
+        }
+
+        // ==================== 工具函数 ====================
+
+        // 计算内容哈希（用于检测图表变化）
+        function hashContent(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash;
+        }
+
+        // 提取图表相关内容的哈希
+        function getChartHash(html) {
+            // 提取 mermaid 图表代码
+            const mermaidMatch = html.match(/class=["']mermaid["'][^>]*>([\s\S]*?)<\/div>/gi) || [];
+            // 提取 echarts 配置
+            const echartsMatch = html.match(/echarts\.init|setOption\s*\(/gi) || [];
+            return hashContent(mermaidMatch.join('') + echartsMatch.join(''));
+        }
+
+        // 清理HTML，移除临时属性
+        function cleanHTML(html) {
+            return html
+                .replace(/\s*contenteditable="true"/gi, '')
+                .replace(/\s*data-selected="[^"]*"/gi, '')
+                .replace(/\s*data-editing="[^"]*"/gi, '');
+        }
+
+        // ==================== 图表渲染 ====================
+
+        // 渲染 Mermaid 图表
+        async function renderMermaidCharts() {
+            if (typeof mermaid === 'undefined') return;
+
+            const mermaidElements = document.querySelectorAll('.mermaid:not([data-processed="true"])');
+            if (mermaidElements.length === 0) return;
+
+            console.log(`📊 [预览模板] 渲染 ${mermaidElements.length} 个 Mermaid 图表`);
+
+            try {
+                await mermaid.run({ nodes: mermaidElements });
+                mermaidElements.forEach(el => el.setAttribute('data-processed', 'true'));
+            } catch (error) {
+                console.error('[预览模板] Mermaid 渲染失败:', error);
+            }
+        }
+
+        // 初始化 ECharts 图表
+        function initEChartsCharts() {
+            if (typeof echarts === 'undefined') return;
+
+            // 查找需要初始化的 echarts 容器
+            const containers = document.querySelectorAll('[data-echarts-config]:not([data-echarts-initialized])');
+
+            containers.forEach(container => {
+                try {
+                    const configStr = container.getAttribute('data-echarts-config');
+                    if (configStr) {
+                        const config = JSON.parse(configStr);
+                        const chart = echarts.init(container);
+                        chart.setOption(config);
+                        container.setAttribute('data-echarts-initialized', 'true');
+                        console.log('📈 [预览模板] ECharts 图表已初始化');
+                    }
+                } catch (error) {
+                    console.error('[预览模板] ECharts 初始化失败:', error);
+                }
+            });
+        }
+
+        // 执行内联脚本 - 简化版本，使用 Function 构造器
+        function executeInlineScripts(container) {
+            const scripts = Array.from(container.querySelectorAll('script'));
+            console.log(`📜 [预览模板] 发现 ${scripts.length} 个脚本标签`);
+
+            // 已预加载的库，跳过这些外部脚本
+            const preloadedLibs = ['echarts.min.js', 'mermaid.min.js', 'echarts.js', 'mermaid.js'];
+
+            // 收集需要执行的脚本内容
+            const scriptsToExecute = [];
+
+            scripts.forEach((script, index) => {
+                const src = script.getAttribute('src');
+
+                // 跳过已预加载的库
+                if (src) {
+                    const isPreloaded = preloadedLibs.some(lib => src.includes(lib));
+                    if (isPreloaded) {
+                        console.log(`⏭️ [预览模板] 跳过已预加载的库: ${src}`);
+                        script.remove();
+                        return;
+                    }
+                    // 外部脚本暂时跳过（非预加载的）
+                    console.log(`⏭️ [预览模板] 跳过外部脚本: ${src}`);
+                    return;
+                }
+
+                // 内联脚本
+                const content = script.textContent.trim();
+                if (content) {
+                    scriptsToExecute.push({ content, index });
+                }
+
+                // 移除原脚本标签
+                script.remove();
+            });
+
+            console.log(`📝 [预览模板] 准备执行 ${scriptsToExecute.length} 个内联脚本`);
+
+            // 延迟执行脚本，确保 DOM 已完全就绪
+            setTimeout(() => {
+                scriptsToExecute.forEach(({ content, index }) => {
+                    try {
+                        // 使用 Function 构造器执行脚本（比 eval 更安全）
+                        const fn = new Function(content);
+                        fn.call(window);
+                        console.log(`▶️ [预览模板] 内联脚本 #${index + 1} 执行成功`);
+                    } catch (e) {
+                        console.error(`❌ [预览模板] 内联脚本 #${index + 1} 执行失败:`, e.message);
+                        // 如果是找不到元素的错误，延迟重试
+                        if (e.message.includes('null') || e.message.includes('undefined')) {
+                            setTimeout(() => {
+                                try {
+                                    const fn = new Function(content);
+                                    fn.call(window);
+                                    console.log(`🔄 [预览模板] 内联脚本 #${index + 1} 重试成功`);
+                                } catch (e2) {
+                                    console.error(`❌ [预览模板] 内联脚本 #${index + 1} 重试失败:`, e2.message);
+                                }
+                            }, 300);
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        // 渲染所有图表
+        async function renderAllCharts() {
+            await renderMermaidCharts();
+            initEChartsCharts();
+        }
+
+        // 检查并初始化未初始化的 ECharts 实例
+        function checkAndInitECharts() {
+            if (typeof echarts === 'undefined') {
+                console.warn('[预览模板] echarts 未加载');
+                return;
+            }
+
+            // 查找所有可能的 echarts 容器
+            // 通常 AI 生成的代码中，echarts 容器有 id 并且内联脚本会调用 echarts.init
+            const containers = document.querySelectorAll('[id*="chart"], [id*="echarts"], [class*="chart"], [class*="echarts"]');
+
+            containers.forEach(container => {
+                // 检查是否已经初始化
+                const instanceId = container.getAttribute('_echarts_instance_');
+                if (!instanceId) {
+                    // 检查容器是否有尺寸
+                    const rect = container.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0) {
+                        console.log(`📊 [预览模板] 发现未初始化的图表容器: #${container.id || container.className}`);
+                    }
+                }
+            });
+
+            // 统计已初始化的图表数量
+            const initializedCharts = document.querySelectorAll('[_echarts_instance_]');
+            console.log(`📈 [预览模板] 已初始化 ${initializedCharts.length} 个 ECharts 图表`);
+        }
+
+        // ==================== 内容更新 ====================
+
+        // 更新预览内容
+        async function updateContent(data) {
+            let { html, mode = 'full' } = data;
+
+            if (!html) {
+                console.warn('[预览模板] 收到空内容');
+                return;
+            }
+
+            console.time('⏱️ [预览模板] 内容更新');
+
+            // 检测并转换 Markdown 内容
+            if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.isMarkdown(html)) {
+                console.log('📝 [预览模板] 检测到 Markdown 格式，正在转换...');
+                const markdownHtml = MarkdownRenderer.parse(html);
+                html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            color: #333;
+        }
+    </style>
+</head>
+<body class="markdown-content">
+    ${markdownHtml}
+</body>
+</html>`;
+                console.log('✅ [预览模板] Markdown 转换完成');
+            }
+
+            const container = document.getElementById('preview-content');
+            const cleanedHTML = cleanHTML(html);
+
+            // 检测图表是否变化
+            const newChartHash = getChartHash(cleanedHTML);
+            const chartChanged = newChartHash !== lastChartHash;
+            lastChartHash = newChartHash;
+
+            // 解析新HTML
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(cleanedHTML, 'text/html');
+
+            // 提取 body 内容
+            let bodyContent = newDoc.body.innerHTML;
+
+            // 提取 head 中的样式
+            const styles = newDoc.querySelectorAll('style');
+            let styleContent = '';
+            styles.forEach(style => {
+                styleContent += style.outerHTML;
+            });
+
+            // 提取 link 标签（CSS）
+            const links = newDoc.querySelectorAll('link[rel="stylesheet"]');
+            links.forEach(link => {
+                styleContent += link.outerHTML;
+            });
+
+            // 提取 head 中的脚本（非外部库）
+            const headScripts = newDoc.head.querySelectorAll('script');
+            let headScriptContent = '';
+            headScripts.forEach(script => {
+                // 跳过库文件引用，内联脚本保留
+                const src = script.getAttribute('src');
+                if (!src || (!src.includes('echarts') && !src.includes('mermaid'))) {
+                    headScriptContent += script.outerHTML;
+                }
+            });
+
+            // 更新内容
+            if (mode === 'full' || chartChanged) {
+                // 全量更新：样式 + body内容（脚本稍后单独处理）
+                // 注意：先插入 DOM 内容，再执行脚本，确保脚本能找到 DOM 元素
+                container.innerHTML = styleContent + bodyContent;
+
+                // 将 head 中的脚本追加到容器末尾（不直接用 innerHTML 以保留已有内容）
+                if (headScriptContent) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = headScriptContent;
+                    while (tempDiv.firstChild) {
+                        container.appendChild(tempDiv.firstChild);
+                    }
+                }
+
+                // 强制浏览器完成布局
+                container.offsetHeight;
+
+                // 调试：检查 DOM 元素是否存在
+                const allIds = container.querySelectorAll('[id]');
+                console.log(`📄 [预览模板] DOM 内容已插入，发现 ${allIds.length} 个带 ID 的元素:`,
+                    Array.from(allIds).slice(0, 5).map(el => '#' + el.id).join(', '));
+
+                // 执行内联脚本（包括body和head中的）
+                executeInlineScripts(container);
+
+                // 延迟渲染图表（确保脚本已执行、DOM已更新）
+                setTimeout(async () => {
+                    await renderAllCharts();
+
+                    // 再次检查是否有未初始化的echarts容器
+                    checkAndInitECharts();
+                }, 300);
+
+                console.log('🔄 [预览模板] 全量更新完成' + (chartChanged ? '（检测到图表变化）' : ''));
+            } else {
+                // 增量更新：仅更新非图表部分
+                container.innerHTML = styleContent + bodyContent;
+                if (headScriptContent) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = headScriptContent;
+                    while (tempDiv.firstChild) {
+                        container.appendChild(tempDiv.firstChild);
+                    }
+                }
+                container.offsetHeight; // 强制布局
+                executeInlineScripts(container);
+                console.log('⚡ [预览模板] 增量更新完成');
+            }
+
+            currentContent = cleanedHTML;
+
+            // 隐藏加载提示
+            document.getElementById('loading-indicator').classList.add('hidden');
+
+            console.timeEnd('⏱️ [预览模板] 内容更新');
+
+            // 通知父窗口更新完成
+            window.parent.postMessage({ type: 'preview-updated', success: true }, '*');
+        }
+
+        // ==================== 消息处理 ====================
+
+        window.addEventListener('message', async function(event) {
+            const data = event.data;
+
+            if (!data || !data.type) return;
+
+            switch (data.type) {
+                case 'update-preview':
+                    if (isReady) {
+                        await updateContent(data);
+                    } else {
+                        pendingUpdates.push(data);
+                    }
+                    break;
+
+                case 'get-content':
+                    // 返回当前内容（用于同步到编辑器）
+                    const content = document.getElementById('preview-content').innerHTML;
+                    window.parent.postMessage({
+                        type: 'content-response',
+                        content: content
+                    }, '*');
+                    break;
+
+                case 'enable-edit':
+                    // 启用编辑模式
+                    enableEditMode(data.enabled);
+                    break;
+
+                case 'ping':
+                    // 心跳检测
+                    window.parent.postMessage({ type: 'pong' }, '*');
+                    break;
+            }
+        });
+
+        // 编辑模式
+        function enableEditMode(enabled) {
+            const container = document.getElementById('preview-content');
+            const editableElements = container.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, li, td, th, div:not(.mermaid):not([class*="echarts"])');
+
+            editableElements.forEach(el => {
+                if (enabled) {
+                    el.setAttribute('contenteditable', 'true');
+                } else {
+                    el.removeAttribute('contenteditable');
+                }
+            });
+
+            console.log(`✏️ [预览模板] 编辑模式: ${enabled ? '开启' : '关闭'}`);
+        }
+
+        // ==================== 初始化完成 ====================
+
+        window.addEventListener('load', function() {
+            const loadTime = performance.now() - startTime;
+            console.log(`✅ [预览模板] 初始化完成，耗时: ${loadTime.toFixed(2)}ms`);
+
+            isReady = true;
+
+            // 处理待处理的更新
+            if (pendingUpdates.length > 0) {
+                console.log(`📬 [预览模板] 处理 ${pendingUpdates.length} 个待处理更新`);
+                pendingUpdates.forEach(data => updateContent(data));
+                pendingUpdates = [];
+            }
+
+            // 通知父窗口模板已就绪
+            window.parent.postMessage({ type: 'template-ready' }, '*');
+        });
+
+        // 暴露全局函数供外部调用
+        window.extractEChartsData = function() {
+            if (typeof echarts === 'undefined') return 0;
+
+            let count = 0;
+            const containers = document.querySelectorAll('[_echarts_instance_]');
+
+            containers.forEach((container, index) => {
+                const instanceId = container.getAttribute('_echarts_instance_');
+                if (instanceId) {
+                    try {
+                        const instance = echarts.getInstanceById(instanceId);
+                        if (instance) {
+                            const dataURL = instance.getDataURL({
+                                type: 'png',
+                                pixelRatio: 2,
+                                backgroundColor: '#ffffff'
+                            });
+                            container.setAttribute('data-echarts-image', dataURL);
+                            container.setAttribute('data-echarts-width', container.offsetWidth || 600);
+                            container.setAttribute('data-echarts-height', container.offsetHeight || 400);
+                            count++;
+                        }
+                    } catch (error) {
+                        console.error('[预览模板] ECharts 数据提取失败:', error);
+                    }
+                }
+            });
+
+            return count;
+        };
+
+        window.extractDiagramData = async function() {
+            let count = 0;
+
+            // 处理 Mermaid 图表
+            const mermaidSvgs = document.querySelectorAll('.mermaid svg');
+            for (const svg of mermaidSvgs) {
+                try {
+                    const container = svg.parentElement;
+                    const dataURL = await svgToDataURL(svg);
+                    if (dataURL) {
+                        container.setAttribute('data-diagram-image', dataURL);
+                        const bbox = svg.getBoundingClientRect();
+                        container.setAttribute('data-diagram-width', bbox.width || 600);
+                        container.setAttribute('data-diagram-height', bbox.height || 400);
+                        container.setAttribute('data-diagram-type', 'mermaid');
+                        count++;
+                    }
+                } catch (error) {
+                    console.error('[预览模板] Mermaid 数据提取失败:', error);
+                }
+            }
+
+            return count;
+        };
+
+        // SVG 转 DataURL
+        async function svgToDataURL(svg) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const clonedSvg = svg.cloneNode(true);
+                    clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                    const bbox = svg.getBoundingClientRect();
+                    const width = bbox.width || 600;
+                    const height = bbox.height || 400;
+
+                    clonedSvg.setAttribute('width', width);
+                    clonedSvg.setAttribute('height', height);
+
+                    const serializer = new XMLSerializer();
+                    const svgString = serializer.serializeToString(clonedSvg);
+                    const encodedSvg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+
+                    const img = new Image();
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width * 2;
+                    canvas.height = height * 2;
+                    const ctx = canvas.getContext('2d');
+
+                    img.onload = function() {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/png'));
+                    };
+
+                    img.onerror = reject;
+                    img.src = encodedSvg;
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+    })();
+    </script>
+</body>
+</html>
+

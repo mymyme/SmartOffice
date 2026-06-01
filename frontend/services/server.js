@@ -31,6 +31,34 @@ const server = http.createServer((req, res) => {
     const parsedUrl = url.parse(req.url);
     let pathname = parsedUrl.pathname;
 
+    // 上传文件静态映射：/uploads/* -> ../uploads/*
+    if (pathname.startsWith('/uploads/')) {
+        const uploadsRoot = path.join(__dirname, '..', '..');
+        const filePath = path.join(uploadsRoot, pathname);
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+                res.end('Not Found');
+                return;
+            }
+            const ext = path.extname(filePath).toLowerCase();
+            const contentType = mimeTypes[ext] || 'application/octet-stream';
+            fs.readFile(filePath, (readErr, data) => {
+                if (readErr) {
+                    res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                    res.end('Internal Server Error');
+                    return;
+                }
+                res.writeHead(200, {
+                    'Content-Type': contentType,
+                    'Cache-Control': 'public, max-age=86400' // 缓存1天
+                });
+                res.end(data);
+            });
+        });
+        return;
+    }
+
     // 本地 monaco-editor 静态映射：/vs/* -> node_modules/monaco-editor/min/vs/*
     if (pathname.startsWith('/vs/')) {
         const vsRoot = path.join(__dirname, '..', 'node_modules', 'monaco-editor', 'min');
@@ -61,9 +89,9 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // 默认页面
+    // 默认页面（重构后的版本）
     if (pathname === '/') {
-        pathname = '/demos/visual-editor.html';
+        pathname = '/demos/visual-editor/';
     }
 
     // AI 演示页面
@@ -94,8 +122,8 @@ const server = http.createServer((req, res) => {
     const filePath = path.join(baseDir, pathname);
 
     // 检查文件是否存在
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
+    fs.stat(filePath, (statErr, stats) => {
+        if (statErr) {
             // 文件不存在，返回 404
             res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end(`
@@ -120,12 +148,35 @@ const server = http.createServer((req, res) => {
             return;
         }
 
+        // 如果是目录，尝试加载index.html
+        let finalPath = filePath;
+        if (stats.isDirectory()) {
+            finalPath = path.join(filePath, 'index.html');
+            // 检查index.html是否存在
+            if (!fs.existsSync(finalPath)) {
+                res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>404 - 页面未找到</title>
+                    </head>
+                    <body>
+                        <h1>404 - 页面未找到</h1>
+                        <p>目录中没有index.html文件: ${pathname}</p>
+                    </body>
+                    </html>
+                `);
+                return;
+            }
+        }
+
         // 获取文件扩展名
-        const ext = path.extname(filePath).toLowerCase();
+        const ext = path.extname(finalPath).toLowerCase();
         const contentType = mimeTypes[ext] || 'application/octet-stream';
 
         // 读取文件
-        fs.readFile(filePath, (err, data) => {
+        fs.readFile(finalPath, (err, data) => {
             if (err) {
                 res.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8' });
                 res.end(`

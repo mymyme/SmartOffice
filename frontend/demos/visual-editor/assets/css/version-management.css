@@ -1,0 +1,491 @@
+/* =====================================================
+   Version Management Styles - 版本管理样式
+   ===================================================== */
+
+/* 版本标签容器 */
+.version-tags-container {
+	display: none;
+	/* 默认隐藏，有版本时通过JS显示 */
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+	padding: 0 10px;
+	flex-wrap: wrap;
+	position: relative;
+	z-index: 1001;
+}
+
+/* 预览面板保存按钮 */
+.preview-save-btn {
+	margin-left: 10px;
+	padding: 4px 12px;
+	background: #0e639c;
+	color: #ffffff;
+	border: none;
+	border-radius: 3px;
+	font-size: 11px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+}
+
+.preview-save-btn:hover {
+	background: #1177bb;
+	box-shadow: 0 2px 8px rgba(14, 99, 156, 0.3);
+}
+
+.preview-save-btn:active {
+	transform: scale(0.95);
+}
+
+/* 保存按钮禁用状态 */
+.preview-save-btn:disabled {
+	background: #3e3e42;
+	color: #858585;
+	cursor: not-allowed;
+	opacity: 0.6;
+	box-shadow: none;
+}
+
+.preview-save-btn:disabled:hover {
+	background: #3e3e42;
+	box-shadow: none;
+	transform: none;
+}
+
+/* 版本标签 */
+.version-tag {
+	position: relative;
+	padding: 3px 10px;
+	font-size: 11px;
+	background: #3e3e42;
+	color: #858585;
+	border: 1px solid #4e4e4e;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	user-select: none;
+	white-space: nowrap;
+	z-index: 10200;
+}
+
+/* 版本标签悬停效果 */
+.version-tag:hover {
+	background: #4e4e4e;
+	color: #ffffff;
+	border-color: #6e6e6e;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 激活状态的版本标签 */
+.version-tag.active {
+	background: #0e639c;
+	color: white;
+	border-color: #0e639c;
+	font-weight: 600;
+	box-shadow: 0 2px 6px rgba(14, 99, 156, 0.4);
+}
+
+.version-tag.active:hover {
+	background: #1177bb;
+	border-color: #1177bb;
+}
+
+/* 原始版本标签（v1） */
+.version-tag.original {
+	border-color: #ffa500;
+	border-width: 1.5px;
+}
+
+/* 原始版本图标 */
+.version-tag.original::before {
+	content: '⭐';
+	margin-right: 3px;
+	font-size: 10px;
+}
+
+/* 原始版本 + 激活状态 */
+.version-tag.original.active {
+	background: #0e639c;
+	color: white;
+	border-color: #ffa500;
+	box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+}
+
+/* 版本删除按钮 */
+.version-delete-btn {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	width: 14px;
+	height: 14px;
+	padding: 0;
+	background: #f44336;
+	color: white;
+	border: 1px solid #1e1e1e;
+	border-radius: 50%;
+	font-size: 10px;
+	line-height: 12px;
+	cursor: pointer;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	z-index: 10;
+}
+
+.version-delete-btn:hover {
+	background: #d32f2f;
+	transform: scale(1.1);
+}
+
+/* 鼠标悬停时显示删除按钮 */
+.version-tag:hover .version-delete-btn {
+	display: flex;
+}
+
+/* 原始版本不显示删除按钮 */
+.version-tag.original .version-delete-btn {
+	display: none !important;
+}
+
+/* 唯一版本不显示删除按钮 */
+.version-tag.only-version .version-delete-btn {
+	display: none !important;
+}
+
+/* 版本标签禁用状态 */
+.version-tag.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* 版本标签加载状态 */
+.version-tag.loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.version-tag.loading::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 3px;
+	background: linear-gradient(90deg,
+			transparent 0%,
+			rgba(255, 255, 255, 0.1) 50%,
+			transparent 100%);
+	animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+	0% {
+		transform: translateX(-100%);
+	}
+
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+/* 版本标签动画 */
+.version-tag.entering {
+	animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.version-tag.exiting {
+	animation: fadeOutScale 0.2s ease-in forwards;
+}
+
+@keyframes fadeOutScale {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	to {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+}
+
+/* 版本提示气泡 - 确保在所有元素之上 */
+.version-tooltip {
+	position: fixed;
+	/* 使用fixed定位，完全脱离文档流，不受父元素限制 */
+	padding: 6px 12px;
+	background: #2d2d30;
+	color: #ffffff;
+	font-size: 11px;
+	border-radius: 4px;
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 99999;
+	/* 极高的z-index，确保在所有元素之上 */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	border: 1px solid #4e4e4e;
+	visibility: hidden;
+}
+
+.version-tooltip::after {
+	content: '';
+	position: absolute;
+	bottom: -5px;
+	left: 50%;
+	transform: translateX(-50%);
+	border: 5px solid transparent;
+	border-top-color: #2d2d30;
+}
+
+.version-tag:hover .version-tooltip {
+	opacity: 1 !important;
+	visibility: visible !important;
+}
+
+/* 版本管理面板（可选：用于显示详细信息） */
+.version-management-panel {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	max-height: 80vh;
+	background: #252526;
+	border: 1px solid #3e3e42;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+	z-index: 10000;
+	display: none;
+	flex-direction: column;
+}
+
+.version-management-panel.active {
+	display: flex;
+}
+
+.version-panel-header {
+	padding: 15px 20px;
+	background: #2d2d30;
+	border-bottom: 1px solid #3e3e42;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.version-panel-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.version-panel-close {
+	width: 24px;
+	height: 24px;
+	background: transparent;
+	border: none;
+	color: #858585;
+	font-size: 20px;
+	cursor: pointer;
+	transition: color 0.2s;
+}
+
+.version-panel-close:hover {
+	color: #ffffff;
+}
+
+.version-panel-body {
+	padding: 20px;
+	overflow-y: auto;
+	flex: 1;
+}
+
+.version-list-item {
+	padding: 12px;
+	background: #2d2d30;
+	border: 1px solid #3e3e42;
+	border-radius: 4px;
+	margin-bottom: 10px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.version-list-item:hover {
+	background: #3e3e42;
+	border-color: #0e639c;
+}
+
+.version-list-item.active {
+	background: #0e639c;
+	border-color: #0e639c;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+	.version-tags-container {
+		flex-wrap: wrap;
+		max-width: 200px;
+	}
+
+	.version-tag {
+		font-size: 10px;
+		padding: 2px 8px;
+	}
+
+	.version-management-panel {
+		width: 90%;
+		max-height: 90vh;
+	}
+}
+
+/* 版本切换通知 */
+.version-notification {
+	position: fixed;
+	top: 80px;
+	right: 20px;
+	padding: 12px 20px;
+	background: linear-gradient(135deg, #0e639c 0%, #1177bb 100%);
+	color: white;
+	border-radius: 6px;
+	box-shadow: 0 4px 16px rgba(14, 99, 156, 0.4);
+	font-size: 13px;
+	z-index: 10001;
+	animation: slideInRight 0.3s ease-out, slideOutRight 0.3s ease-in 2.7s forwards;
+}
+
+/* 加载中通知（不自动消失） */
+.version-notification.loading {
+	animation: slideInRight 0.3s ease-out;
+	background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+}
+
+.version-notification.loading::after {
+	content: '';
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-left: 8px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: white;
+	border-radius: 50%;
+	animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		transform: translateX(400px);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+
+	to {
+		transform: translateX(400px);
+		opacity: 0;
+	}
+}
+
+/* 确认对话框样式增强 */
+.version-confirm-dialog {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10002;
+}
+
+.version-confirm-content {
+	background: #252526;
+	border: 1px solid #3e3e42;
+	border-radius: 8px;
+	padding: 24px;
+	max-width: 400px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.version-confirm-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #ffffff;
+	margin-bottom: 12px;
+}
+
+.version-confirm-message {
+	font-size: 14px;
+	color: #cccccc;
+	line-height: 1.5;
+	margin-bottom: 20px;
+}
+
+.version-confirm-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+}
+
+.version-confirm-btn {
+	padding: 8px 16px;
+	border: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.version-confirm-btn-cancel {
+	background: #3e3e42;
+	color: #ffffff;
+}
+
+.version-confirm-btn-cancel:hover {
+	background: #4e4e4e;
+}
+
+.version-confirm-btn-confirm {
+	background: #f44336;
+	color: white;
+}
+
+.version-confirm-btn-confirm:hover {
+	background: #d32f2f;
+}

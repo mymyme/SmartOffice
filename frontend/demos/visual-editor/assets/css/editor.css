@@ -1,0 +1,129 @@
+/* =====================================================
+   Editor Styles - 编辑器样式
+   包含：Monaco编辑器、预览区、选区高亮
+   ===================================================== */
+
+/* ==================== 预览区选中高亮 ==================== */
+.preview-element-hover {
+    outline: 2px solid rgba(101, 175, 255, 0.8) !important;
+    outline-offset: 0px !important;
+    background: rgba(101, 175, 255, 0.1) !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+.preview-selection-highlight {
+    outline: 2px solid #1a73e8 !important;
+    outline-offset: 0px !important;
+    background: rgba(26, 115, 232, 0.08) !important;
+    position: relative !important;
+}
+
+.element-tag-tooltip {
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: #1a73e8;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 10000;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== 图片可调整大小 ==================== */
+.resizable-image {
+    position: relative;
+    display: inline-block;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #0e639c;
+    border: 1px solid white;
+    border-radius: 50%;
+    cursor: nwse-resize;
+    z-index: 100;
+}
+
+.resize-handle.se {
+    bottom: -5px;
+    right: -5px;
+}
+
+/* ==================== 代码块 ==================== */
+.code-block-container {
+    margin: 10px 0;
+    background: #1e1e1e;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.code-block-header {
+    background: #2d2d30;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.code-block-lang {
+    color: #858585;
+    font-size: 12px;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.code-block-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.code-block-btn {
+    padding: 3px 10px;
+    font-size: 11px;
+    background: #0e639c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.code-block-btn:hover {
+    background: #1177bb;
+}
+
+.code-content {
+    width: 100%;
+    max-width: 100%;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border: none;
+    padding: 12px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    box-sizing: border-box;
+}
+
+.code-content:focus {
+    outline: none;
+    background: #252526;
+}
+
