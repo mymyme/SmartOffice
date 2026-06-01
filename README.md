@@ -2,6 +2,8 @@
 
 > The ultimate document, speed is everything.
 
+[中文](README_CN.md)
+
 A visual document editing platform built on [Monaco Editor](https://github.com/microsoft/monaco-editor) (the editor that powers VS Code). It integrates AI-powered content generation, real-time code editing, document rendering, diagram visualization, user management, and version control into a unified workspace.
 
 ## Features

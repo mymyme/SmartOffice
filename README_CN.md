@@ -2,6 +2,8 @@
 
 > 天下文档，唯快不破。
 
+[English](README.md)
+
 基于 [Monaco Editor](https://github.com/microsoft/monaco-editor)（VS Code 核心编辑器）二次开发的在线可视化文档编辑平台。集成了 AI 对话生成、代码编辑、文档渲染、图表绘制、用户管理和版本控制能力。
 
 ## 功能特性
