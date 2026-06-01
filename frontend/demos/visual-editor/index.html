@@ -432,8 +432,8 @@
 	<!-- ⚠️ 关键库必须在 Monaco Editor 之前加载，避免 AMD 加载器干扰 -->
 
 	<!-- JSZip 库（用于 ZIP 导出） -->
-	<script src="assets/libs/jszip.min.js?v=20250121003"></script>
-	<script>
+<script src="assets/libs/jszip.min.js?v=20250121003"></script>
+<script>
 		// 立即保存 JSZip 引用，防止被其他库覆盖
 		console.log('✅ JSZip 预加载检查:', typeof JSZip);
 		if (typeof JSZip !== 'undefined') {
@@ -445,8 +445,8 @@
 	</script>
 
 	<!-- Markdown 渲染器 -->
-	<script src="assets/libs/markdown-renderer.js"></script>
-	<script>
+<script src="assets/libs/markdown-renderer.js"></script>
+<script>
 		console.log('🔍 Markdown 渲染器预加载检查:', typeof MarkdownRenderer);
 		if (typeof MarkdownRenderer !== 'undefined') {
 			window._MarkdownRendererSafe = MarkdownRenderer;
@@ -457,8 +457,8 @@
 	</script>
 
 	<!-- docx.js 库（用于 Word 导出）- 本地版本 v7.8.2 -->
-	<script src="assets/libs/docx.min.js"></script>
-	<script>
+<script src="assets/libs/docx.min.js"></script>
+<script>
 		// 立即保存 docx 引用，防止被其他库覆盖
 		console.log('🔍 docx 预加载检查:', typeof docx);
 		if (typeof docx !== 'undefined') {
@@ -470,9 +470,9 @@
 	</script>
 
 	<!-- 第三方库 -->
-	<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 
-	<script>
+<script>
 		// Monaco Editor 加载后，恢复被覆盖的库
 		if (typeof JSZip === 'undefined' && window._JSZipSafe) {
 			window.JSZip = window._JSZipSafe;
@@ -486,26 +486,27 @@
 	</script>
 
 	<!-- 配置文件 -->
-	<script src="assets/js/config/constants.js"></script>
+<script src="assets/js/config/local.js"></script>
+<script src="assets/js/config/constants.js"></script>
 
 	<!-- 版本管理模块 -->
-	<script src="assets/js/version-manager.js"></script>
+<script src="assets/js/version-manager.js"></script>
 
 	<!-- 注意：不在主页面加载 echarts/mermaid，避免与 Monaco Editor AMD 加载器冲突 -->
 	<!-- 这些库由 iframe 内部按需加载，通过服务器缓存头优化加载速度 -->
 
 	<!-- Word 导出模块（按依赖顺序加载） -->
-	<script src="assets/js/word-export/utils.js"></script>
-	<script src="assets/js/word-export/style-mapper.js"></script>
-	<script src="assets/js/word-export/image-processor.js"></script>
-	<script src="assets/js/word-export/echarts-processor.js"></script>
-	<script src="assets/js/word-export/layout-optimizer.js"></script>
-	<script src="assets/js/word-export/preprocessor.js"></script>
-	<script src="assets/js/word-export/element-handlers.js"></script>
-	<script src="assets/js/word-export/converter.js"></script>
+<script src="assets/js/word-export/utils.js"></script>
+<script src="assets/js/word-export/style-mapper.js"></script>
+<script src="assets/js/word-export/image-processor.js"></script>
+<script src="assets/js/word-export/echarts-processor.js"></script>
+<script src="assets/js/word-export/layout-optimizer.js"></script>
+<script src="assets/js/word-export/preprocessor.js"></script>
+<script src="assets/js/word-export/element-handlers.js"></script>
+<script src="assets/js/word-export/converter.js"></script>
 
 	<!-- 主应用文件 -->
-	<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js"></script>
 </body>
 
 </html>
